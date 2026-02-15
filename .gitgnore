@@ -1,5 +1,3 @@
+.gitgnore
 *.env
 testpassword.env
-Docs/
-Backend/
-Frontend/
