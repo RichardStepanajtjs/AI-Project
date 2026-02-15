@@ -1,0 +1,41 @@
+services:
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=Host(`sokrates.local`)"
+      - "traefik.http.routers.frontend.entrypoints=websecure"
+      - "traefik.http.routers.frontend.tls=true"
+
+    networks:
+      - gateway
+      - backend
+      - frontend
+
+  backend:
+    build: ./backend
+    container_name: backend
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=Host(`api.sokrates.local`)"
+      - "traefik.http.routers.backend.entrypoints=websecure"
+      - "traefik.http.routers.backend.tls=true"
+    networks:
+      - gateway
+      - backend
+
+  database:
+    container_name: database
+    restart: unless-stopped
+    networks:
+      - backend
+
+networks:
+  gateway:
+    external: true
+  backend:
+    internal: true
+  frontend:
