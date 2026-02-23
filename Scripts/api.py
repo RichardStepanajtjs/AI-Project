@@ -41,7 +41,7 @@ if "access_token" not in token_data:
 access_token = token_data["access_token"]
 print(f"Access token received: {access_token[:20]}...")
 
-# Dit is de URL voor de api keys. Dit kan je nog aanpassen om specifieke resultaten te krijgen.
+# Dit is de URL voor de api call. Dit kan je nog aanpassen om specifieke resultaten te krijgen.
 url = "https://api.vdab.be/services/openservices/vacatures/v4/vacatures/bulk?van=2026-02-13T12:00:00.000Z&tot=2026-02-14T12:00:00.000Z"
 
 headers = {

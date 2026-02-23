@@ -8,7 +8,7 @@ services:
       - "traefik.http.routers.frontend.rule=Host(`sokrates.local`)"
       - "traefik.http.routers.frontend.entrypoints=websecure"
       - "traefik.http.routers.frontend.tls=true"
-
+      - "traefik.http.services.mongo-express.loadbalancer.server.port=4200"
     networks:
       - gateway
       - backend
@@ -20,19 +20,47 @@ services:
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.backend.rule=Host(`api.sokrates.local`)"
+      - "traefik.http.routers.backend.rule=Host(`nest.sokrates.local`)"
       - "traefik.http.routers.backend.entrypoints=websecure"
       - "traefik.http.routers.backend.tls=true"
+      - "traefik.http.services.mongo-express.loadbalancer.server.port=3000"
     networks:
       - gateway
       - backend
 
   database:
+    image: mongo:7.0
     container_name: database
     restart: unless-stopped
+    # Dit is om te controleren of de database goed werkt.
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      retries: 5
+      start_period: 10s
     networks:
-      - gateway
       - backend
+    env_file: db.env
+    volumes:
+      - mongodata:/data/db
+
+  mongo-express:
+    image: mongo-express
+    restart: unless-stopped
+    # Database moet eerst online staan om dit te laten werken.
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - backend
+      - gateway
+    env_file: db_express.env
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.mongo-express.rule=Host(`database.sokrates.local`)"
+      - "traefik.http.routers.mongo-express.entrypoints=websecure"
+      - "traefik.http.routers.mongo-express.tls=true"
+      - "traefik.http.services.mongo-express.loadbalancer.server.port=8081"
 
 networks:
   gateway:
@@ -40,3 +68,7 @@ networks:
   backend:
     internal: true
   frontend:
+  database:
+
+volumes:
+  mongodata:
