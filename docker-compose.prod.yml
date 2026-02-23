@@ -1,0 +1,53 @@
+services:
+  traefik:
+    image: traefik:v3.0
+    container_name: traefik_gateway
+    restart: always
+    command:
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+  frontend:
+    build: ./frontend
+    container_name: frontend_prod
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=Host(`123.45.67.89`)" # Verander IP adres naar hetzner adres
+      - "traefik.http.routers.frontend.entrypoints=web"
+    networks:
+      - web_network
+
+  backend:
+    build: ./backend
+    container_name: backend_prod
+    restart: always
+    env_file: .env
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=Host(`123.45.67.89`) && PathPrefix(`/api`)" # Verander IP adres
+      - "traefik.http.routers.backend.entrypoints=web"
+    networks:
+      - web_network
+      - db_network
+
+  database:
+    image: postgres:15
+    container_name: database_prod
+    restart: always
+    env_file: .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - db_network
+
+networks:
+  web_network:
+  db_network:
+
+volumes:
+  postgres_data:
