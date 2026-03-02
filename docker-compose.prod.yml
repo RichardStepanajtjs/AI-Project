@@ -1,53 +1,74 @@
 services:
-  traefik:
-    image: traefik:v3.0
-    container_name: traefik_gateway
-    restart: always
-    command:
-      - "--providers.docker=true"
-      - "--entrypoints.web.address=:80"
-    ports:
-      - "80:80"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-
   frontend:
     build: ./frontend
-    container_name: frontend_prod
-    restart: always
+    container_name: frontend
+    restart: unless-stopped
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.frontend.rule=Host(`123.45.67.89`)" # Verander IP adres naar hetzner adres
+      - "traefik.http.routers.frontend.rule=Host(`91.99.191.71`)"
       - "traefik.http.routers.frontend.entrypoints=web"
+      - "traefik.http.services.frontend.loadbalancer.server.port=4200"
     networks:
-      - web_network
+      - gateway
+      - backend
+      - frontend
 
   backend:
     build: ./backend
-    container_name: backend_prod
-    restart: always
-    env_file: .env
+    container_name: backend
+    restart: unless-stopped
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.backend.rule=Host(`123.45.67.89`) && PathPrefix(`/api`)" # Verander IP adres
+      - "traefik.http.routers.backend.rule=Host(`91.99.191.71`) && PathPrefix(`/api`)"
       - "traefik.http.routers.backend.entrypoints=web"
     networks:
-      - web_network
-      - db_network
+      - gateway
+      - backend
 
   database:
-    image: postgres:15
-    container_name: database_prod
-    restart: always
-    env_file: .env
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+    image: postgres:16-alpine
+    container_name: database
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U data_user -d data_inventory"]
+      interval: 10s
+      retries: 5
+      start_period: 10s
     networks:
-      - db_network
+      - backend
+    env_file: db.env
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  pgadmin:
+    image: dpage/pgadmin4:8
+    container_name: pgadmin
+    ports:
+      - "5050:80"
+    restart: unless-stopped
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - backend
+      - gateway
+    env_file: pgadmin.env
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.pgadmin.rule=Host(`91.99.191.71`) && PathPrefix(`/pgadmin`)"
+      - "traefik.http.routers.pgadmin.entrypoints=web"
+      - "traefik.http.services.pgadmin.loadbalancer.server.port=80"
+      - "traefik.http.middlewares.pgadmin-strip.stripprefix.prefixes=/pgadmin"
+      - "traefik.http.routers.pgadmin.middlewares=pgadmin-strip"
 
 networks:
-  web_network:
-  db_network:
+  gateway:
+    external: true
+  backend:
+    internal: true
+  frontend:
 
 volumes:
-  postgres_data:
+  db-data:
+  pgadmin-data:
