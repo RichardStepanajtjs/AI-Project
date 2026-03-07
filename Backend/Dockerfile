@@ -8,13 +8,13 @@ RUN npm install
 
 COPY . .
 
-# Dit is voor productie.
-RUN npm run build
-
-# Dit is voor development & testing.
-# RUN npm start
+# Productie
+#RUN npm run build
 
 EXPOSE 3000
 
-# Je vindt de gecompileerde code in de dist map.
-CMD ["node", "dist/main.js"]
+# Development & testing.
+CMD ["npm", "start"]
+
+# Gecompileerde code in dist map (productie).
+#CMD ["node", "dist/server.js"]

@@ -15,19 +15,22 @@ services:
   #     - backend
   #     - frontend
   
-  # Backend folder nog te vervolledigen
-  # backend:
-  #   build: ./backend
-  #   container_name: backend
-  #   restart: unless-stopped
-  #   labels:
-  #     - "traefik.enable=true"
-  #     - "traefik.http.routers.backend.rule=Host(`nest.sokrates.traefik.me`)"
-  #     - "traefik.http.routers.backend.entrypoints=websecure"
-  #     - "traefik.http.routers.backend.tls=true"
-  #   networks:
-  #     - gateway
-  #     - backend
+  backend:
+    build: ./backend
+    container_name: backend
+    restart: unless-stopped
+    depends_on:
+      database:
+        condition: service_healthy
+    env_file: Env/db.env
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=Host(`nest.sokrates.traefik.me`)"
+      - "traefik.http.routers.backend.entrypoints=websecure"
+      - "traefik.http.routers.backend.tls=true"
+    networks:
+      - gateway
+      - backend
 
   database:
     image: postgres:16-alpine
@@ -41,7 +44,7 @@ services:
       start_period: 10s
     networks:
       - backend
-    env_file: db.env
+    env_file: Env/db.env
     volumes:
       - db-data:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
@@ -58,7 +61,7 @@ services:
     networks:
       - backend
       - gateway
-    env_file: pgadmin.env
+    env_file: Env/pgadmin.env
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.pgadmin.rule=Host(`database.sokrates.traefik.me`)"
