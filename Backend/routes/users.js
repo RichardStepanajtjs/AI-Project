@@ -1,5 +1,8 @@
 const express = require('express');
 const router = express.Router();
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const pool = require('../db/connection'); // PAS OP: zorg dat dit klopt later wanneer connection is gemaakt
 const {
   getAllUsers,
   getUserById,
@@ -9,6 +12,81 @@ const {
 } = require('../crud/usersCrud');
 
 // USERS ROUTES
+
+router.post('/login', async (req, res) => {
+  try {
+    const { email, password } = req.body; // fix zodat het niet crasht
+
+    if (!email || !password) {
+      return res.status(400).json({ success: false, message: 'Email and password are required' });
+    }
+
+    const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+    if (result.rows.length === 0) {
+      return res.status(401).json({ success: false, message: 'Invalid credentials' });
+    }
+
+    const user = result.rows[0];
+
+    const isMatch = await bcrypt.compare(password, user.password_hash);
+    if (!isMatch) {
+      return res.status(401).json({ success: false, message: 'Invalid credentials' });
+    }
+
+    const token = jwt.sign(
+      { id: user.id, email: user.email, role: user.role },
+      process.env.JWT_SECRET || 'VERVANG_DIT_LATER_IN_ENV', // VERVANG DIT LATER
+      { expiresIn: '1h' }
+    );
+
+    res.json({
+      success: true,
+      message: 'Login successful',
+      token: token,
+      data: { id: user.id, email: user.email, role: user.role }
+    });
+  } catch (error) {
+    console.error('Error logging in:', error);
+    res.status(500).json({ success: false, message: 'Error logging in', error: error.message });
+  }
+});
+
+// Create new user
+router.post('/', async (req, res) => {
+  try {
+    const { email, password, role } = req.body; // fix zodat het niet crasht
+
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email and password are required'
+      });
+    }
+    
+    const user = await createUser(email, password, role);
+    
+    res.status(201).json({
+      success: true,
+      message: 'User created successfully',
+      data: user
+    });
+  } catch (error) {
+    console.error('Error creating user:', error);
+    
+    if (error.code === '23505') {
+      return res.status(409).json({
+        success: false,
+        message: 'Email already exists'
+      });
+    }
+    
+    res.status(500).json({
+      success: false,
+      message: 'Error creating user',
+      error: error.message
+    });
+  }
+});
 
 // Get all users
 router.get('/', async (req, res) => {
@@ -51,41 +129,6 @@ router.get('/:id', async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Error fetching user',
-      error: error.message
-    });
-  }
-});
-
-// Create new user
-router.post('/', async (req, res) => {
-  try {
-    if (!email || !password) {
-      return res.status(400).json({
-        success: false,
-        message: 'Email and password are required'
-      });
-    }
-    
-    const user = await createUser(req.body);
-    
-    res.status(201).json({
-      success: true,
-      message: 'User created successfully',
-      data: user
-    });
-  } catch (error) {
-    console.error('Error creating user:', error);
-    
-    if (error.code === '23505') {
-      return res.status(409).json({
-        success: false,
-        message: 'Email already exists'
-      });
-    }
-    
-    res.status(500).json({
-      success: false,
-      message: 'Error creating user',
       error: error.message
     });
   }
