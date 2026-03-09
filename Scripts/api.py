@@ -55,7 +55,7 @@ def get_recent_vacatures():
         params = {
             "aantal": 200,
             "sinds": 1,
-            "sorteerveld": "WIJZIGINGS_DATUM",
+            "sorteerveld": "PUBLICATIE_DATUM",
             "filterDubbels": "true",
             "velden": ["leverancier", "tewerkstellingsgemeente", "beroep", "competentie", "vdabreferentie"],
         }
@@ -115,21 +115,18 @@ def save_as_csv(vacatures):
             'beroepsprofiel_code': item.get('functie', {}).get('beroepsprofiel', {}).get('code', 'Onbekend'),
             'beroepsprofiel_label': item.get('functie', {}).get('beroepsprofiel', {}).get('label', 'Onbekend'),
             'vereisten': ', '.join([v.get('label', '') for v in item.get('profiel', {}).get('vereisten', [])]),
-            'text': item.get('text', '')
+            'text': item.get('text', ''),
+            "embedding_array": item.get('embedding', [[]])
         }
-        
-        embedding = item.get('embedding', [[]])[0]
-        for i, x in enumerate(embedding):
-            row[f'embedding_{i}'] = x
-        
         rows.append(row)
     
     nieuwe_df = pd.DataFrame(rows)
-    header = not Path("vacatures.csv").exists() # Als de bestand bestaat zal het de kolom namen niet herschrijven.
-    nieuwe_df.to_csv("vacatures.csv", mode='a', index=False, header=header, encoding='utf-8')
+    header = not Path("././Data/vacatures.csv").exists() # Als de bestand bestaat zal het de kolom namen niet herschrijven.
+    nieuwe_df.to_csv("././Data/vacatures.csv", mode='a', index=False, header=header, encoding='utf-8')
 
-new_vacatures = get_recent_vacatures()
+if __name__ == "__main__":
+    new_vacatures = get_recent_vacatures()
 
-embedded_vacatures = embed_vacatures(new_vacatures)
+    embedded_vacatures = embed_vacatures(new_vacatures)
 
-save_as_csv(embedded_vacatures)
+    save_as_csv(embedded_vacatures)
