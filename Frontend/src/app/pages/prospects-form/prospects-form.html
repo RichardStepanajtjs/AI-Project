@@ -1,0 +1,53 @@
+<app-page-header title="Prospects Form"></app-page-header>
+
+<main>
+    <form action="">
+        @if (isJobMode) {
+            <div class="form-title">
+                <h1>ProductForm</h1>
+                <p>This is the product form for creating new prospectlists.</p>
+            </div>
+        }@else {
+            <div class="form-title">
+                <h1>JobForm</h1>
+                <p>This is the job form for finding new jobs.</p>
+            </div>
+        }
+        <div class="toggle-button">
+            <span>Job Mode</span>
+            <div class="toggle" [class.on]="isJobMode" (click)="toggle()"></div>
+            <span>Product Mode</span>
+        </div>
+        <div>
+            <label>Product Name:</label>
+            <input type="text" id="productName" name="productName" required>
+        </div>
+
+        <div>
+            <label>Sector:</label>
+            <input type="text" id="sector" name="sector" required>
+        </div>
+        <div>
+            <label>Short description:</label>
+            <input type="text" id="shortDescription" name="shortDescription" required>
+        </div>
+        <div>
+            <label>Target Group:</label>
+            <input type="text" id="targetGroup" name="targetGroup" required>
+        </div>
+
+        <div>
+            <label>Tags & Technologies:</label>
+            <input type="text" id="tagsTechnologies" name="tagsTechnologies" required>  
+        </div>
+        <div>
+            <label>Amount of prospects:</label>
+            <input type="text" id="amountOfProspects" name="amountOfProspects" required>
+        </div>
+        <div>
+            <label>Minimum matching score:</label>
+            <input type="text" id="minimumMatchingScore" name="minimumMatchingScore" required>
+        </div>
+        <button type="submit">Add Prospect</button>
+    </form>
+</main>

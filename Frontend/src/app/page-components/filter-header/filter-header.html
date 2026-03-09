@@ -1,0 +1,12 @@
+<div class="filters">
+    @for (filter of filters; track filter) {
+        <button
+            class="filter-button"
+            [class.active]="activeFilter === filter"
+            (click)="activeFilterChange.emit(filter)">
+            {{ filter }}
+        </button>
+    }
+    <input type="text" placeholder="tag" class="tag-input" />
+    <button class="add-button">{{addLabel}}</button>
+</div>

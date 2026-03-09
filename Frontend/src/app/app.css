@@ -1,0 +1,13 @@
+body {
+    display: grid;
+    grid-template-columns: 1fr 6fr;
+    background-color: #f7f6f2;
+}
+
+app-navigation {
+    grid-column: 1;
+}
+
+main {
+    grid-column: 2;
+}

@@ -1,0 +1,7 @@
+<div class="nav-item">
+    <!-- <img [src]="image" class="nav-icon"> -->
+    <a [routerLink]="link" routerLinkActive="active" class="nav-a">{{label}}</a>
+    @if (isAdmin) {
+        <span class="admin-tag">Admin</span>
+    }
+</div>

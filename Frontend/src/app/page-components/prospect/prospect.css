@@ -1,0 +1,45 @@
+.prospect-card {
+    background: #ffffff;
+    border: 1px solid #ffffffc7;
+    border-radius: 10px;
+    padding: 20px;
+    transition: all .2s;
+    width: 30vw;
+}
+
+.prospect-card:hover {
+    border-color: green;
+}
+
+.head {
+    display: flex;
+    align-items: left;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.sector {
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.4;
+}
+
+.score {
+    background-color: green;
+    color: white;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.description {
+    font-size: 12.5px;
+    color: black;
+    line-height: 1.5;
+    margin-top: 9px;
+}

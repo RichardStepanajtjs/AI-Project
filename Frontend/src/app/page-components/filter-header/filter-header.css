@@ -1,0 +1,49 @@
+.filters {
+    display: flex;
+    padding: 1rem;
+    gap: 7px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.filter-button {
+    padding: 5px 13px;
+    border-radius: 20px;
+    border: 1px solid black;
+    background: #ffffff;
+    font-size: 12.5px;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    color: black;
+    transition: all .15s;
+}
+
+.filter-button:hover {
+    background: #2d6a5e;
+    color: #fff;
+}
+
+.filter-button.active {
+    background: #2d6a5e;
+    color: #fff;
+}
+
+.tag-input {
+    padding: 5px 13px;
+    border-radius: 20px;
+    border: 1px solid black;
+    background: #ffffff;
+    font-size: 12.5px;
+    font-family: 'DM Sans', sans-serif;
+}
+
+.add-button {
+    padding: 5px 13px;
+    border-radius: 20px;
+    border: 1px solid black;
+    background: #2d6a5e;
+    font-size: 12.5px;
+    font-family: 'DM Sans', sans-serif;
+    color: white;
+    transition: all .15s;
+}
