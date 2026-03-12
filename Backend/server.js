@@ -14,7 +14,7 @@ const vacanciesRoute = require('./routes/vacancies');
 require('./db/connection');
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = 3000;
 
 // Middleware
 app.use(cors());
@@ -46,7 +46,7 @@ app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
   console.log('Available endpoints:');
   console.log('  GET    /health');
-  console.log('Users:')
+  console.log('Users:');
   console.log('  GET    /api/users');
   console.log('  GET    /api/users/:id');
   console.log('  POST   /api/users');
@@ -58,6 +58,8 @@ app.listen(port, () => {
   console.log('  POST   /api/vacancies');
   console.log('  PUT    /api/vacancies/:id');
   console.log('  DELETE /api/vacancies/:id');
+  console.log('Login:')
+  console.log('  POST /api/login');
 });
 
 module.exports = app;
