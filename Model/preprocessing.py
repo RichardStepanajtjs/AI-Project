@@ -7,7 +7,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 def fetch_data(endpoint: str):
     """
-    GET-request to retrieve vacancy or company data.
+    GET-request to retrieve company or forum data.
     """
     url = f"{api_base_url}/{endpoint}"
     print(f"Retrieving data from API: {url}...")
@@ -25,7 +25,7 @@ def fetch_data(endpoint: str):
             return []
             
     except requests.exceptions.RequestException as e:
-        print(f"Cannot connect to API: {e}")
+        print(f"Error: Cannot connect to API. {e}")
         return []
 
 def format(api_data: list):
@@ -51,16 +51,17 @@ def format(api_data: list):
     vectors_array = np.array(vectors).astype('float32')
     return vectors_array, metadata
 
-if __name__ == "__main__":
-    print("Testing preprocessing.py...")
+# Debugging
+#if __name__ == "__main__":
+#    print("Testing preprocessing.py...")
     
-    companies = fetch_data("companies")
+#     companies = fetch_data("companies")
     
-    if companies:
-        print(f"\nSucces! {len(companies)} companies found.")
-        vectoren, meta = format(companies)
-        print(f"Transformed to {len(vectoren)} FAISS vectors.")
-        if len(vectoren) > 0:
-            print(f"Dimensions of first vector: {len(vectoren[0])}")
-    else:
-        print("\nNo companies found or failed to connect to API.")
+#     if companies:
+#         print(f"\nSucces! {len(companies)} companies found.")
+#         vectoren, meta = format(companies)
+#         print(f"Transformed to {len(vectoren)} FAISS vectors.")
+#         if len(vectoren) > 0:
+#             print(f"Dimensions of first vector: {len(vectoren[0])}")
+#     else:
+#         print("\Error: No companies found or failed to connect to API.")
