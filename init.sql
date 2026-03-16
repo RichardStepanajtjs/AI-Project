@@ -41,10 +41,11 @@ CREATE TABLE IF NOT EXISTS companies (
     jobdomein VARCHAR(100)
 );
 
-/* Dummy data voor Bedrijven (GH-43) */
+/* Dummy data voor Bedrijven (GH-43) 
 INSERT INTO companies (naam, kbonummer, postcode, gemeente, landcode, email, telefoonnummer, jobdomein) -- GEEN ID want serial
 VALUES 
 ('Rich-Hard Capital', '1', '2000', 'Antwerpen', 'BE', 'contact@rich-hardcapital.be', '+3231234567', 'ICT'),
 ('Souf-souf Soufflés', '2', '1000', 'Brussel', 'BE', 'souf@soufiwoufi.be', '+3267676767', 'Horeca en toerisme'),
 ('Sharp Angles INC', '3', '3000', 'Gent', 'BE', 'hallo@bye.be', '+32042069', 'Andere')
 ON CONFLICT (kbonummer) DO NOTHING;
+*/
