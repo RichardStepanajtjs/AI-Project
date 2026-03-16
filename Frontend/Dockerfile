@@ -14,4 +14,6 @@ RUN npm install -g @angular/cli
 EXPOSE 4200
 
 # Dit "--host 0.0.0.0" zorgt ervoor dat de applicatie bereikbaar is buiten de container...
-CMD ["ng", "serve", "--host", "0.0.0.0"] 
+CMD ["ng", "serve", "--host", "0.0.0.0", "--poll", "1000"]
+
+# "--disable-host-check" dit indien er een host probleem is.

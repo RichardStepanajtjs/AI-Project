@@ -1,32 +1,32 @@
 .prospect-card {
-    background: #ffffff;
-    border: 1px solid #ffffffc7;
-    border-radius: 10px;
-    padding: 20px;
+    background: white;
+    border: 1px solid #E5E2D9;
+    border-radius: 12px;
+    padding: 18px;
+    cursor: pointer;
     transition: all .2s;
-    width: 30vw;
+    box-shadow: 0 1px 3px rgba(0,0,0,.06);
 }
 
 .prospect-card:hover {
-    border-color: green;
+    border-color: #2D6A4F;
+    box-shadow: 0 4px 16px rgba(0,0,0,.08);
+    transform: translateY(-2px);
 }
 
 .head {
     display: flex;
-    align-items: left;
+    align-items: center;
     justify-content: space-between;
-    margin-bottom: 10px;
-}
-
-.sector {
-    font-size: 12.5px;
-    color: var(--muted);
-    line-height: 1.4;
+    font-weight: 600;
+    font-size: 14px;
+    color: #1A1916;
+    margin-bottom: 6px;
 }
 
 .score {
-    background-color: green;
-    color: white;
+    background: #E8F4EF;
+    color: #2D6A4F;
     width: 34px;
     height: 34px;
     border-radius: 50%;
@@ -35,11 +35,12 @@
     justify-content: center;
     font-size: 12px;
     font-weight: 700;
+    flex-shrink: 0;
 }
 
 .description {
     font-size: 12.5px;
-    color: black;
+    color: #8A8780;
     line-height: 1.5;
     margin-top: 9px;
 }

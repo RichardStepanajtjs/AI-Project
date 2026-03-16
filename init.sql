@@ -6,10 +6,9 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-/*INSERT INTO users (email, password_hash, role) 
+INSERT INTO users (email, password_hash, role) 
 VALUES ('admin@sokrates.be', '$2b$10$n7E.1v.vG.7E.1v.vG.7E.1v.vG.7E.1v.vG.7E.1v.vG', 'admin')
 ON CONFLICT (email) DO NOTHING;
-*/
 
 CREATE TABLE IF NOT EXISTS vacancies (
     id SERIAL PRIMARY KEY,

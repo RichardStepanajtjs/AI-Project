@@ -1,1 +1,25 @@
 <app-page-header title="My Account"></app-page-header>
+
+<main>
+  <div class="card">
+    <h2 class="card-header">Profile</h2>
+    <div class="card-body">
+      <div class="form-group">
+        <label>Naam</label>
+        <input type="text" [(ngModel)]="user.name"/>
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" [(ngModel)]="user.email"/>
+      </div>
+      <div class="form-group">
+        <label>Rol</label>
+        <input type="text" [value]="user.role" disabled/>
+      </div>
+      <div class="form-buttons">
+        <button (click)="save()">Opslaan</button>
+        <button (click)="logout()" class="logout">Logout</button>
+      </div>
+    </div>
+  </div>
+</main>

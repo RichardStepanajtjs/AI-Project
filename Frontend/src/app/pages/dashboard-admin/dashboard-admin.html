@@ -1,1 +1,74 @@
 <app-page-header title="Admin Dashboard"></app-page-header>
+
+<main>
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">Totaal gebruikers</div>
+      <div class="stat-value">{{aantal_gebruikers}}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Actieve gebruikers</div>
+      <div class="stat-value">{{aantal_gebruikers}}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Aantal Admins</div>
+      <div class="stat-value">{{aantal_admins}}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Aanvragen deze week</div>
+      <div class="stat-value">404</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span>Gebruikers</span>
+      <button (click)="showScreen = true">+ Nieuwe gebruiker</button>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Email</th>
+          <th>Rol</th>
+          <th>Acties</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (user of users; track user.email) {
+          <tr>
+            <td>{{ user.email }}</td>
+            <td>{{ user.role }}</td>
+            <!-- <td><button (click)="toggleActive(user)">{{ user.active ? 'Deactiveer' : 'Activeer' }}</button></td> -->
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</main>
+
+@if (showScreen) {
+  <div class="screen-overlay" (click)="showScreen = false">
+    <div class="screen" (click)="$event.stopPropagation()">
+      <h2>Nieuwe gebruiker</h2>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" placeholder="jan@bedrijf.be" [(ngModel)]="new_user.email"/>
+      </div>
+      <div class="form-group">
+        <label>password</label>
+        <input type="password" placeholder="password" [(ngModel)]="new_user.password"/>
+      </div>
+      <div class="form-group">
+        <label>Rol</label>
+        <select [(ngModel)]="new_user.role">
+          <option>Partner</option>
+          <option>Admin</option>
+        </select>
+      </div>
+      <div class="screen-footer">
+        <button (click)="showScreen = false">Annuleren</button>
+        <button (click)="addUser()">Aanmaken</button>
+      </div>
+    </div>
+  </div>
+}

@@ -1,0 +1,94 @@
+main {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  height: auto;
+}
+
+.card {
+  background: white;
+  border: 1px solid #E5E2D9;
+  border-radius: 12px;
+  overflow: hidden;
+  height: auto;
+}
+
+.card-header {
+  padding: 14px 20px;
+  border-bottom: 1px solid #E5E2D9;
+  font-weight: 600;
+  font-size: 14px;
+  color: #1A1916;
+}
+
+.card-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+label {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #8A8780;
+}
+
+input {
+  padding: 10px 12px;
+  border: 1px solid #E5E2D9;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-family: inherit;
+  background: #F7F6F2;
+  outline: none;
+  transition: border-color .15s;
+}
+
+input:focus {
+  border-color: #2D6A4F;
+  background: white;
+}
+
+input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+button {
+  align-self: flex-end;
+  padding: 9px 20px;
+  background: #2D6A4F;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-family: inherit;
+  font-weight: 600;
+  transition: background .15s;
+}
+
+.logout {
+  background: #E63946;
+}
+
+.logout:hover {
+  background: #A62832;
+}
+
+.form-buttons {
+  display: flex;
+  justify-content: center;  
+  gap: 10px;
+}
+
+button:hover {
+  background: #245540;
+}

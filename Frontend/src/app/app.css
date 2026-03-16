@@ -1,6 +1,10 @@
-body {
+.loggedin {
     display: grid;
     grid-template-columns: 1fr 6fr;
+    background-color: #f7f6f2;
+}
+
+.loggedout {
     background-color: #f7f6f2;
 }
 

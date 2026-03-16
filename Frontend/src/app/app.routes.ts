@@ -8,7 +8,7 @@ import { ModelPage } from './pages/model-page/model-page';
 import { ProspectsForm } from './pages/prospects-form/prospects-form';
 
 export const routes: Routes = [
-    {path: '', redirectTo: '/dashboard', pathMatch: 'full'},
+    {path: '', redirectTo: '/login', pathMatch: 'full'},
     {path: 'dashboard', component: DashboardAdmin},
     {path: 'my-account', component: AccountPage},
     {path: 'business-profiles', component: BusinessProfilesPage},

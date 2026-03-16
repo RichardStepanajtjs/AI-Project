@@ -1,4 +1,5 @@
 seaborn
+matplotlib
 mlflow
 jupyter
 scikit-learn
@@ -7,3 +8,4 @@ hyperopt
 numpy
 dotenv
 voyageai
+faiss-cpu
