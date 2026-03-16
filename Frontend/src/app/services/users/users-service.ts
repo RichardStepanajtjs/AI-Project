@@ -9,22 +9,22 @@ export class UsersService {
   private apiUrl = 'https://nest.sokrates.traefik.me';
 
   getAllUsers() {
-    return this.http.get(`${this.apiUrl}/api/users`);
+    return this.http.get(`${this.apiUrl}/users`);
   }
 
   createUser(data: any) {
-    return this.http.post(`${this.apiUrl}/api/users`, data);
+    return this.http.post(`${this.apiUrl}/users`, data);
   }
 
   getUserById(id: number) {
-    return this.http.get(`${this.apiUrl}/api/users/${id}`);
+    return this.http.get(`${this.apiUrl}/users/${id}`);
   }
 
   updateUser(id: number, data: any) {
-    return this.http.put(`${this.apiUrl}/api/users/${id}`, data);
+    return this.http.put(`${this.apiUrl}/users/${id}`, data);
   }
 
   deleteUser(id: number) {
-    return this.http.delete(`${this.apiUrl}/api/users/${id}`);
+    return this.http.delete(`${this.apiUrl}/users/${id}`);
   }
 }

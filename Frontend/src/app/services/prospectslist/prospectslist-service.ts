@@ -9,22 +9,22 @@ export class ProspectslistService {
   private apiUrl = 'nest.sokrates.traefik.me';
 
   createProspect(data: any) {
-    return this.http.post(`${this.apiUrl}/api/prospects`, data);
+    return this.http.post(`${this.apiUrl}/prospects`, data);
   }
 
   getProspects() {
-    return this.http.get(`${this.apiUrl}/api/prospects`);
+    return this.http.get(`${this.apiUrl}/prospects`);
   }
 
   getProspectById(id: string) {
-    return this.http.get(`${this.apiUrl}/api/prospects/${id}`);
+    return this.http.get(`${this.apiUrl}/prospects/${id}`);
   }
 
   updateProspect(id: string, data: any) {
-    return this.http.put(`${this.apiUrl}/api/prospects/${id}`, data);
+    return this.http.put(`${this.apiUrl}/prospects/${id}`, data);
   }
 
   deleteProspect(id: string) {
-    return this.http.delete(`${this.apiUrl}/api/prospects/${id}`);
+    return this.http.delete(`${this.apiUrl}/prospects/${id}`);
   }
 }

@@ -10,7 +10,7 @@ import { LoginResponse } from '../../models/login-response';
 export class LoginService {
   private http = inject(HttpClient);
   private router = inject(Router);
-  private apiUrl = 'https://nest.sokrates.traefik.me/api/users';
+  private apiUrl = 'https://nest.sokrates.traefik.me/users';
 
   isLoggedIn = signal(false);
 
