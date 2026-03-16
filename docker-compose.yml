@@ -1,19 +1,19 @@
 services:
   # Frontend folder nog te vervolledigen
-  # frontend:
-  #   build: ./frontend
-  #   container_name: frontend
-  #   restart: unless-stopped
-  #   labels:
-  #     - "traefik.enable=true"
-  #     - "traefik.http.routers.frontend.rule=Host(`sokrates.traefik.me`)"
-  #     - "traefik.http.routers.frontend.entrypoints=websecure"
-  #     - "traefik.http.routers.frontend.tls=true"
-  #     - "traefik.http.services.frontend.loadbalancer.server.port=4200"
-  #   networks:
-  #     - gateway
-  #     - backend
-  #     - frontend
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=Host(`sokrates.traefik.me`)"
+      - "traefik.http.routers.frontend.entrypoints=websecure"
+      - "traefik.http.routers.frontend.tls=true"
+      - "traefik.http.services.frontend.loadbalancer.server.port=4200"
+    networks:
+      - gateway
+      - backend
+      - frontend
   
   backend:
     build: ./backend
@@ -28,6 +28,7 @@ services:
       - "traefik.http.routers.backend.rule=Host(`nest.sokrates.traefik.me`)"
       - "traefik.http.routers.backend.entrypoints=websecure"
       - "traefik.http.routers.backend.tls=true"
+      - "traefik.http.services.backend.loadbalancer.server.port=3000"
     networks:
       - gateway
       - backend

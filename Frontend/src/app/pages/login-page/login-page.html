@@ -1,1 +1,13 @@
-<p>login-page works!</p>
+<main>
+  <form (ngSubmit)="onSubmit()">
+    <h2>Welkom!</h2>
+
+    <label for="username">Gebruikersnaam</label>
+    <input type="text" id="username" name="username" [(ngModel)]="email" placeholder="naam@bedrijf.be"/>
+
+    <label for="password">Wachtwoord</label>
+    <input type="password" id="password" name="password" [(ngModel)]="password" placeholder="••••••••"/>
+
+    <button type="submit">Inloggen</button>
+  </form>
+</main>

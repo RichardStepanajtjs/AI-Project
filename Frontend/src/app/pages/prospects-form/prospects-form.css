@@ -1,35 +1,60 @@
 main {
     background-color: white;
-    margin: 1rem;
-    border-radius: 20px;
-    width: 40vw;
-    padding: 20px;
+    margin: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid #E5E2D9;
+    padding: 28px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 form {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    width: 100%;
+    gap: 14px;
 }
 
-label {
-    display: block;
+.form-title {
+    margin-bottom: 6px;
+}
+
+.form-title h1 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1A1916;
+    margin-bottom: 4px;
+}
+
+.form-title p {
+    font-size: 13px;
+    color: #8A8780;
 }
 
 .toggle-button {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 20px;
+    padding: 12px 14px;
+    background: #F7F6F2;
+    border-radius: 9px;
+    font-size: 13px;
+    color: #8A8780;
 }
 
 .toggle {
     width: 44px;
     height: 24px;
     border-radius: 12px;
-    background: gray;
+    background: #E5E2D9;
     position: relative;
     transition: background .2s;
+    flex-shrink: 0;
+}
+
+.toggle.on {
+    background: #2D6A4F;
 }
 
 .toggle::after {
@@ -38,12 +63,98 @@ label {
     width: 18px;
     height: 18px;
     border-radius: 50%;
-    background: #fff;
+    background: white;
     top: 3px;
     left: 3px;
     transition: transform .2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,.2);
 }
 
 .toggle.on::after {
     transform: translateX(20px);
+}
+
+div:has(label) {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+label {
+    font-size: 12.5px;
+    font-weight: 500;
+    color: #8A8780;
+}
+
+input {
+    padding: 10px 12px;
+    border: 1px solid #E5E2D9;
+    border-radius: 8px;
+    font-size: 13.5px;
+    font-family: inherit;
+    color: #1A1916;
+    background: #F7F6F2;
+    outline: none;
+    transition: border-color .15s, background .15s;
+}
+
+input:focus {
+    border-color: #2D6A4F;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(45,106,79,.07);
+}
+
+button[type="submit"] {
+    margin-top: 6px;
+    padding: 11px;
+    background: #2D6A4F;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    transition: background .15s;
+}
+
+button[type="reset"] {
+    margin-top: 6px;
+    padding: 11px;
+    background: #E76F51;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    transition: background .15s;
+}
+
+button:hover {
+    background: #245540;
+}
+
+button[type="reset"]:hover {
+    background: #D65A3B;
+}
+
+.error {
+  font-size: 12px;
+  color: #E76F51;
+}
+
+.buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.buttons button {
+    flex: 1;
+    padding: 11px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    transition: background .15s;
 }

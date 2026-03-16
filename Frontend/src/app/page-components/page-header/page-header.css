@@ -1,7 +1,15 @@
+header {
+    background-color: white;
+    border-bottom: 1px solid #E5E2D9;
+    padding: 0 28px;
+    height: 58px;
+    display: flex;
+    align-items: center;
+}
+
 h1 {
-    color: black;
-    font-size: 1.5rem;
-    background-color: #ffffff;
-    padding: 1.2rem;
-    border-bottom: 2px solid #f0f0f0;
+    font-size: 19px;
+    font-weight: 600;
+    color: #1A1916;
+    letter-spacing: -0.3px;
 }

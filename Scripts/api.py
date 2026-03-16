@@ -90,17 +90,25 @@ def embed_vacatures(vacatures):
         
         vacature["text"] = text
 
-        vo = voyageai.Client(api_key=VOYAGE_API_KEY)
+        result = embed(text)
 
-        result = vo.embed(text, model="voyage-4-lite")
         vacature["embedding"] = result.embeddings
         updated_vacatures.append(vacature)
         time.sleep(0.05)
 
     return updated_vacatures
 
+def embed_bedrijven(profile):
+    pass
+
+def embed(text):
+    vo = voyageai.Client(api_key=VOYAGE_API_KEY)
+    result = vo.embed(text, model="voyage-4-lite")
+    return result
+
 def save_as_csv(vacatures):
     rows = []
+    headers = ["interne_referentie", "vdab_referentie", ""]
 
     for item in vacatures:
         row = {

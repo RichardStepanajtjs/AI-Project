@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS companies (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-/* Dummy data voor Bedrijven (GH-43) */
+/* Dummy data voor Bedrijven (GH-43) 
 INSERT INTO companies (naam, kbonummer, postcode, gemeente, landcode, email, telefoonnummer, jobdomein) -- GEEN ID want serial
 VALUES 
 ('Rich-Hard Capital', '1', '2000', 'Antwerpen', 'BE', 'contact@rich-hardcapital.be', '+3231234567', 'ICT', 'Rich-Hard Capital is een toonaangevende durfkapitaalverstrekker die zich richt op de tech-sector in Antwerpen. We bieden strategische ondersteuning en financiering voor innovatieve startups met een sterke groeiambitie. Ons team van experts helpt ondernemers om hun technologische visie om te zetten in marktconforme oplossingen.'),

@@ -1,6 +1,7 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { Navigation } from './page-components/navigation/navigation';
+import { LoginService } from './services/login/login-service';
 
 @Component({
   selector: 'app-root',
@@ -9,5 +10,6 @@ import { Navigation } from './page-components/navigation/navigation';
   styleUrl: './app.css'
 })
 export class App {
-  protected readonly title = signal('Frontend');
+  auth = inject(LoginService);
+  isLoggedIn = this.auth.isLoggedIn;
 }

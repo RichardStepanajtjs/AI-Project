@@ -2,7 +2,8 @@
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
   "cli": {
-    "packageManager": "npm"
+    "packageManager": "npm",
+    "analytics": "cb6da475-ddd9-4de9-a0ca-853da5d291ca"
   },
   "newProjectRoot": "projects",
   "projects": {
@@ -63,6 +64,10 @@
             }
           },
           "defaultConfiguration": "development"
+          ,
+          "options": {
+            "allowedHosts": ["sokrates.traefik.me"]
+          }
         },
         "test": {
           "builder": "@angular/build:unit-test"

@@ -1,6 +1,13 @@
-<body>
-    <app-navigation></app-navigation>
-    <main>
+@if (isLoggedIn()) {
+    <body class="loggedin">
+
+            <app-navigation></app-navigation>
+            <main>
+                <router-outlet></router-outlet>
+            </main>
+    </body>
+} @else {
+    <main class="loggedout">
         <router-outlet></router-outlet>
     </main>
-</body>
+}

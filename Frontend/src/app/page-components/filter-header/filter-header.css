@@ -9,41 +9,55 @@
 .filter-button {
     padding: 5px 13px;
     border-radius: 20px;
-    border: 1px solid black;
-    background: #ffffff;
+    border: 1px solid #E5E2D9;
+    background: white;
     font-size: 12.5px;
     font-family: 'DM Sans', sans-serif;
     cursor: pointer;
-    color: black;
+    color: #8A8780;
     transition: all .15s;
 }
 
 .filter-button:hover {
-    background: #2d6a5e;
-    color: #fff;
+    background: #2D6A4F;
+    color: white;
+    border-color: #2D6A4F;
 }
 
 .filter-button.active {
-    background: #2d6a5e;
-    color: #fff;
+    background: #2D6A4F;
+    color: white;
+    border-color: #2D6A4F;
 }
 
 .tag-input {
     padding: 5px 13px;
     border-radius: 20px;
-    border: 1px solid black;
-    background: #ffffff;
+    border: 1px solid #E5E2D9;
+    background: #F7F6F2;
     font-size: 12.5px;
     font-family: 'DM Sans', sans-serif;
+    color: #1A1916;
+    outline: none;
+    transition: border-color .15s;
+}
+
+.tag-input:focus {
+    border-color: #2D6A4F;
+    background: white;
 }
 
 .add-button {
     padding: 5px 13px;
     border-radius: 20px;
-    border: 1px solid black;
-    background: #2d6a5e;
+    border: none;
+    background: #2D6A4F;
     font-size: 12.5px;
     font-family: 'DM Sans', sans-serif;
     color: white;
-    transition: all .15s;
+    transition: background .15s;
+}
+
+.add-button:hover {
+    background: #245540;
 }
