@@ -45,14 +45,16 @@ CREATE TABLE IF NOT EXISTS companies (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-/* Dummy data voor Bedrijven (GH-43) 
-INSERT INTO companies (naam, kbonummer, postcode, gemeente, landcode, email, telefoonnummer, jobdomein) -- GEEN ID want serial
-VALUES 
+/* Dummy data voor Bedrijven (GH-43) */
+INSERT INTO companies (naam, kbonummer, postcode, gemeente, landcode, email, telefoonnummer, jobdomein, text) -- GEEN ID want serial
+VALUES
 ('Rich-Hard Capital', '1', '2000', 'Antwerpen', 'BE', 'contact@rich-hardcapital.be', '+3231234567', 'ICT', 'Rich-Hard Capital is een toonaangevende durfkapitaalverstrekker die zich richt op de tech-sector in Antwerpen. We bieden strategische ondersteuning en financiering voor innovatieve startups met een sterke groeiambitie. Ons team van experts helpt ondernemers om hun technologische visie om te zetten in marktconforme oplossingen.'),
 ('Souf-souf Soufflés', '2', '1000', 'Brussel', 'BE', 'souf@soufiwoufi.be', '+3267676767', 'Horeca en toerisme', 'Souf-souf Soufflés brengt de authentieke Franse patisserie naar het hartje van onze hoofdstad Brussel. Wij specialiseren ons in het bereiden van vederlichte soufflés met zowel klassieke als moderne smaakcombinaties. Elke creatie wordt met de hand gemaakt door onze meester-banketbakkers voor een unieke gastronomische ervaring.'),
 ('Sharp Angles INC', '3', '3000', 'Gent', 'BE', 'hallo@bye.be', '+32042069', 'Andere', 'Sharp Angles INC is een multidisciplinair ontwerpbureau gevestigd in de creatieve hub van Gent. Wij combineren scherpe esthetiek met functioneel design voor uiteenlopende projecten in de publieke ruimte. Onze aanpak kenmerkt zich door een onconventionele kijk op architectuur en visuele communicatie.')
 ON CONFLICT (kbonummer) DO NOTHING;
 
+
+/* Prospectielijsten tabel (GH-46) */
 CREATE TABLE IF NOT EXISTS prospect_lists (
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL,
