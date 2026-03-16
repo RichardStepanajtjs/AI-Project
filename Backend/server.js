@@ -9,6 +9,7 @@ const cors = require('cors');
 // Import routes
 const usersRoute = require('./routes/users');
 const vacanciesRoute = require('./routes/vacancies');
+const companiesRoute = require('./routes/companies');
 
 // Initialize database connection
 require('./db/connection');
@@ -23,6 +24,7 @@ app.use(express.json());
 // Api routes
 app.use('/users', usersRoute);
 app.use('/vacancies', vacanciesRoute);
+app.use('/companies', companiesRoute);
 
 // Health check
 app.get('/health', (req, res) => {

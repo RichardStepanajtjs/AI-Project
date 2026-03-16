@@ -1,7 +1,7 @@
 services:
   # Frontend folder nog te vervolledigen
   frontend:
-    build: ./frontend
+    build: ./Frontend
     container_name: frontend
     restart: unless-stopped
     labels:
@@ -16,7 +16,7 @@ services:
       - frontend
   
   backend:
-    build: ./backend
+    build: ./Backend
     container_name: backend
     restart: unless-stopped
     depends_on:
