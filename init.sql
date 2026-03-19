@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 INSERT INTO users (email, password_hash, role) 
-VALUES ('admin@sokrates.be', '$2a$12$Of9km9gx.6NWXxQb2fl6T.Z0janv/F.44y2BI6gVCYDe3xd3a/ZmG', 'admin')
+VALUES ('admin@sokrates.be', '$2a$12$lhxJYCJ2PLgv37cVOsV20e5CVo0QtwftiAqL3fXhjyFUay.HLK60K', 'admin')
 ON CONFLICT (email) DO NOTHING;
 
 
