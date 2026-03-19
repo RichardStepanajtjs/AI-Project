@@ -62,3 +62,31 @@ CREATE TABLE IF NOT EXISTS prospect_lists (
     company_ids INTEGER[] NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS models (
+    id SERIAL PRIMARY KEY,
+    version_label VARCHAR(255) NOT NULL,
+    faiss_index BYTEA NOT NULL,          
+    metadata_pkl BYTEA NOT NULL,         
+    is_active BOOLEAN DEFAULT FALSE,     
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    description TEXT                     
+);
+
+CREATE INDEX idx_active_model ON models (is_active) WHERE is_active = TRUE;
+CREATE OR REPLACE FUNCTION set_single_active_model()
+    RETURNS TRIGGER AS $$
+        BEGIN
+            IF NEW.is_active = TRUE THEN
+            UPDATE models
+            SET is_active = FALSE
+            WHERE is_active = TRUE AND id IS DISTICT FROM NEW.id;
+        END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_single_active_model
+BEFORE INSERT OR UPDATE ON ai_models
+FOR EACH ROW
+EXECUTE FUNCTION set_single_active_model();
