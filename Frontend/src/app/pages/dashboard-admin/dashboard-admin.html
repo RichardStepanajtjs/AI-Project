@@ -52,17 +52,17 @@
       <h2>Nieuwe gebruiker</h2>
       <div class="form-group">
         <label>Email</label>
-        <input type="email" placeholder="jan@bedrijf.be" [(ngModel)]="new_user.email"/>
+        <input type="email" placeholder="john.doe@example.com" [(ngModel)]="new_user.email"/>
       </div>
       <div class="form-group">
         <label>password</label>
-        <input type="password" placeholder="password" [(ngModel)]="new_user.password"/>
+        <input type="password" placeholder="*****" [(ngModel)]="new_user.password"/>
       </div>
       <div class="form-group">
         <label>Rol</label>
         <select [(ngModel)]="new_user.role">
-          <option>Partner</option>
-          <option>Admin</option>
+          <option>partner</option>
+          <option>admin</option>
         </select>
       </div>
       <div class="screen-footer">
