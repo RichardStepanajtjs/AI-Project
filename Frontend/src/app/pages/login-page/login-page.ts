@@ -22,7 +22,7 @@ export class LoginPage {
 
     this.auth.login(this.email, this.password).subscribe({
       next: () => {
-        this.router.navigate(['/dashboard']);
+        // Navigation is handled in the service
       },
       error: (err) => {
         this.errorMessage = err.error?.message ?? 'Inloggen mislukt, probeer opnieuw.';

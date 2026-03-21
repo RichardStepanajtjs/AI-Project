@@ -3,10 +3,11 @@ import { PageHeader } from "../../page-components/page-header/page-header";
 import { LoginService } from '../../services/login/login-service';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { Navigation } from "../../page-components/navigation/navigation";
 
 @Component({
   selector: 'app-account-page',
-  imports: [PageHeader, FormsModule],
+  imports: [PageHeader, FormsModule, Navigation],
   templateUrl: './account-page.html',
   styleUrl: './account-page.css',
 })
