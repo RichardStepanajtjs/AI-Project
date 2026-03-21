@@ -18,17 +18,17 @@ const getCompanyById = async (id) => {
 const createCompany = async (data) => {
     const { 
         naam, kbonummer, postcode, gemeente, landcode, 
-        email, telefoonnummer, jobdomein, text 
+        email, telefoonnummer, jobdomein, text, embedding 
     } = data;
     
     const query = `
-        INSERT INTO companies (naam, kbonummer, postcode, gemeente, landcode, email, telefoonnummer, jobdomein, text) 
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) 
+        INSERT INTO companies (naam, kbonummer, postcode, gemeente, landcode, email, telefoonnummer, jobdomein, text, embedding) 
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) 
         RETURNING *`;
     
     const { rows } = await pool.query(query, [
         naam, kbonummer, postcode, gemeente, landcode, 
-        email, telefoonnummer, jobdomein, text
+        email, telefoonnummer, jobdomein, text, embedding
     ]);
     return rows[0];
 };
@@ -46,6 +46,7 @@ const updateCompany = async (id, data) => {
     if (data.telefoonnummer) { sets.push(`telefoonnummer = $${sets.length + 1}`); values.push(data.telefoonnummer); }
     if (data.jobdomein) { sets.push(`jobdomein = $${sets.length + 1}`); values.push(data.jobdomein); }
     if (data.text) { sets.push(`text = $${sets.length + 1}`); values.push(data.text); }
+    if (data.embedding) { sets.push(`embedding = $${sets.length + 1}`); values.push(data.embedding); }
 
     if (sets.length === 0) return null;
 
