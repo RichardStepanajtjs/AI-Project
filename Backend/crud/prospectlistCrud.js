@@ -15,6 +15,13 @@ const getProspectListById = async (id) => {
     return rows[0];
 };
 
+
+const getCompaniesByDomain = async (domain) => {
+    const query = 'SELECT * FROM companies WHERE jobdomein = $1 ORDER BY naam ASC';
+    const { rows } = await pool.query(query, [domain]);
+    return rows;
+};
+
 const createProspectList = async (data) => {
     const { user_id, naam, company_ids } = data;
     
@@ -53,6 +60,7 @@ module.exports = {
     getAllProspectLists,
     getProspectListsByUserId,
     getProspectListById,
+    getCompaniesByDomain,
     createProspectList,
     updateProspectList,
     deleteProspectList
