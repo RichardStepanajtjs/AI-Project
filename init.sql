@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS users (
 
 INSERT INTO users (email, password_hash, role) 
 VALUES
-    ('admin@sokrates.be', '$2a$10$sVTZ9XC/0Net2Q/fzHpYbuJCO352bA0Wi7q5EHzqdStx.LbRGEMvS', 'admin')
+    ('admin@sokrates.be', '$2a$10$sVTZ9XC/0Net2Q/fzHpYbuJCO352bA0Wi7q5EHzqdStx.LbRGEMvS', 'admin'),
     ('user@sokrates.be', '$2a$10$sVTZ9XC/0Net2Q/fzHpYbuJCO352bA0Wi7q5EHzqdStx.LbRGEMvS', 'user')
 ON CONFLICT (email) DO NOTHING;
 
@@ -82,7 +82,7 @@ CREATE OR REPLACE FUNCTION set_single_active_model()
             IF NEW.is_active = TRUE THEN
             UPDATE models
             SET is_active = FALSE
-            WHERE is_active = TRUE AND id IS DISTICT FROM NEW.id;
+            WHERE is_active = TRUE AND id IS DISTINCT FROM NEW.id;
         END IF;
     RETURN NEW;
 END;

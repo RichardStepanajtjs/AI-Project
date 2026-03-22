@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { tap } from 'rxjs/internal/operators/tap';
-import { LoginToken } from '../../models/login-token';
+import { LoginResponse } from '../../models/login-response';
 
 @Injectable({
   providedIn: 'root',
@@ -22,12 +22,12 @@ export class LoginService {
   }
 
   login(email: string, password: string) {
-    return this.http.post<LoginToken>(`${this.apiUrl}/login`, { email, password }).pipe(
+    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, { email, password }).pipe(
       tap(response => {
         localStorage.setItem('token', response.token);
-        localStorage.setItem('role', response.role);
+        localStorage.setItem('role', response.data.role);
         this.isLoggedIn.set(true);
-        this.isAdmin.set(response.role === "admin");
+        this.isAdmin.set(response.data.role === "admin");
         if (this.isAdmin()) {
           this.router.navigate(['/dashboard'])
           }
@@ -48,7 +48,7 @@ export class LoginService {
   }
 
   getRol() {
-    return !!localStorage.getItem('role')
+    return localStorage.getItem('role')
   }
 
   getLogginStatus() {

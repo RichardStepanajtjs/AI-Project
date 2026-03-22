@@ -15,11 +15,12 @@ export class ProspectsForm {
 
   form = this.fb.group({
     productName: ['', Validators.required],
+    partnerName: ['', Validators.required],
     sector: ['', Validators.required],
-    shortDescription: [''],
+    description: [''],
     targetGroup: ['', Validators.required],
-    tagsTechnologies: ['', Validators.required],
-    amountOfProspects: ['10', [Validators.required, Validators.min(1), Validators.max(25)]],
+    technologies: ['', Validators.required],
+    amountOfProspects: ['25', [Validators.required, Validators.min(1), Validators.max(50)]],
   });
 
   toggle(): void {

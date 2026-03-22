@@ -1,27 +1,57 @@
-import requests
 import os
-from dotenv import load_dotenv
-from pathlib import Path
-import voyageai
-import pandas as pd
 import time
+import schedule
+import requests
+import voyageai
+from datetime import datetime
+from sqlalchemy import create_engine, MetaData, Table, Column, Integer, BigInteger, Text, Float, String
+from sqlalchemy.dialects.postgresql import insert, ARRAY, TIMESTAMP, UUID, JSONB
 
-# Dit is om de environment variabelen in te laden.
-env_path = load_dotenv(Path(__file__).parent / "api_keys.env")
-
-# Environment variabelen.
-CLIENT_ID = os.getenv("CLIENT_ID")
+# VDAB credentials
+CLIENT_ID    = os.getenv("CLIENT_ID")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 X_IBM_CLIENT_ID = os.getenv("X_IBM_CLIENT_ID")
-VOYAGE_API_KEY = os.getenv("VOYAGE_API_KEY")
 
-def get_token_access():
+# Voyage API credentials
+VOYAGE_API_KEY  = os.getenv("VOYAGE_API_KEY")
+
+# Database credentials
+DB_USER = os.getenv("DB_USER")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
+DB_HOST = os.getenv("DB_HOST")
+DB_PORT = os.getenv("DB_PORT")
+DB_NAME = os.getenv("DB_NAME")
+
+DB_URL = (
+    f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+)
+
+metadata = MetaData()
+
+vacatures_tabel = Table("vacancies", metadata,
+    Column("id", Integer, primary_key=True, autoincrement=True),
+    Column("interne_referentie", UUID, unique=True, nullable=False),
+    Column("vdab_referentie", BigInteger),
+    Column("kbo_nummer", String(20)),
+    Column("leverancier_naam", String(255)),
+    Column("leverancier_type", String(100)),
+    Column("postcode", Integer),
+    Column("gemeente", String(50)),
+    Column("land_code", String(5)),
+    Column("beroepsprofiel_code", String(50)),
+    Column("beroepsprofiel_label", String(255)),
+    Column("vereisten", JSONB),
+    Column("text", Text),
+    Column("embedding", ARRAY(Float)),
+    Column("created_at", TIMESTAMP(timezone=False), default=datetime.now),
+)
+
+def get_token():
     # Dit is om te controleren
     if not all([CLIENT_ID, CLIENT_SECRET, X_IBM_CLIENT_ID]):
         print("Error: Niet alle environment variables zijn aanwezig!")
         exit(1)
 
-    # Je moet eerst een post uitvoeren voor een bearer key.
     token_url = "https://op-derden.vdab.be/isam/sps/oauth/oauth20/token"
 
     token_response = requests.post(
@@ -33,21 +63,13 @@ def get_token_access():
             "scope": "openid"
         }
     )
+    # Helpt bij het debuggen
+    token_response.raise_for_status()
 
-    # Dit zijn checks om sneller te kunnen debuggen.
-    if token_response.status_code != 200:
-        print("Error: Token request failed!")
-        exit(1)
-
-    token_data = token_response.json()
-    if "access_token" not in token_data:
-        print(f"Error: No access token in response: {token_data}")
-        exit(1)
-
-    return token_data["access_token"]
+    return token_response.json()["access_token"]
 
 def get_recent_vacatures():
-    access_token = get_token_access()
+    access_token = get_token()
 
     if access_token != "":
         url = "https://api.vdab.be/services/openservices/vacatures/v4/vacatures?"
@@ -67,74 +89,61 @@ def get_recent_vacatures():
         }
 
         response = requests.get(url, headers=headers, params=params)
-    
-    return response.json()
-
-def embed_vacatures(vacatures):
-    updated_vacatures = []
-    for i in range(len(vacatures["resultaten"])):
-        vacature = vacatures["resultaten"][i]
-        postcode = vacature.get("tewerkstellingsadres", {}).get("postcode", "Onbekend")
-        gemeente = vacature.get("tewerkstellingsadres", {}).get("gemeente", "Onbekend")
-        functie = vacature.get("functie", {}).get("beroepsprofiel", {}).get("label", "Onbekend")
-
-        text = f"Functie {functie} beschikbaar in {gemeente}, {postcode}. Vereisten: "
-
-        vereisten = vacature.get("profiel", {}).get("vereisten", [])
-
-        if vereisten:
-            for vereiste in vereisten:
-                text += vereiste["label"] + " "
-        else:
-            text += "Geen"
-        
-        vacature["text"] = text
-
-        result = embed(text)
-
-        vacature["embedding"] = result.embeddings
-        updated_vacatures.append(vacature)
-        time.sleep(0.05)
-
-    return updated_vacatures
-
-def embed_bedrijven(profile):
-    pass
+        response.raise_for_status()
+    return response.json().get("resultaten", [])
 
 def embed(text):
     vo = voyageai.Client(api_key=VOYAGE_API_KEY)
     result = vo.embed(text, model="voyage-4-lite")
     return result
 
-def save_as_csv(vacatures):
-    rows = []
-    headers = ["interne_referentie", "vdab_referentie", ""]
+def add_text_to_vacatures(vacatures):
+    for v in vacatures:
+        gemeente  = v.get("tewerkstellingsadres", {}).get("gemeente", "Onbekend")
+        postcode  = v.get("tewerkstellingsadres", {}).get("postcode", "Onbekend")
+        functie   = v.get("functie", {}).get("beroepsprofiel", {}).get("label", "Onbekend")
+        vereisten = " ".join(x["label"] for x in v.get("profiel", {}).get("vereisten", [])) or "Geen"
+        v["text"]     = f"Functie {functie} in {gemeente} {postcode}. Vereisten: {vereisten}"
+        time.sleep(0.1)
+    return vacatures
 
-    for item in vacatures:
-        row = {
-            'interne_referentie': item.get('vacatureReferentie', {}).get('interneReferentie', 'Onbekend'),
-            'vdab_referentie': item.get('vacatureReferentie', {}).get('vdabReferentie', 'Onbekend'),
-            'kbo_nummer': item.get('leverancier', {}).get('kboNummer', 'Onbekend'),
-            'leverancier_naam': item.get('leverancier', {}).get('naam', 'Onbekend'),
-            'leverancier_type': item.get('leverancier', {}).get('type', 'Onbekend'),
-            'postcode': item.get('tewerkstellingsadres', {}).get('postcode', 'Onbekend'),
-            'gemeente': item.get('tewerkstellingsadres', {}).get('gemeente', 'Onbekend'),
-            'land_code': item.get('tewerkstellingsadres', {}).get('landCode', 'Onbekend'),
-            'beroepsprofiel_code': item.get('functie', {}).get('beroepsprofiel', {}).get('code', 'Onbekend'),
-            'beroepsprofiel_label': item.get('functie', {}).get('beroepsprofiel', {}).get('label', 'Onbekend'),
-            'vereisten': ', '.join([v.get('label', '') for v in item.get('profiel', {}).get('vereisten', [])]),
-            'text': item.get('text', ''),
-            "embedding_array": item.get('embedding', [[]])
-        }
-        rows.append(row)
-    
-    nieuwe_df = pd.DataFrame(rows)
-    header = not Path("././Data/vacatures.csv").exists() # Als de bestand bestaat zal het de kolom namen niet herschrijven.
-    nieuwe_df.to_csv("././Data/vacatures.csv", mode='a', index=False, header=header, encoding='utf-8')
+def save(engine, vacatures):
+    rows = [{
+        "vdab_referentie": v.get("vacatureReferentie", {}).get("vdabReferentie"),
+        "interne_referentie": v.get("vacatureReferentie", {}).get("interneReferentie"),
+        "kbo_nummer": v.get("leverancier", {}).get("kboNummer"),
+        "leverancier_naam": v.get("leverancier", {}).get("naam"),
+        "leverancier_type": v.get("leverancier", {}).get("type"),
+        "postcode": v.get("tewerkstellingsadres", {}).get("postcode"),
+        "gemeente": v.get("tewerkstellingsadres", {}).get("gemeente"),
+        "land_code": v.get("tewerkstellingsadres", {}).get("landCode"),
+        "beroepsprofiel_code": v.get("functie", {}).get("beroepsprofiel", {}).get("code"),
+        "beroepsprofiel_label": v.get("functie", {}).get("beroepsprofiel", {}).get("label"),
+        "vereisten": [x.get("label", "") for x in v.get("profiel", {}).get("vereisten", [])],
+        "text": v.get("text"),
+        "embedding": v.get("embedding"),
+    } for v in vacatures]
+
+    with engine.connect() as conn:
+        conn.execute(insert(vacatures_tabel).values(rows).on_conflict_do_nothing(index_elements=["interne_referentie"]))
+        conn.commit()
+
+
+def run(engine):
+    print(f"[{datetime.now().strftime('%H:%M:%S')}] Synchronisatie gestart...")
+    vacatures = get_recent_vacatures()
+    vacatures = add_text_to_vacatures(vacatures)
+    save(engine, vacatures)
+    print(f"[{datetime.now().strftime('%H:%M:%S')}] {len(vacatures)} vacatures verwerkt.")
+
 
 if __name__ == "__main__":
-    new_vacatures = get_recent_vacatures()
+    engine = create_engine(DB_URL)
+    metadata.create_all(engine)
 
-    embedded_vacatures = embed_vacatures(new_vacatures)
+    run(engine)
+    schedule.every(48).hours.do(run, engine=engine)
 
-    save_as_csv(embedded_vacatures)
+    while True:
+        schedule.run_pending()
+        time.sleep(60)
