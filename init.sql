@@ -61,6 +61,7 @@ CREATE TABLE IF NOT EXISTS prospect_lists (
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL,
     naam VARCHAR(255) NOT NULL,
+    jobdomein VARCHAR(100),
     company_ids INTEGER[] NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

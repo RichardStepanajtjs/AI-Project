@@ -30,14 +30,14 @@ const getProspectListsByDomain = async (domain) => {
 };
 
 const createProspectList = async (data) => {
-    const { user_id, naam, company_ids } = data;
+    const { user_id, naam, jobdomein, company_ids } = data;
     
     const query = `
-        INSERT INTO prospect_lists (user_id, naam, company_ids) 
-        VALUES ($1, $2, $3) 
+        INSERT INTO prospect_lists (user_id, naam, jobdomein, company_ids) 
+        VALUES ($1, $2, $3, $4) 
         RETURNING *`;
     
-    const { rows } = await pool.query(query, [user_id, naam, company_ids]);
+    const { rows } = await pool.query(query, [user_id, naam, jobdomein, company_ids]);
     return rows[0];
 };
 
@@ -48,6 +48,7 @@ const updateProspectList = async (id, data) => {
     if (data.naam) { sets.push(`naam = $${sets.length + 1}`); values.push(data.naam); }
     if (data.company_ids) { sets.push(`company_ids = $${sets.length + 1}`); values.push(data.company_ids); }
     if (data.user_id) { sets.push(`user_id = $${sets.length + 1}`); values.push(data.user_id); }
+    if (data.jobdomein) { sets.push(`jobdomein = $${sets.length + 1}`); values.push(data.jobdomein); }
 
     if (sets.length === 0) return null;
 
