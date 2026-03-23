@@ -15,6 +15,12 @@ const getCompanyById = async (id) => {
     return rows[0];
 };
 
+const getCompaniesByDomain = async (domain) => {
+    const query = 'SELECT * FROM companies WHERE jobdomein = $1 ORDER BY naam ASC';
+    const { rows } = await pool.query(query, [domain]);
+    return rows;
+};
+
 const createCompany = async (data) => {
     const { 
         naam, kbonummer, postcode, gemeente, landcode, 
@@ -66,6 +72,7 @@ module.exports = {
     getAllCompaniesWithEmbeddings,
     getAllCompaniesWithoutEmbeddings,
     getCompanyById,
+    getCompaniesByDomain,
     createCompany,
     updateCompany,
     deleteCompany
