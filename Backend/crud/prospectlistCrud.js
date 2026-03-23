@@ -15,6 +15,19 @@ const getProspectListById = async (id) => {
     return rows[0];
 };
 
+const getProspectListsByDomain = async (domain) => {
+    // Als er geen domein is of het is 'Alle sectoren', select all
+    if (!domain || domain === 'Alle sectoren') {
+        const query = 'SELECT * FROM prospect_lists ORDER BY created_at DESC';
+        const { rows } = await pool.query(query);
+        return rows;
+    }
+
+    // filter op domein
+    const query = 'SELECT * FROM prospect_lists WHERE jobdomein = $1 ORDER BY created_at DESC';
+    const { rows } = await pool.query(query, [domain]);
+    return rows;
+};
 
 const createProspectList = async (data) => {
     const { user_id, naam, company_ids } = data;
@@ -54,6 +67,7 @@ module.exports = {
     getAllProspectLists,
     getProspectListsByUserId,
     getProspectListById,
+    getProspectListsByDomain,
     createProspectList,
     updateProspectList,
     deleteProspectList
