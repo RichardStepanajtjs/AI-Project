@@ -1,18 +1,19 @@
+<app-page-header title="Home Page"></app-page-header>
 <app-page-header title="Admin Dashboard"></app-page-header>
 
 <main>
   <div class="stats-grid">
     <div class="stat-card">
       <div class="stat-label">Totaal gebruikers</div>
-      <div class="stat-value">{{aantal_gebruikers}}</div>
+      <div class="stat-value">{{amount_prospectlists}}</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">Actieve gebruikers</div>
-      <div class="stat-value">{{aantal_gebruikers}}</div>
+      <div class="stat-value">{{amount_productsForms}}</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">Aantal Admins</div>
-      <div class="stat-value">{{aantal_admins}}</div>
+      <div class="stat-value">{{amount_jobForms}}</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">Aanvragen deze week</div>
@@ -20,7 +21,7 @@
     </div>
   </div>
 
-  <div class="card">
+  <!-- <div class="card">
     <div class="card-header">
       <span>Gebruikers</span>
       <button (click)="showScreen = true">+ Nieuwe gebruiker</button>
@@ -38,15 +39,15 @@
           <tr>
             <td>{{ user.email }}</td>
             <td>{{ user.role }}</td>
-            <!-- <td><button (click)="toggleActive(user)">{{ user.active ? 'Deactiveer' : 'Activeer' }}</button></td> -->
-          </tr>
+            <td><button (click)="toggleActive(user)">{{ user.active ? 'Deactiveer' : 'Activeer' }}</button></td> -->
+          <!-- </tr>
         }
       </tbody>
     </table>
   </div>
-</main>
+</main> -->
 
-@if (showScreen) {
+<!-- @if (showScreen) {
   <div class="screen-overlay" (click)="showScreen = false">
     <div class="screen" (click)="$event.stopPropagation()">
       <h2>Nieuwe gebruiker</h2>
@@ -71,4 +72,4 @@
       </div>
     </div>
   </div>
-}
+} -->

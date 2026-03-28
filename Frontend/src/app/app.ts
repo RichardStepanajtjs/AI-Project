@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { Navigation } from './page-components/navigation/navigation';
 import { LoginService } from './services/login/login-service';
 
@@ -11,5 +11,6 @@ import { LoginService } from './services/login/login-service';
 })
 export class App {
   auth = inject(LoginService);
+  router = inject(Router)
   isLoggedIn = this.auth.isLoggedIn;
 }

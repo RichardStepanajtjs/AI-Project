@@ -7,10 +7,9 @@ import { Component, Input } from '@angular/core';
   styleUrl: './business-profile.css',
 })
 
-export class BusinessProfile {
-  @Input() companyName: string = '';
-  @Input() companyDescription: string = 'Company Description';
-  @Input() city: string = '';
-  @Input() sector: string = '';
-  @Input() date: string = '';
+export class BusinessProfileComponent {
+  @Input() companyName: string = ''
+  @Input() province: string = ''
+  @Input() countryCode: string = ''
+  @Input() jobDomain: string = ''
 }

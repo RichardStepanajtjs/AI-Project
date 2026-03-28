@@ -3,9 +3,11 @@
 </header>
 
 <nav>
-    <span>Admin</span>
-    <app-nav-component link="/dashboard" activeLink="/dashboard" label="Dashboard" [isAdmin] = true></app-nav-component>
-    <app-nav-component link="/ai-model" activeLink="/ai-model" label="AI Model" [isAdmin] = true></app-nav-component>
+    @if (loginService.isAdmin()) {
+        <span>Admin</span>
+        <app-nav-component link="/dashboard" activeLink="/dashboard" label="Dashboard" [isAdmin] = true></app-nav-component>
+        <app-nav-component link="/ai-model" activeLink="/ai-model" label="AI Model" [isAdmin] = true></app-nav-component>
+    }
     <span>Prospects</span>
     <app-nav-component link="/prospects" activeLink="/prospects" label="My Prospectlists" [isAdmin] = false></app-nav-component>
     <app-nav-component link="/prospects/new" activeLink="/prospects/new" label="New Prospectlist" [isAdmin] = false></app-nav-component>

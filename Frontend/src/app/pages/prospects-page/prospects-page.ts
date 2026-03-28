@@ -12,5 +12,4 @@ import { FilterHeader } from '../../page-components/filter-header/filter-header'
 export class ProspectsPage {
   sectorFilters = ['Alle sectoren', 'test', 'test2', 'test3'];
   geselecteerdeSector = 'Alle sectoren';
-
 }

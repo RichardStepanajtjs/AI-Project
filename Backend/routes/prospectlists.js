@@ -4,10 +4,28 @@ const {
   getAllProspectLists,
   getProspectListById,
   getProspectListsByUserId,
+  getCompaniesByDomain,
   createProspectList,
   updateProspectList,
   deleteProspectList,
 } = require("../crud/prospectlistCrud");
+
+// (GH-03) Lijst filteren - pak de domein van de url
+router.get("/filter/:tag", async (req, res) => {
+  try {
+    const { tag } = req.params;
+    const data = await getCompaniesByDomain(tag);
+    
+    res.json({ 
+      success: true, 
+      filter: tag,
+      data 
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
 
 router.get("/", async (req, res) => {
   try {

@@ -2,74 +2,121 @@
 
 <main>
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        @if (isJobMode) {
-            <div class="form-title">
-                <h1>ProductForm</h1>
-                <p>This is the product form for creating new prospectlists.</p>
-            </div>
-        }@else {
-            <div class="form-title">
-                <h1>JobForm</h1>
-                <p>This is the job form for finding new jobs.</p>
-            </div>
+        @if (isJobMode){
+        <div class="form-title">
+            <h1>ProductForm</h1>
+            <p>This is the product form for creating new prospectlists.</p>
+        </div>
         }
+        @else {
+        <div class="form-title">
+            <h1>JobForm</h1>
+            <p>This is the job form for finding new jobs.</p>
+        </div>
+        }
+
         <div class="toggle-button">
             <span>Job Mode</span>
-                <div class="toggle" [class.on]="isJobMode" (click)="toggle()"></div>
+            <div class="toggle" [class.on]="isJobMode" (click)="toggle()"></div>
             <span>Product Mode</span>
         </div>
 
+        @if (isJobMode) {
         <div>
-            <label>Product Name:</label>
-            <input type="text" formControlName="productName"/>
-            @if (form.get('productName')?.invalid && form.get('productName')?.touched) {
-                <span class="error">Verplicht veld</span>
+            <label>Partner Name:</label>
+            <input type="text" formControlName="partnerName" />
+            @if (form.get('partnerName')?.invalid && form.get('partnerName')?.touched) {
+            <span class="error">Verplicht veld</span>
             }
         </div>
 
         <div>
             <label>Sector:</label>
-            <input type="text" formControlName="sector"/>
+            <input type="text" formControlName="sector" />
             @if (form.get('sector')?.invalid && form.get('sector')?.touched) {
-                <span class="error">Verplicht veld</span>
+            <span class="error">Verplicht veld</span>
             }
         </div>
 
         <div>
             <label>Description:</label>
-            <input type="text" formControlName="shortDescription"/>
-            @if (form.get('shortDescription')?.invalid && form.get('shortDescription')?.touched) {
-                <span class="error">Verplicht veld</span>
+            <input type="text" formControlName="description" />
+            @if (form.get('description')?.invalid && form.get('description')?.touched) {
+            <span class="error">Verplicht veld</span>
             }
         </div>
 
         <div>
-            <label>Target Group:</label>
-            <input type="text" formControlName="targetGroup"/>
-            @if (form.get('targetGroup')?.invalid && form.get('targetGroup')?.touched) {
-                <span class="error">Verplicht veld</span>
-            }
-        </div>
-
-        <div>
-            <label>Tags & Technologies:</label>
-            <input type="text" formControlName="tagsTechnologies"/>
-            @if (form.get('tagsTechnologies')?.invalid && form.get('tagsTechnologies')?.touched) {
-                <span class="error">Verplicht veld</span>
+            <label>Technologies:</label>
+            <input type="text" formControlName="technologies" />
+            @if (form.get('technologies')?.invalid && form.get('technologies')?.touched) {
+            <span class="error">Verplicht veld</span>
             }
         </div>
 
         <div>
             <label>Amount of prospects:</label>
-            <input type="number" formControlName="amountOfProspects"/>
+            <input type="number" formControlName="amountOfProspects" />
             @if (form.get('amountOfProspects')?.invalid && form.get('amountOfProspects')?.touched) {
-                <span class="error">Verplicht veld, minimum 1</span>
+            <span class="error">Verplicht veld, minimum 1</span>
             }
         </div>
         <div class="buttons">
-            <button type="submit">Add Prospect</button>
+            <button type="submit">Generate Prospect</button>
             <button type="reset">Reset Form</button>
+        </div>}
+
+        @else{
+        <div>
+            <label>Product Name:</label>
+            <input type="text" formControlName="productName" />
+            @if (form.get('productName')?.invalid && form.get('productName')?.touched) {
+            <span class="error">Verplicht veld</span>
+            }
         </div>
 
+        <div>
+            <label>Sector:</label>
+            <input type="text" formControlName="sector" />
+            @if (form.get('sector')?.invalid && form.get('sector')?.touched) {
+            <span class="error">Verplicht veld</span>
+            }
+        </div>
+
+        <div>
+            <label>Description:</label>
+            <input type="text" formControlName="description" />
+            @if (form.get('description')?.invalid && form.get('description')?.touched) {
+            <span class="error">Verplicht veld</span>
+            }
+        </div>
+
+        <div>
+            <label>Target Group:</label>
+            <input type="text" formControlName="targetGroup" />
+            @if (form.get('targetGroup')?.invalid && form.get('targetGroup')?.touched) {
+            <span class="error">Verplicht veld</span>
+            }
+        </div>
+
+        <div>
+            <label>Tags & Technologies:</label>
+            <input type="text" formControlName="technologies" />
+            @if (form.get('technologies')?.invalid && form.get('technologies')?.touched) {
+            <span class="error">Verplicht veld</span>
+            }
+        </div>
+
+        <div>
+            <label>Amount of prospects:</label>
+            <input type="number" formControlName="amountOfProspects" />
+            @if (form.get('amountOfProspects')?.invalid && form.get('amountOfProspects')?.touched) {
+            <span class="error">Verplicht veld, minimum 1</span>
+            }
+        </div>
+        <div class="buttons">
+            <button type="submit">Generate Prospect</button>
+            <button type="reset">Reset Form</button>
+        </div>}
     </form>
 </main>

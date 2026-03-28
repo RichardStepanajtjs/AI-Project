@@ -11,3 +11,5 @@ dotenv
 voyageai
 faiss-cpu
 faiss-cpu
+schedule
+psycopg2-binary
