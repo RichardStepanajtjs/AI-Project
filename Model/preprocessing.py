@@ -2,7 +2,7 @@ import requests
 import numpy as np
 import urllib3
 
-api_base_url = "https://nest.sokrates.traefik.me"
+api_base_url = "https://nest.sokrates.traefik.me" # for deployment http://backend:3000 or for testing https://nest.sokrates.traefik.me
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 def fetch_data(endpoint: str):

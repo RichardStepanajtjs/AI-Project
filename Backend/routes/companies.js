@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const {
+  getAllCompaniesWithEmbeddings,
   getAllCompaniesWithoutEmbeddings,
   getCompanyById,
   createCompany,
@@ -10,7 +11,26 @@ const {
 
 // COMPANIES ROUTES
 
-// Get all companies (zonder embeddings voor de list)
+// GET all companies (with embeddings)
+router.get("/embeddings", async (req, res) => {
+  try {
+    const companies = await getAllCompaniesWithEmbeddings();
+    res.json({
+      success: true,
+      data: companies,
+      count: companies.length,
+    });
+  } catch (error) {
+    console.error("Error fetching companies for AI:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching companies for AI",
+      error: error.message,
+    });
+  }
+});
+
+// Get all companies (wihtout embeddings)
 router.get("/", async (req, res) => {
   try {
     const companies = await getAllCompaniesWithoutEmbeddings();

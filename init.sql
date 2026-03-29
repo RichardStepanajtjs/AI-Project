@@ -83,13 +83,13 @@ CREATE OR REPLACE FUNCTION set_single_active_model()
             IF NEW.is_active = TRUE THEN
             UPDATE models
             SET is_active = FALSE
-            WHERE is_active = TRUE AND id IS DISTICT FROM NEW.id;
+            WHERE is_active = TRUE AND id IS DISTINCT FROM NEW.id;
         END IF;
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER trg_single_active_model
-BEFORE INSERT OR UPDATE ON ai_models
+BEFORE INSERT OR UPDATE ON models
 FOR EACH ROW
 EXECUTE FUNCTION set_single_active_model();
