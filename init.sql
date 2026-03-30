@@ -66,6 +66,13 @@ CREATE TABLE IF NOT EXISTS prospect_lists (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+INSERT INTO prospect_lists (user_id, naam, jobdomein, company_ids) -- GEEN ID want serial
+VALUES
+(1, 'Prospect 1', 'ICT', 1),
+(1, 'Prospect 2', 'Horeca en toerisme', 2),
+(1, 'Prospect 3', 'Andere', 3)
+;
+
 CREATE TABLE IF NOT EXISTS models (
     id SERIAL PRIMARY KEY,
     version_label VARCHAR(255) NOT NULL,

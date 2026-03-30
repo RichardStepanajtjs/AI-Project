@@ -6,10 +6,10 @@ import { inject, Injectable } from '@angular/core';
 })
 export class ProspectslistService {
   private http = inject(HttpClient);
-  private apiUrl = 'nest.sokrates.traefik.me';
+  private apiUrl = 'https://nest.sokrates.traefik.me';
 
   getProspectsByTag(tag: string) {
-    return this.http.get(`${this.apiUrl}/filter/${tag}`);
+    return this.http.get(`${this.apiUrl}/prospects/filter/${tag}`);
   }
   
   createProspect(data: any) {

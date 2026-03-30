@@ -27,7 +27,7 @@ app.use(express.json());
 app.use('/users', usersRoute);
 app.use('/vacancies', vacanciesRoute);
 app.use('/companies', companiesRoute);
-app.use('/prospect-lists', prospectListsRoute);
+app.use('/prospects', prospectListsRoute);
 app.use('/models', modelsRoute);
 
 // Health check
