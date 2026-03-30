@@ -10,6 +10,7 @@ const cors = require('cors');
 const usersRoute = require('./routes/users');
 const vacanciesRoute = require('./routes/vacancies');
 const companiesRoute = require('./routes/companies');
+const prospectListsRoute = require('./routes/prospectlists');
 const modelsRoute = require('./routes/models');
 
 // Initialize database connection
