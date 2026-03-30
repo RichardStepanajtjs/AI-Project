@@ -6,35 +6,40 @@ const getAllModels = async () => {
     return rows;
 };
 
-// Get all active models
+// Get active model
 const getActiveModel = async () => {
-    const { result } = await pool.query('SELECT * FROM models WHERE is_active = TRUE');
-    return result.rows[0];
+    const { rows } = await pool.query('SELECT * FROM models WHERE is_active = TRUE');
+    return rows[0];
 };
 
 // Get model by ID
 const getModelById = async (id) => {
-    const { result } = await pool.query('SELECT * FROM models WHERE id = $1', [id]);
-    return result.rows[0];
+    const { rows } = await pool.query('SELECT * FROM models WHERE id = $1', [id]);
+    return rows[0];
 };
 
 // Create a new model
 const createModel = async (data) => {
-    const { version_label, faiss_index, metadata_pkl, description, is_active = false } = data;
-    
+    const { version_label, description, is_active, faiss_index, metadata_pkl } = data;
+
+    const faissBuffer = Buffer.from(faiss_index, 'base64');
+    const metadataBuffer = Buffer.from(metadata_pkl, 'base64');
+
     const query = `
-        INSERT INTO models (version_label, faiss_index, metadata_pkl, description, is_active) 
+        INSERT INTO models (version_label, description, is_active, faiss_index, metadata_pkl) 
         VALUES ($1, $2, $3, $4, $5) 
-        RETURNING *`;
+        RETURNING id, version_label, is_active, created_at, description;
+    `;
     
-    const { result } = await pool.query(query, [
+    const { rows } = await pool.query(query, [
         version_label, 
-        faiss_index, 
-        metadata_pkl, 
         description, 
-        is_active
+        is_active, 
+        faissBuffer, 
+        metadataBuffer
     ]);
-    return result.rows[0];
+    
+    return rows[0];
 };
 
 // Update model
@@ -68,21 +73,21 @@ const updateModel = async (id, data) => {
     values.push(id);
     const query = `UPDATE models SET ${sets.join(', ')} WHERE id = $${values.length} RETURNING *`;
     
-    const { result } = await pool.query(query, values);
-    return result.rows[0];
+    const { rows } = await pool.query(query, values);
+    return rows[0];
 };
 
 // Delete model
 const deleteModel = async (id) => {
-    const { result } = await pool.query('DELETE FROM models WHERE id = $1 RETURNING id, version_label', [id]);
-    return result.rows[0];
+    const { rows } = await pool.query('DELETE FROM models WHERE id = $1 RETURNING id, version_label', [id]);
+    return rows[0];
 };
 
 // Set model as active
 const setModelActive = async (id) => {
     const query = `UPDATE models SET is_active = TRUE WHERE id = $1 RETURNING *`;
-    const { result } = await pool.query(query, [id]);
-    return result.rows[0];
+    const { rows } = await pool.query(query, [id]);
+    return rows[0];
 };
 
 module.exports = {

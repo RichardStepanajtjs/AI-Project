@@ -10,7 +10,6 @@ const cors = require('cors');
 const usersRoute = require('./routes/users');
 const vacanciesRoute = require('./routes/vacancies');
 const companiesRoute = require('./routes/companies');
-const prospectListsRoute = require('./routes/prospectlists');
 const modelsRoute = require('./routes/models');
 
 // Initialize database connection
@@ -66,6 +65,14 @@ app.listen(port, () => {
   console.log('  POST   /vacancies');
   console.log('  PUT    /vacancies/:id');
   console.log('  DELETE /vacancies/:id');
+
+  console.log('Companies:');
+  console.log('  GET    /companies');
+  console.log('  GET    /companies/:id');
+  console.log('  POST   /companies');
+  console.log('  PUT    /companies/:id');
+  console.log('  DELETE /companies/:id');
+
   console.log('Models:');
   console.log('  GET    /models');
   console.log('  GET    /models/active');

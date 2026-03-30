@@ -86,37 +86,32 @@ router.get("/:id", async (req, res) => {
 
 // Create new model
 router.post("/", async (req, res) => {
-    try {
-        const { version_label, faiss_index, metadata_pkl, description, is_active } = req.body;
+  try {
+    const { version_label, faiss_index, metadata_pkl } = req.body;
 
-        if (!version_label || !faiss_index || !metadata_pkl) {
-            return res.status(400).json({
-                success: false,
-                message: "version_label, faiss_index, and metadata_pkl are required",
-            });
-        }
-
-        const model = await createModel({
-            version_label,
-            faiss_index,
-            metadata_pkl,
-            description,
-            is_active,
-        });
-
-        res.status(201).json({
-            success: true,
-            message: "Model created successfully",
-            data: model,
-        });
-    } catch (error) {
-        console.error("Error creating model:", error);
-        res.status(500).json({
-            success: false,
-            message: "Error creating model",
-            error: error.message,
-        });
+    if (!version_label || !faiss_index || !metadata_pkl) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing required fields: version_label, faiss_index, or metadata_pkl",
+      });
     }
+
+    const newModel = await createModel(req.body);
+
+    res.status(201).json({
+      success: true,
+      message: "Model successfully saved to database",
+      data: newModel,
+    });
+
+  } catch (error) {
+    console.error("Error creating model:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error creating model",
+      error: error.message,
+    });
+  }
 });
 
 // Update model

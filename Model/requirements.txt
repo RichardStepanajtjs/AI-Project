@@ -1,0 +1,6 @@
+requests
+numpy
+faiss-cpu
+urllib3
+base64
+datetime

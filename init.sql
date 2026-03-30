@@ -97,6 +97,6 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER trg_single_active_model
-BEFORE INSERT OR UPDATE ON ai_models
+BEFORE INSERT OR UPDATE ON models
 FOR EACH ROW
 EXECUTE FUNCTION set_single_active_model();
