@@ -1,5 +1,13 @@
 <app-page-header title="My Prospectlists"></app-page-header>
 <app-filter-header [filters]="sectorFilters" [(activeFilter)]="geselecteerdeSector"></app-filter-header>
 <main>
-    <app-prospect prospectName="Prospectlist 1" prospectDescription="lorem loremlorem loremlorem loremlorem loremlorem loremlorem loremlorem loremlorem lorem" [accuracy]="95"></app-prospect>
+    @for (lijst of gefilterdeLijsten; track lijst.id) {
+        <app-prospect 
+            [prospectName]="lijst.naam" 
+            [prospectDescription]="'Domein: ' + lijst.jobdomein" 
+            [accuracy]="95">
+        </app-prospect>
+    } @empty {
+        <p>Er zijn geen lijsten gevonden voor deze sector.</p>
+    }
 </main>
