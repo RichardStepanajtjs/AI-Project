@@ -99,35 +99,42 @@ def embed(text):
 
 def add_text_to_vacatures(vacatures):
     for v in vacatures:
-        gemeente  = v.get("tewerkstellingsadres", {}).get("gemeente", "Onbekend")
-        postcode  = v.get("tewerkstellingsadres", {}).get("postcode", "Onbekend")
-        functie   = v.get("functie", {}).get("beroepsprofiel", {}).get("label", "Onbekend")
+        gemeente = v.get("tewerkstellingsadres", {}).get("gemeente", "Onbekend")
+        postcode = v.get("tewerkstellingsadres", {}).get("postcode", "Onbekend")
+        functie = v.get("functie", {}).get("beroepsprofiel", {}).get("label", "Onbekend")
         vereisten = " ".join(x["label"] for x in v.get("profiel", {}).get("vereisten", [])) or "Geen"
-        v["text"]     = f"Functie {functie} in {gemeente} {postcode}. Vereisten: {vereisten}"
+        v["text"] = f"Functie {functie} in {gemeente} {postcode}. Vereisten: {vereisten}"
         time.sleep(0.1)
     return vacatures
 
 def save(engine, vacatures):
-    rows = [{
-        "vdab_referentie": v.get("vacatureReferentie", {}).get("vdabReferentie"),
-        "interne_referentie": v.get("vacatureReferentie", {}).get("interneReferentie"),
-        "kbo_nummer": v.get("leverancier", {}).get("kboNummer"),
-        "leverancier_naam": v.get("leverancier", {}).get("naam"),
-        "leverancier_type": v.get("leverancier", {}).get("type"),
-        "postcode": v.get("tewerkstellingsadres", {}).get("postcode"),
-        "gemeente": v.get("tewerkstellingsadres", {}).get("gemeente"),
-        "land_code": v.get("tewerkstellingsadres", {}).get("landCode"),
-        "beroepsprofiel_code": v.get("functie", {}).get("beroepsprofiel", {}).get("code"),
-        "beroepsprofiel_label": v.get("functie", {}).get("beroepsprofiel", {}).get("label"),
-        "vereisten": [x.get("label", "") for x in v.get("profiel", {}).get("vereisten", [])],
-        "text": v.get("text"),
-        "embedding": v.get("embedding"),
-    } for v in vacatures]
-
     with engine.connect() as conn:
-        conn.execute(insert(vacatures_tabel).values(rows).on_conflict_do_nothing(index_elements=["interne_referentie"]))
-        conn.commit()
+        for v in vacatures:
+            row = {
+                "vdab_referentie": v.get("vacatureReferentie", {}).get("vdabReferentie"),
+                "interne_referentie": v.get("vacatureReferentie", {}).get("interneReferentie"),
+                "kbo_nummer": v.get("leverancier", {}).get("kboNummer"),
+                "leverancier_naam": v.get("leverancier", {}).get("naam"),
+                "leverancier_type": v.get("leverancier", {}).get("type"),
+                "postcode": v.get("tewerkstellingsadres", {}).get("postcode"),
+                "gemeente": v.get("tewerkstellingsadres", {}).get("gemeente"),
+                "land_code": v.get("tewerkstellingsadres", {}).get("landCode"),
+                "beroepsprofiel_code": v.get("functie", {}).get("beroepsprofiel", {}).get("code"),
+                "beroepsprofiel_label": v.get("functie", {}).get("beroepsprofiel", {}).get("label"),
+                "vereisten": [x.get("label", "") for x in v.get("profiel", {}).get("vereisten", [])],
+                "text": v.get("text"),
+                "embedding": v.get("embedding")
+            }
 
+            try:
+                conn.execute(
+                    insert(vacatures_tabel)
+                    .values(row)
+                    .on_conflict_do_nothing(index_elements=["interne_referentie"])
+                )
+                conn.commit()
+            except Exception as e:
+                conn.rollback()
 
 def run(engine):
     print(f"[{datetime.now().strftime('%H:%M:%S')}] Synchronisatie gestart...")
@@ -141,8 +148,7 @@ if __name__ == "__main__":
     engine = create_engine(DB_URL)
     metadata.create_all(engine)
 
-    run(engine)
-    schedule.every(48).hours.do(run, engine=engine)
+    schedule.every().day.at("18:00").do(run, engine=engine)
 
     while True:
         schedule.run_pending()
