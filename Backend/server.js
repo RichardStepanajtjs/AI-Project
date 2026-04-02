@@ -11,6 +11,7 @@ const usersRoute = require('./routes/users');
 const vacanciesRoute = require('./routes/vacancies');
 const companiesRoute = require('./routes/companies');
 const modelsRoute = require('./routes/models');
+const forumsRoute = require('./routes/forums');
 
 // Initialize database connection
 require('./db/connection');
@@ -27,6 +28,7 @@ app.use('/users', usersRoute);
 app.use('/vacancies', vacanciesRoute);
 app.use('/companies', companiesRoute);
 app.use('/models', modelsRoute);
+app.use('/forums', forumsRoute);
 
 // Health check
 app.get('/health', (req, res) => {
@@ -80,6 +82,13 @@ app.listen(port, () => {
   console.log('  PUT    /models/:id');
   console.log('  PATCH  /models/:id/activate');
   console.log('  DELETE /models/:id');
+
+  console.log('Forums:');
+  console.log('  GET    /forums');
+  console.log('  GET    /forums/:id');
+  console.log('  POST   /forums');
+  console.log('  PUT    /forums/:id');
+  console.log('  DELETE /forums/:id');
 });
 
 module.exports = app;

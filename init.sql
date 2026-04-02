@@ -27,7 +27,6 @@ CREATE TABLE IF NOT EXISTS vacancies (
     beroepsprofiel_label VARCHAR(255),
     vereisten JSONB,
     text TEXT,
-    embedding FLOAT4[],
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -42,6 +41,7 @@ CREATE TABLE IF NOT EXISTS companies (
     email VARCHAR(255),
     telefoonnummer VARCHAR(50),
     jobdomein VARCHAR(100),
+    technologies VARCHAR(50)[],
     text TEXT,
     embedding FLOAT4[],
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -93,3 +93,12 @@ CREATE TRIGGER trg_single_active_model
 BEFORE INSERT OR UPDATE ON models
 FOR EACH ROW
 EXECUTE FUNCTION set_single_active_model();
+
+CREATE TABLE IF NOT EXISTS forums (
+    id SERIAL PRIMARY KEY,
+    partner_name VARCHAR(255) NOT NULL,
+    sector VARCHAR(100),
+    description TEXT,
+    technologies VARCHAR(50)[],
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

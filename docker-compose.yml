@@ -82,13 +82,13 @@ services:
       - api
     env_file: Env/api_keys.env
   
-  #ai_model:
-  #  build: ./Model
-  #  container_name: ai_model
-  #  depends_on:
-  #    - backend 
-  #  networks:
-  #    - backend
+#  ai_model:
+#    build: ./Model
+#    container_name: ai_model
+#    depends_on:
+#      - backend 
+#    networks:
+#      - backend
 
 networks:
   gateway:

@@ -9,7 +9,7 @@ from setup import create_faiss_index
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-model_url = "https://nest.sokrates.traefik.me/models" # for deployment http://backend:3000/models or for testing https://nest.sokrates.traefik.me/models
+model_url = "https://nest.sokrates.traefik.me/models"
 
 def train():
     raw_data = fetch_data("companies/embeddings")
