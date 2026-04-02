@@ -10,6 +10,7 @@ const cors = require('cors');
 const usersRoute = require('./routes/users');
 const vacanciesRoute = require('./routes/vacancies');
 const companiesRoute = require('./routes/companies');
+const prospectListsRoute = require('./routes/prospectlists');
 const modelsRoute = require('./routes/models');
 
 // Initialize database connection
@@ -26,6 +27,7 @@ app.use(express.json());
 app.use('/users', usersRoute);
 app.use('/vacancies', vacanciesRoute);
 app.use('/companies', companiesRoute);
+app.use('/prospects', prospectListsRoute);
 app.use('/models', modelsRoute);
 
 // Health check
