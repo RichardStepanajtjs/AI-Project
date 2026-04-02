@@ -68,9 +68,9 @@ CREATE TABLE IF NOT EXISTS prospect_lists (
 
 INSERT INTO prospect_lists (user_id, naam, jobdomein, company_ids) -- GEEN ID want serial
 VALUES
-(1, 'Prospect 1', 'ICT', 1),
-(1, 'Prospect 2', 'Horeca en toerisme', 2),
-(1, 'Prospect 3', 'Andere', 3)
+(1, 'Prospect 1', 'ICT', ARRAY[1]),
+(1, 'Prospect 2', 'Horeca en toerisme', ARRAY[2]),
+(1, 'Prospect 3', 'Andere', ARRAY[3])
 ;
 
 CREATE TABLE IF NOT EXISTS models (

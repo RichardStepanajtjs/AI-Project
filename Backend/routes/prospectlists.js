@@ -4,7 +4,7 @@ const {
   getAllProspectLists,
   getProspectListById,
   getProspectListsByUserId,
-  getCompaniesByDomain,
+  getProspectListsByDomain,
   createProspectList,
   updateProspectList,
   deleteProspectList,

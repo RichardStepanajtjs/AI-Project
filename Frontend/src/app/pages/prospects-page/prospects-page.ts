@@ -46,14 +46,17 @@ export class ProspectsPage {
 
 ngOnInit() {
     this.prospectsService.getProspects().subscribe({
-      next: (data: any) => {
-        this.alleLijsten = data;
+      next: (res: any) => {
+        this.alleLijsten = res.data;
       },
       error: (err) => console.error(err)
     });
   }
 
   get gefilterdeLijsten() {
+    if (!this.alleLijsten || !Array.isArray(this.alleLijsten)) {
+      return [];
+    }
     return this.geselecteerdeSector === 'Alle sectoren' 
       ? this.alleLijsten 
       : this.alleLijsten.filter(l => l.jobdomein === this.geselecteerdeSector);
