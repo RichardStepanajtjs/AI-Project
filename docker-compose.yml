@@ -77,11 +77,41 @@ services:
     depends_on:
       database:
         condition: service_healthy
+      ollama_pull:
+        condition: service_completed_successfully
     networks:
       - backend
       - api
     env_file: Env/api_keys.env
-  
+
+  ollama:
+    image: ollama/ollama
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: unless-stopped
+    networks:
+      - backend
+      - api
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  ollama_pull:
+    image: ollama/ollama
+    volumes:
+      - ollama_data:/root/.ollama
+    entrypoint: ["ollama"]
+    command: ["pull", "llama3.2"]
+    env_file: Env/api_keys.env
+    depends_on:
+      ollama:
+        condition: service_healthy
+    networks:
+      - backend
+
   #ai_model:
   #  build: ./Model
   #  container_name: ai_model
@@ -101,3 +131,4 @@ networks:
 volumes:
   db-data:
   pgadmin-data:
+  ollama_data:
