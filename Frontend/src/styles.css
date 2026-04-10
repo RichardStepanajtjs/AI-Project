@@ -1,10 +1,55 @@
-/* You can add global styles to this file, and also import other style files */
 * {
-    margin: 0;
-    padding: 0;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 html, body {
-    height: 100%;
-    width: 100%;
+  height: 100%;
+  width: 100%;
+  font-family: 'DM Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
+
+/* Variables */
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: var(--muted-lite); }
+
+/* Licht thema */
+:root,
+[data-theme="light"] {
+  --bg:         #F7F6F2;
+  --surface:    #FFFFFF;
+  --border:     #E5E2D9;
+  --text:       #1A1916;
+  --muted:      #8A8780;
+  --muted-lite: #B0ADA6;
+  --accent:     #2D6A4F;
+  --accent-hov: #245540;
+  --accent-bg:  #EAF2EE;
+  --danger:     #E63946;
+  --danger-hov: #A62832;
+  --shadow:     rgba(0,0,0,.06);
+}
+
+/* donkere thema */
+[data-theme="dark"] {
+  --bg:         #111110;
+  --surface:    #1C1C1A;
+  --border:     #2E2E2C;
+  --text:       #F0EDE7;
+  --muted:      #7A7873;
+  --muted-lite: #4A4845;
+  --accent:     #52B788;
+  --accent-hov: #40956E;
+  --accent-bg:  #1A2E24;
+  --danger:     #E63946;
+  --danger-hov: #A62832;
+  --shadow:     rgba(0,0,0,.3);
+}
+

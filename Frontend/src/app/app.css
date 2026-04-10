@@ -1,17 +1,26 @@
 .loggedin {
-    display: grid;
-    grid-template-columns: 1fr 6fr;
-    background-color: #f7f6f2;
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  height: 100vh;
+  overflow: hidden;
+  background-color: var(--bg);
 }
 
 .loggedout {
-    background-color: #f7f6f2;
+  background-color: var(--bg);
+  min-height: 100vh;
 }
 
 app-navigation {
-    grid-column: 1;
+  grid-column: 1;
+  height: 100vh;
+  overflow-y: auto;
+  position: sticky;
+  top: 0;
 }
 
 main {
-    grid-column: 2;
+  grid-column: 2;
+  height: 100vh;
+  overflow-y: auto;
 }

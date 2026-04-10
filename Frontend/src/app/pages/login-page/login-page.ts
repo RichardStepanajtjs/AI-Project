@@ -21,9 +21,7 @@ export class LoginPage {
     this.errorMessage = '';
 
     this.auth.login(this.email, this.password).subscribe({
-      next: () => {
-        // Navigation is handled in the service
-      },
+      next: () => {},
       error: (err) => {
         this.errorMessage = err.error?.message ?? 'Inloggen mislukt, probeer opnieuw.';
       }

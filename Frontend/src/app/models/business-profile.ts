@@ -1,4 +1,5 @@
 export interface BusinessProfile {
+    id?: number,
     naam: string,
     kbonummer: string,
     postcode: string,

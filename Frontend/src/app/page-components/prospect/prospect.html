@@ -1,4 +1,20 @@
-<div class="prospect-card">
-    <div class="head">{{ prospectName }}<span class="score">{{ accuracy }}%</span></div>
-    <p class="description">{{ prospectDescription }}</p>
+<div class="prospect-card" (click)="cardClick.emit()">
+  <div class="head">
+    <span class="name">{{ prospectName }}</span>
+    <div class="head-right">
+      <span class="score">{{ accuracy }}%</span>
+      <button
+        class="favorite-btn"
+        [class.active]="isFavorite"
+        [title]="isFavorite ? 'Verwijder uit favorieten' : 'Voeg toe aan favorieten'"
+        (click)="favoriteChange.emit(); $event.stopPropagation()">
+        <svg width="14" height="14" viewBox="0 0 24 24"
+          [attr.fill]="isFavorite ? 'currentColor' : 'none'"
+          stroke="currentColor" stroke-width="2">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+  <p class="description">{{ prospectDescription }}</p>
 </div>

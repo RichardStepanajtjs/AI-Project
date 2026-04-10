@@ -1,75 +1,189 @@
-<app-page-header title="Home Page"></app-page-header>
-<app-page-header title="Admin Dashboard"></app-page-header>
+<app-page-header title="Overzicht"></app-page-header>
 
 <main>
-  <div class="stats-grid">
-    <div class="stat-card">
-      <div class="stat-label">Totaal gebruikers</div>
-      <div class="stat-value">{{amount_prospectlists}}</div>
+
+  <!-- Welkom kaart -->
+  <div class="welcome-banner">
+    <div class="welcome-text">
+      <h2>Welkom terug</h2>
+      <p>Hier is een overzicht van jouw werkruimte binnen Sokrates.</p>
     </div>
-    <div class="stat-card">
-      <div class="stat-label">Actieve gebruikers</div>
-      <div class="stat-value">{{amount_productsForms}}</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Aantal Admins</div>
-      <div class="stat-value">{{amount_jobForms}}</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Aanvragen deze week</div>
-      <div class="stat-value">404</div>
-    </div>
+    <span class="role-badge">{{ role }}</span>
   </div>
 
-  <!-- <div class="card">
-    <div class="card-header">
-      <span>Gebruikers</span>
-      <button (click)="showScreen = true">+ Nieuwe gebruiker</button>
-    </div>
-    <table>
-      <thead>
-        <tr>
-          <th>Email</th>
-          <th>Rol</th>
-          <th>Acties</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (user of users; track user.email) {
-          <tr>
-            <td>{{ user.email }}</td>
-            <td>{{ user.role }}</td>
-            <td><button (click)="toggleActive(user)">{{ user.active ? 'Deactiveer' : 'Activeer' }}</button></td> -->
-          <!-- </tr>
-        }
-      </tbody>
-    </table>
-  </div>
-</main> -->
+  <div class="body-grid">
 
-<!-- @if (showScreen) {
-  <div class="screen-overlay" (click)="showScreen = false">
-    <div class="screen" (click)="$event.stopPropagation()">
-      <h2>Nieuwe gebruiker</h2>
-      <div class="form-group">
-        <label>Email</label>
-        <input type="email" placeholder="john.doe@example.com" [(ngModel)]="new_user.email"/>
+    <div class="left-col">
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+            </svg>
+          </div>
+          <div>
+            <div class="stat-label">Bedrijfsprofielen</div>
+            @if (loading) {
+              <div class="stat-value skeleton"></div>
+            } @else {
+              <div class="stat-value">{{ totalBusinessProfiles }}</div>
+            }
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+            </svg>
+          </div>
+          <div>
+            <div class="stat-label">Mijn prospectlijsten</div>
+            @if (loading) {
+              <div class="stat-value skeleton"></div>
+            } @else {
+              <div class="stat-value">{{ totalProspectLists }}</div>
+            }
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+            </svg>
+          </div>
+          <div>
+            <div class="stat-label">Jouw rol</div>
+            <div class="stat-value capitalize">{{ role }}</div>
+          </div>
+        </div>
       </div>
-      <div class="form-group">
-        <label>password</label>
-        <input type="password" placeholder="*****" [(ngModel)]="new_user.password"/>
+
+      <!-- Snelle acties/navigaties -->
+      <div class="section">
+        <p class="section-label">Snelle acties</p>
+        <div class="actions-grid">
+
+          <button class="action-card" (click)="router.navigate(['/prospects'])">
+            <div class="action-icon primary">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+            </div>
+            <div class="action-text">
+              <span class="action-title">Nieuwe prospectlijst</span>
+              <span class="action-sub">Genereer prospects via AI</span>
+            </div>
+            <svg class="action-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14"/><path d="M12 5l7 7-7 7"/>
+            </svg>
+          </button>
+
+          <button class="action-card" (click)="router.navigate(['/business-profiles'])">
+            <div class="action-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+              </svg>
+            </div>
+            <div class="action-text">
+              <span class="action-title">Bedrijfsprofielen</span>
+              <span class="action-sub">Doorzoek alle bedrijven</span>
+            </div>
+            <svg class="action-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14"/><path d="M12 5l7 7-7 7"/>
+            </svg>
+          </button>
+
+          <button class="action-card" (click)="router.navigate(['/prospects'])">
+            <div class="action-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+              </svg>
+            </div>
+            <div class="action-text">
+              <span class="action-title">Mijn prospectlijsten</span>
+              <span class="action-sub">Bekijk en beheer lijsten</span>
+            </div>
+            <svg class="action-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14"/><path d="M12 5l7 7-7 7"/>
+            </svg>
+          </button>
+
+          <button class="action-card" (click)="router.navigate(['/my-account'])">
+            <div class="action-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+              </svg>
+            </div>
+            <div class="action-text">
+              <span class="action-title">Mijn account</span>
+              <span class="action-sub">Profiel & thema-instellingen</span>
+            </div>
+            <svg class="action-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14"/><path d="M12 5l7 7-7 7"/>
+            </svg>
+          </button>
+
+        </div>
       </div>
-      <div class="form-group">
-        <label>Rol</label>
-        <select [(ngModel)]="new_user.role">
-          <option>partner</option>
-          <option>admin</option>
-        </select>
-      </div>
-      <div class="screen-footer">
-        <button (click)="showScreen = false">Annuleren</button>
-        <button (click)="addUser()">Aanmaken</button>
-      </div>
+
     </div>
+
+    <div class="right-col">
+
+      <!-- Aan de slag kaart -->
+      <div class="info-card">
+        <div class="info-card-header">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><circle cx="12" cy="16" r=".5" fill="currentColor"/>
+          </svg>
+          Aan de slag
+        </div>
+        <ul class="guide-list">
+          <li class="guide-item">
+            <div class="guide-num">1</div>
+            <div>
+              <div class="guide-title">Bedrijfsprofielen verkennen</div>
+            </div>
+          </li>
+          <li class="guide-item">
+            <div class="guide-num">2</div>
+            <div>
+              <div class="guide-title">Prospectlijst aanmaken</div>
+            </div>
+          </li>
+          <li class="guide-item">
+            <div class="guide-num">3</div>
+            <div>
+              <div class="guide-title">Resultaten analyseren</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Over ons -->
+      <div class="info-card">
+        <div class="info-card-header">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/>
+          </svg>
+          Over Sokrates
+        </div>
+        <div class="about-body">
+          <p>Sokrates is een AI-gedreven prospectingplatform dat automatisch relevante bedrijfscontacten identificeert op basis van jouw product of vacature.</p>
+          <div class="feature-pills">
+            <span class="pill">AI-gegenereerd</span>
+            <span class="pill">Sectorfilters</span>
+            <span class="pill">KBO-data</span>
+            <span class="pill">Exporteerbaar</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
   </div>
-} -->
+
+</main>

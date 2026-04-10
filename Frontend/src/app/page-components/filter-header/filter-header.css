@@ -1,63 +1,179 @@
+:host {
+  display: block;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
 .filters {
-    display: flex;
-    padding: 1rem;
-    gap: 7px;
-    flex-wrap: wrap;
-    align-items: center;
+  display: flex;
+  padding: 10px 16px;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  height: 100%;
+  box-sizing: border-box;
 }
 
-.filter-button {
-    padding: 5px 13px;
-    border-radius: 20px;
-    border: 1px solid #E5E2D9;
-    background: white;
-    font-size: 12.5px;
-    font-family: 'DM Sans', sans-serif;
-    cursor: pointer;
-    color: #8A8780;
-    transition: all .15s;
+/* dropdown menu */
+.dropdown { position: relative; }
+
+.dropdown-trigger {
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  font-size: 12.5px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--muted);
+  transition: all .15s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
-.filter-button:hover {
-    background: #2D6A4F;
-    color: white;
-    border-color: #2D6A4F;
+.dropdown-trigger:hover,
+.dropdown.open .dropdown-trigger {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
 }
 
-.filter-button.active {
-    background: #2D6A4F;
-    color: white;
-    border-color: #2D6A4F;
+.icon {
+  font-size: 10px;
+  transition: transform .15s;
 }
 
+.dropdown.open .icon { transform: rotate(180deg); }
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px var(--shadow);
+  padding: 4px;
+  z-index: 100;
+  min-width: 160px;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.dropdown.open .dropdown-menu {
+  display: flex;
+  flex-direction: column;
+}
+
+.dropdown-item {
+  padding: 7px 12px;
+  border: none;
+  background: transparent;
+  font-size: 13px;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  color: var(--muted);
+  text-align: left;
+  border-radius: 7px;
+  transition: all .12s;
+  white-space: nowrap;
+}
+
+.dropdown-item:hover {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+.dropdown-item.active {
+  background: var(--accent);
+  color: white;
+  font-weight: 600;
+}
+
+/* zoekbalk */
+.search-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  left: 11px;
+  color: var(--muted);
+  pointer-events: none;
+}
+
+.search-input {
+  padding: 6px 32px 6px 30px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  font-size: 12.5px;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+  outline: none;
+  width: 200px;
+  transition: border-color .15s, width .2s, background .15s;
+}
+
+.search-input:focus {
+  border-color: var(--accent);
+  background: var(--surface);
+  width: 260px;
+}
+
+.search-input::placeholder { color: var(--muted); }
+
+.clear-btn {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  border-radius: 4px;
+  transition: color .15s;
+}
+
+.clear-btn:hover { color: var(--text); }
+
+/* tag */
 .tag-input {
-    padding: 5px 13px;
-    border-radius: 20px;
-    border: 1px solid #E5E2D9;
-    background: #F7F6F2;
-    font-size: 12.5px;
-    font-family: 'DM Sans', sans-serif;
-    color: #1A1916;
-    outline: none;
-    transition: border-color .15s;
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  font-size: 12.5px;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+  outline: none;
+  transition: border-color .15s;
 }
 
 .tag-input:focus {
-    border-color: #2D6A4F;
-    background: white;
+  border-color: var(--accent);
+  background: var(--surface);
 }
 
 .add-button {
-    padding: 5px 13px;
-    border-radius: 20px;
-    border: none;
-    background: #2D6A4F;
-    font-size: 12.5px;
-    font-family: 'DM Sans', sans-serif;
-    color: white;
-    transition: background .15s;
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: none;
+  background: var(--accent);
+  font-size: 12.5px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: background .15s;
 }
 
-.add-button:hover {
-    background: #245540;
-}
+.add-button:hover { background: var(--accent-hov); }
