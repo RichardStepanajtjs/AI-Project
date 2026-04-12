@@ -92,14 +92,6 @@
         </div>
 
         <div>
-            <label>Target Group:</label>
-            <input type="text" formControlName="targetGroup" />
-            @if (form.get('targetGroup')?.invalid && form.get('targetGroup')?.touched) {
-            <span class="error">Verplicht veld</span>
-            }
-        </div>
-
-        <div>
             <label>Tags & Technologies:</label>
             <input type="text" formControlName="technologies" />
             @if (form.get('technologies')?.invalid && form.get('technologies')?.touched) {

@@ -15,6 +15,9 @@ export class DashboardAdmin {
   showScreen = false;
   showUserDetail = false;
   showDeleteConfirm = false;
+  editMode = false;
+  editData: Partial<User> = {};
+  editPassword = '';
   errorMessage = '';
 
   usersService = inject(UsersService);
@@ -58,6 +61,55 @@ export class DashboardAdmin {
     this.showUserDetail = false;
     this.selectedUser = null;
     this.showDeleteConfirm = false;
+    this.editMode = false;
+    this.editData = {};
+    this.editPassword = '';
+  }
+
+  startEdit() {
+    if (!this.selectedUser) return;
+    this.editData = { email: this.selectedUser.email, role: this.selectedUser.role, active: this.selectedUser.active };
+    this.editPassword = '';
+    this.editMode = true;
+  }
+
+  cancelEdit() {
+    this.editMode = false;
+    this.editData = {};
+    this.editPassword = '';
+  }
+
+  saveEdit() {
+    if (!this.selectedUser?.id) return;
+    const updated: User = {
+      ...this.selectedUser,
+      email: this.editData.email ?? this.selectedUser.email,
+      role: this.editData.role ?? this.selectedUser.role,
+      active: this.editData.active ?? this.selectedUser.active,
+      password: this.editPassword || this.selectedUser.password,
+    };
+    this.usersService.updateUser(this.selectedUser.id, updated).subscribe({
+      next: () => {
+        const idx = this.users.findIndex(u => u.id === this.selectedUser!.id);
+        if (idx !== -1) this.users[idx] = updated;
+        this.selectedUser = updated;
+        this.updateStats();
+        this.editMode = false;
+        this.editData = {};
+        this.editPassword = '';
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        const idx = this.users.findIndex(u => u.id === this.selectedUser!.id);
+        if (idx !== -1) this.users[idx] = updated;
+        this.selectedUser = updated;
+        this.updateStats();
+        this.editMode = false;
+        this.editData = {};
+        this.editPassword = '';
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   toggleStatus(user: User, event?: Event) {

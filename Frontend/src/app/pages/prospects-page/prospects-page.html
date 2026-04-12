@@ -86,16 +86,6 @@
             <textarea formControlName="description" rows="3" placeholder="Korte omschrijving van het product of de job..."></textarea>
           </div>
 
-          @if (!isJobMode) {
-            <div class="field">
-              <label>Doelgroep *</label>
-              <input type="text" formControlName="targetGroup" placeholder="bv. KMO's in de bouwsector"/>
-              @if (form.get('targetGroup')?.invalid && form.get('targetGroup')?.touched) {
-                <span class="error">Verplicht veld</span>
-              }
-            </div>
-          }
-
           <div class="field">
             <label>Technologieën & tags *</label>
             <input type="text" formControlName="technologies" placeholder="bv. Angular, NestJS, SQL"/>

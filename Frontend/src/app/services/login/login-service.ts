@@ -80,6 +80,13 @@ export class LoginService {
     return sessionStorage.getItem('token');
   }
 
+  getEmail(): string | null {
+    const token = sessionStorage.getItem('token');
+    if (!token) return null;
+    const payload = decodeJwtPayload(token);
+    return payload?.['email'] ?? payload?.['sub'] ?? null;
+  }
+
   getLogginStatus() {
     return this.isLoggedIn;
   }

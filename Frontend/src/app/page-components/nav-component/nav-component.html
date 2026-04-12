@@ -1,7 +1,9 @@
-<a [routerLink]="link" routerLinkActive="active" class="nav-item">
+<a [routerLink]="link" routerLinkActive="active" class="nav-item" [class.icon-only]="collapsed" [title]="collapsed ? label : ''">
   <span class="nav-icon" [innerHTML]="iconSvg"></span>
-  <span class="nav-label">{{ label }}</span>
-  @if (isAdmin) {
-    <span class="admin-tag">Admin</span>
+  @if (!collapsed) {
+    <span class="nav-label">{{ label }}</span>
+    @if (isAdmin) {
+      <span class="admin-tag">Admin</span>
+    }
   }
 </a>

@@ -4,14 +4,28 @@
   background: var(--surface);
   border-right: 1px solid var(--border);
   height: 100vh;
+  width: 220px;
+  transition: width .25s ease;
+  overflow: hidden;
 }
 
+:host.collapsed {
+  width: 60px;
+}
+
+/* ── Brand ── */
 .brand {
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 16px 14px;
   border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+:host.collapsed .brand {
+  justify-content: center;
+  padding: 16px 0;
 }
 
 .brand-logo {
@@ -34,16 +48,52 @@
   font-weight: 700;
   color: var(--text);
   letter-spacing: -0.3px;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
+:host.collapsed .brand-name {
+  display: none;
+}
+
+/* ── Nav ── */
 nav {
-  padding: 12px 10px;
+  padding: 10px 10px;
   flex: 1;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
+/* ── Toggle knop ── */
+.toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  margin: 4px 12px 6px;
+  padding: 0;
+  border-radius: 7px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  cursor: pointer;
+  transition: background .15s, color .15s, border-color .15s;
+  flex-shrink: 0;
+}
+
+.toggle-btn:hover {
+  background: var(--border);
+  color: var(--text);
+}
+
+:host.collapsed .toggle-btn {
+  margin: 4px auto 6px;
+}
+
+/* ── Section labels ── */
 .section-label {
   font-size: 10px;
   font-weight: 700;
@@ -51,8 +101,88 @@ nav {
   text-transform: uppercase;
   color: var(--muted-lite);
   padding: 14px 12px 5px;
+  white-space: nowrap;
 }
 
 app-nav-component {
   display: block;
+}
+
+/* ── Account sectie onderaan ── */
+.account-section {
+  flex-shrink: 0;
+  padding: 10px;
+  border-top: 1px solid var(--border);
+}
+
+:host.collapsed .account-section {
+  padding: 8px 0;
+}
+
+.account-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: background .15s;
+  cursor: pointer;
+  min-width: 0;
+}
+
+:host.collapsed .account-link {
+  justify-content: center;
+  padding: 8px 0;
+}
+
+.account-link:hover {
+  background: var(--border);
+}
+
+.account-link.active-account {
+  background: transparent;
+}
+
+.account-link.active-account .account-avatar {
+  box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--accent);
+}
+
+.account-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.account-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.account-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.account-email {
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

@@ -4,16 +4,36 @@
 </header>
 
 <nav>
-  <p class="section-label">Algemeen</p>
-  <app-nav-component link="/home" icon="home" label="Home"></app-nav-component>
+  <button class="toggle-btn" (click)="toggleCollapse()" [title]="collapsed ? 'Uitklappen' : 'Inklappen'">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+      <line x1="3" y1="6" x2="21" y2="6"/>
+      <line x1="3" y1="12" x2="21" y2="12"/>
+      <line x1="3" y1="18" x2="21" y2="18"/>
+    </svg>
+  </button>
+
+  @if (!collapsed) { <p class="section-label">Algemeen</p> }
+  <app-nav-component link="/home" icon="home" label="Home" [collapsed]="collapsed"></app-nav-component>
   @if (loginService.isAdmin()) {
-    <p class="section-label">Admin</p>
-    <app-nav-component link="/dashboard" icon="dashboard" label="Dashboard" [isAdmin]="true"></app-nav-component>
-    <app-nav-component link="/ai-model" icon="model" label="AI Model" [isAdmin]="true"></app-nav-component>
+    @if (!collapsed) { <p class="section-label">Admin</p> }
+    <app-nav-component link="/dashboard" icon="dashboard" label="Dashboard" [isAdmin]="true" [collapsed]="collapsed"></app-nav-component>
+    <app-nav-component link="/ai-model" icon="model" label="AI Model" [isAdmin]="true" [collapsed]="collapsed"></app-nav-component>
   }
-  <p class="section-label">Prospects</p>
-  <app-nav-component link="/prospects" icon="prospects" label="My Prospectlists"></app-nav-component>
-  <app-nav-component link="/business-profiles" icon="business" label="Business Profiles"></app-nav-component>
-  <p class="section-label">Account</p>
-  <app-nav-component link="/my-account" icon="account" label="My Account"></app-nav-component>
+  @if (!collapsed) { <p class="section-label">Prospects</p> }
+  <app-nav-component link="/prospects" icon="prospects" label="My Prospectlists" [collapsed]="collapsed"></app-nav-component>
+  <app-nav-component link="/business-profiles" icon="business" label="Business Profiles" [collapsed]="collapsed"></app-nav-component>
 </nav>
+
+<div class="account-section">
+  <a routerLink="/my-account" routerLinkActive="active-account" class="account-link" [title]="collapsed ? 'My Account' : ''">
+    <div class="account-avatar">{{ (loginService.getEmail()?.charAt(0) ?? 'U').toUpperCase() }}</div>
+    @if (!collapsed) {
+      <div class="account-info">
+        <span class="account-name">My Account</span>
+        @if (loginService.getEmail()) {
+          <span class="account-email">{{ loginService.getEmail() }}</span>
+        }
+      </div>
+    }
+  </a>
+</div>

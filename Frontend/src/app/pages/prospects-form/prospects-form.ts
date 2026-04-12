@@ -18,7 +18,6 @@ export class ProspectsForm {
     partnerName: ['', Validators.required],
     sector: ['', Validators.required],
     description: [''],
-    targetGroup: ['', Validators.required],
     technologies: ['', Validators.required],
     amountOfProspects: ['25', [Validators.required, Validators.min(1), Validators.max(50)]],
   });

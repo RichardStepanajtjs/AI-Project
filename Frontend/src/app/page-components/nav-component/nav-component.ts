@@ -24,6 +24,7 @@ export class NavComponent implements OnInit {
   @Input() isAdmin: boolean = false;
   @Input() label: string = '';
   @Input() icon: string = '';
+  @Input() collapsed: boolean = false;
 
   iconSvg: SafeHtml = '';
   private sanitizer = inject(DomSanitizer);

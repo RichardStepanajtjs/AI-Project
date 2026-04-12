@@ -139,15 +139,33 @@ tr:last-child td { border-bottom: none; }
   border-color: color-mix(in srgb, var(--accent) 25%, transparent);
 }
 
-.status-dot {
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 20px;
   font-size: 12px;
-  font-weight: 500;
-  color: var(--muted);
+  font-weight: 600;
+  font-family: inherit;
+  border: none;
+  cursor: pointer;
+  transition: filter .15s, transform .1s;
 }
 
-.status-dot.active { color: var(--accent); }
-.status-dot.active::before { content: '● '; font-size: 10px; }
-.status-dot:not(.active)::before { content: '○ '; font-size: 10px; }
+.status-badge:hover {
+  filter: brightness(0.88);
+  transform: scale(0.97);
+}
+
+.status-badge.status-active {
+  background: color-mix(in srgb, #22c55e 18%, transparent);
+  color: #16a34a;
+}
+
+.status-badge.status-inactive {
+  background: color-mix(in srgb, #ef4444 18%, transparent);
+  color: #dc2626;
+}
 
 .actions-cell { white-space: nowrap; }
 
@@ -458,3 +476,61 @@ tr:last-child td { border-bottom: none; }
 }
 
 .delete-confirm strong { color: var(--text); }
+
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 6px 22px 0;
+}
+
+.edit-form .form-group {
+  padding: 8px 0;
+}
+
+.optional-label {
+  font-size: 10px;
+  font-weight: 400;
+  color: var(--muted);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.input-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: var(--bg);
+  color: var(--muted);
+}
+
+.field-note {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 3px;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-edit-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  cursor: pointer;
+  color: var(--muted);
+  transition: all .15s;
+}
+
+.btn-edit-icon:hover {
+  background: var(--accent-bg);
+  border-color: color-mix(in srgb, var(--accent) 30%, transparent);
+  color: var(--accent);
+}
