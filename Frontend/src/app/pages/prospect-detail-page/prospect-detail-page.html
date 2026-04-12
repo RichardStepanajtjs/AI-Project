@@ -1,0 +1,145 @@
+<app-page-header [title]="listName"></app-page-header>
+
+@if (loading) {
+  <div class="state-msg">Laden...</div>
+} @else if (error) {
+  <div class="state-msg error">{{ error }}</div>
+} @else if (prospect) {
+  <div class="detail-page">
+
+    <button class="back-btn" (click)="goBack()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+      Terug
+    </button>
+
+    <div class="two-col">
+      <!-- Links prospects -->
+      <div class="col-profiles">
+        <div class="col-header">
+          <span class="col-title">Verbonden bedrijfsprofielen</span>
+          @if (connectedProfiles.length) {
+            <span class="count-badge">{{ connectedProfiles.length }}</span>
+          }
+          <div class="sort-wrapper">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M3 6h18M7 12h10M11 18h2"/>
+            </svg>
+            <select [(ngModel)]="sortOrder">
+              <option value="accuracy-desc">Accuracy: hoog → laag</option>
+              <option value="accuracy-asc">Accuracy: laag → hoog</option>
+              <option value="name-asc">Naam: A → Z</option>
+              <option value="name-desc">Naam: Z → A</option>
+            </select>
+          </div>
+        </div>
+
+        @if (sortedProfiles.length) {
+          <div class="profiles-list">
+            @for (p of sortedProfiles; track p.kbonummer ?? p.id ?? $index) {
+              <div class="profile-card">
+                <div class="p-avatar">{{ (p.naam ?? p.name ?? '?').charAt(0).toUpperCase() }}</div>
+                <div class="p-info">
+                  <p class="p-name">{{ p.naam ?? p.name }}</p>
+                  <p class="p-meta">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+                    {{ p.gemeente ?? p.city ?? '' }}{{ (p.gemeente ?? p.city) && (p.landcode ?? p.country) ? ' · ' : '' }}{{ p.landcode ?? p.country ?? '' }}
+                  </p>
+                  @if (p.jobdomein ?? p.sector) {
+                    <p class="p-domain">{{ p.jobdomein ?? p.sector }}</p>
+                  }
+                </div>
+                <div class="accuracy-badge" [style.color]="accuracyColor(accuracyOf(p))" [style.border-color]="accuracyColor(accuracyOf(p))">
+                  @if (accuracyOf(p) !== null) {
+                    {{ accuracyOf(p) }}%
+                  } @else {
+                    –%
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <p class="empty-profiles">Geen verbonden bedrijfsprofielen gevonden.</p>
+        }
+      </div>
+
+      <!-- Rechts prospect info -->
+      <div class="col-config">
+        <div class="col-header">
+          <span class="col-title">Configuratie</span>
+        </div>
+
+        <div class="config-body">
+          <dl>
+            <div class="row">
+              <dt>Naam</dt>
+              <dd>{{ listName }}</dd>
+            </div>
+            <div class="row">
+              <dt>Type</dt>
+              <dd>{{ isJobMode ? 'Job' : 'Product' }}</dd>
+            </div>
+            @if (isJobMode) {
+              <div class="row">
+                <dt>Partnernaam</dt>
+                <dd>{{ prospect.partnerName ?? prospect.partnername ?? '–' }}</dd>
+              </div>
+            } @else {
+              <div class="row">
+                <dt>Productnaam</dt>
+                <dd>{{ prospect.productname ?? prospect.productName ?? '–' }}</dd>
+              </div>
+            }
+            <div class="row">
+              <dt>Sector</dt>
+              <dd>{{ sector || '–' }}</dd>
+            </div>
+            <div class="row">
+              <dt>Doelgroep</dt>
+              <dd>{{ prospect.targetgroup ?? prospect.targetGroup ?? '–' }}</dd>
+            </div>
+            <div class="row">
+              <dt>Aantal prospects</dt>
+              <dd>{{ prospect.amount_prospects ?? prospect.amountOfProspects ?? connectedProfiles.length || '–' }}</dd>
+            </div>
+            @if (createdAt) {
+              <div class="row">
+                <dt>Aangemaakt op</dt>
+                <dd>{{ createdAt }}</dd>
+              </div>
+            }
+          </dl>
+
+          @if (tagsList.length) {
+            <div class="tags-block">
+              <p class="tags-label">Technologieën & Tags</p>
+              <div class="tags">
+                @for (tag of tagsList; track tag) {
+                  <span class="tag">{{ tag }}</span>
+                }
+              </div>
+            </div>
+          } @else {
+            <div class="tags-block">
+              <p class="tags-label">Technologieën & Tags</p>
+              <p class="none-text">Niet opgegeven</p>
+            </div>
+          }
+
+          @if (prospect.description) {
+            <div class="desc-block">
+              <p class="tags-label">Beschrijving</p>
+              <p class="description-text">{{ prospect.description }}</p>
+            </div>
+          } @else {
+            <div class="desc-block">
+              <p class="tags-label">Beschrijving</p>
+              <p class="none-text">Niet opgegeven</p>
+            </div>
+          }
+        </div>
+      </div>
+
+    </div>
+  </div>
+}

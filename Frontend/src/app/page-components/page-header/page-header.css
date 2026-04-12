@@ -1,15 +1,18 @@
 header {
-    background-color: white;
-    border-bottom: 1px solid #E5E2D9;
-    padding: 0 28px;
-    height: 58px;
-    display: flex;
-    align-items: center;
+  background-color: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 28px;
+  height: 62.5px;
+  display: flex;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 h1 {
-    font-size: 19px;
-    font-weight: 600;
-    color: #1A1916;
-    letter-spacing: -0.3px;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.3px;
 }

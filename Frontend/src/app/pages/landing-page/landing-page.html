@@ -1,0 +1,67 @@
+<div class="page">
+
+  <!-- Navigatie -->
+  <nav class="topnav">
+    <span class="logo">SOKRATES</span>
+    <button class="btn-outline" (click)="router.navigate(['/login'])">Inloggen</button>
+  </nav>
+
+  <!-- main -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-badge">AI-gedreven prospecting</div>
+      <h1>Vind de juiste<br>prospects <span class="accent">sneller</span>.</h1>
+      <p class="hero-sub">
+        SOKRATES analyseert bedrijfsprofielen en genereert gerichte prospectlijsten op maat van jouw product of dienst volledig ondersteund door AI.
+      </p>
+      <div class="hero-actions">
+        <button class="btn-primary" (click)="router.navigate(['/login'])">Aan de slag</button>
+        <a class="btn-ghost" href="#features">Meer info</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Functies -->
+  <section class="features" id="features">
+    <h2>Alles wat je nodig hebt</h2>
+    <p class="features-sub">Van bedrijfsprofiel tot gegenereerde prospectlijst alles op één plek.</p>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        </div>
+        <h3>Bedrijfsprofielen</h3>
+        <p>Doorzoek duizenden bedrijfsprofielen gefilterd op sector, regio en grootte.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        </div>
+        <h3>Prospectlijsten</h3>
+        <p>Maak en beheer gerichte lijsten van potentiële klanten op basis van jouw criteria.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/><path d="M18 2l4 4-4 4"/><path d="M22 2l-4 4"/></svg>
+        </div>
+        <h3>AI-model</h3>
+        <p>Ons AI-model analyseert beschrijvingen en koppelt automatisch de meest relevante bedrijven.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- cta sectie (call to action) -->
+  <section class="cta">
+    <h2>Klaar om te starten?</h2>
+    <p>Log in op jouw account en begin vandaag nog met prospecteren.</p>
+    <button class="btn-primary large" (click)="router.navigate(['/login'])">Inloggen</button>
+  </section>
+
+  <footer>
+    <span>2026 SOKRATES</span>
+  </footer>
+
+</div>

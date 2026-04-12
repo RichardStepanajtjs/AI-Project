@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'app-prospect',
@@ -10,6 +10,7 @@ export class Prospect {
   @Input() prospectName: string = '';
   @Input() prospectDescription: string = '';
   @Input() accuracy: number = 0;
-  @Input() city: string = 'city';
-  @Input() sector: string = 'sector';
+  @Input() isFavorite: boolean = false;
+  @Output() cardClick = new EventEmitter<void>();
+  @Output() favoriteChange = new EventEmitter<void>();
 }

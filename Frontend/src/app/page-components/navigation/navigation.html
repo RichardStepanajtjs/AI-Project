@@ -1,17 +1,19 @@
-<header>
-    <h1>SOKRATES</h1>
+<header class="brand">
+  <div class="brand-logo">S</div>
+  <span class="brand-name">SOKRATES</span>
 </header>
 
 <nav>
-    @if (loginService.isAdmin()) {
-        <span>Admin</span>
-        <app-nav-component link="/dashboard" activeLink="/dashboard" label="Dashboard" [isAdmin] = true></app-nav-component>
-        <app-nav-component link="/ai-model" activeLink="/ai-model" label="AI Model" [isAdmin] = true></app-nav-component>
-    }
-    <span>Prospects</span>
-    <app-nav-component link="/prospects" activeLink="/prospects" label="My Prospectlists" [isAdmin] = false></app-nav-component>
-    <app-nav-component link="/prospects/new" activeLink="/prospects/new" label="New Prospectlist" [isAdmin] = false></app-nav-component>
-    <app-nav-component link="/business-profiles" activeLink="/business-profiles" label="Business Profiles Overview" [isAdmin] = false></app-nav-component>
-    <span>User</span>
-    <app-nav-component link="/my-account" activeLink="/my-account" label="My Account" [isAdmin] = false></app-nav-component>
+  <p class="section-label">Algemeen</p>
+  <app-nav-component link="/home" icon="home" label="Home"></app-nav-component>
+  @if (loginService.isAdmin()) {
+    <p class="section-label">Admin</p>
+    <app-nav-component link="/dashboard" icon="dashboard" label="Dashboard" [isAdmin]="true"></app-nav-component>
+    <app-nav-component link="/ai-model" icon="model" label="AI Model" [isAdmin]="true"></app-nav-component>
+  }
+  <p class="section-label">Prospects</p>
+  <app-nav-component link="/prospects" icon="prospects" label="My Prospectlists"></app-nav-component>
+  <app-nav-component link="/business-profiles" icon="business" label="Business Profiles"></app-nav-component>
+  <p class="section-label">Account</p>
+  <app-nav-component link="/my-account" icon="account" label="My Account"></app-nav-component>
 </nav>

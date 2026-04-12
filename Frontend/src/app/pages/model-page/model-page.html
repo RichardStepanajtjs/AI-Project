@@ -24,7 +24,10 @@
   <div class="card">
     <div class="card-header">
       <span>Versiegeschiedenis</span>
-      <button (click)="showScreen = true">↺ Hertrainen</button>
+      <button (click)="showScreen = true">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+        Hertrainen
+      </button>
     </div>
     <table>
       <thead>
@@ -59,19 +62,47 @@
 </main>
 
 @if (showScreen) {
-  <div class="modal-overlay" (click)="!showScreen">
+  <div class="modal-overlay" (click)="showScreen = false">
     <div class="modal" (click)="$event.stopPropagation()">
-      <h2>Model hertrainen</h2>
-      <div class="form-group">
-        <label>Type</label>
-        <select [(ngModel)]="trainType">
-          <option>Volledige hertraining</option>
-          <option>Optie 2</option>
-        </select>
+      <div class="modal-header">
+        <div class="modal-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+        </div>
+        <div>
+          <h2>Model hertrainen</h2>
+          <p class="modal-sub">Volledige hertraining</p>
+        </div>
       </div>
+      <p class="modal-body">
+        Je staat op het punt het AI-model volledig te hertrainen. Dit proces kan enige tijd duren en kan niet worden onderbroken.<br><br>
+        Weet je zeker dat je wil doorgaan?
+      </p>
       <div class="modal-footer">
-        <button (click)="!showScreen">Annuleren</button>
-        <button (click)="startTraining()">Starten</button>
+        <button class="btn-cancel" (click)="showScreen = false">Annuleren</button>
+        <button class="btn-confirm" (click)="startTraining()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+          Hertraining starten
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (trainingStarted) {
+  <div class="modal-overlay" (click)="trainingStarted = false">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div class="modal-icon success">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
+        <div>
+          <h2>Hertraining gestart</h2>
+          <p class="modal-sub">Het model wordt op de achtergrond hertraind</p>
+        </div>
+      </div>
+      <p class="modal-body">De hertraining is succesvol opgestart. Je ontvangt een melding wanneer het model klaar is.</p>
+      <div class="modal-footer">
+        <button class="btn-confirm" (click)="trainingStarted = false">Sluiten</button>
       </div>
     </div>
   </div>

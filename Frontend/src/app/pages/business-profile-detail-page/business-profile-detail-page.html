@@ -1,0 +1,94 @@
+@if (loading) {
+  <div class="state-msg">Laden...</div>
+} @else if (error) {
+  <div class="state-msg error">{{ error }}</div>
+} @else if (profile) {
+  <div class="detail-page">
+
+    <button class="back-btn" (click)="goBack()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+      Terug
+    </button>
+
+    <div class="hero">
+      <div class="avatar">{{ profile.naam.charAt(0).toUpperCase() }}</div>
+      <div>
+        <h1>{{ profile.naam }}</h1>
+        <p class="subtitle">{{ profile.jobdomein }} · {{ profile.gemeente }}, {{ profile.landcode }}</p>
+      </div>
+    </div>
+
+    <div class="grid">
+
+      <section class="card">
+        <h2>Bedrijfsinfo</h2>
+        <dl>
+          <div class="row">
+            <dt>KBO-nummer</dt>
+            <dd>{{ profile.kbonummer }}</dd>
+          </div>
+          <div class="row">
+            <dt>Sector</dt>
+            <dd>{{ profile.jobdomein }}</dd>
+          </div>
+          <div class="row">
+            <dt>Aangemaakt op</dt>
+            <dd>{{ profile.created_at | date:'dd/MM/yyyy' }}</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="card">
+        <h2>Locatie</h2>
+        <dl>
+          <div class="row">
+            <dt>Gemeente</dt>
+            <dd>{{ profile.gemeente }}</dd>
+          </div>
+          <div class="row">
+            <dt>Postcode</dt>
+            <dd>{{ profile.postcode }}</dd>
+          </div>
+          <div class="row">
+            <dt>Land</dt>
+            <dd>{{ profile.landcode }}</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="card">
+        <h2>Contact</h2>
+        <dl>
+          <div class="row">
+            <dt>E-mail</dt>
+            <dd>
+              @if (profile.email) {
+                <a [href]="'mailto:' + profile.email">{{ profile.email }}</a>
+              } @else {
+                <span class="muted">Niet beschikbaar</span>
+              }
+            </dd>
+          </div>
+          <div class="row">
+            <dt>Telefoon</dt>
+            <dd>
+              @if (profile.telefoonnummer) {
+                <a [href]="'tel:' + profile.telefoonnummer">{{ profile.telefoonnummer }}</a>
+              } @else {
+                <span class="muted">Niet beschikbaar</span>
+              }
+            </dd>
+          </div>
+        </dl>
+      </section>
+
+      @if (profile.text) {
+        <section class="card wide">
+          <h2>AI Beschrijving</h2>
+          <p class="description-text">{{ profile.text }}</p>
+        </section>
+      }
+
+    </div>
+  </div>
+}

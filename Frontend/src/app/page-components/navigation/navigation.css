@@ -1,31 +1,58 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  height: 100vh;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.brand-logo {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: var(--accent);
+  color: white;
+  font-size: 15px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  letter-spacing: -0.5px;
+}
+
+.brand-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.3px;
+}
+
 nav {
-    background-color: #ffffff;
-    border-right: 3px solid #f0f0f0;
-    padding: 10px;
-    height: 100%;
+  padding: 12px 10px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
 }
 
-h1 {
-    background-color: #ffffff;
-    padding: 1rem 2rem;
-    font-size: 30px;
-    font-weight: 500;
-    color: black;
-    border-bottom: 3px solid #f0f0f0;
-    border-right: 3px solid #f0f0f0;
-}
-
-span {
-    border-bottom: 3px solid #f0f0f0;
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    color: #8a8790;
-    padding: 10px 8px 4px;
+.section-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted-lite);
+  padding: 14px 12px 5px;
 }
 
 app-nav-component {
-    display: block;
-    margin: 8px 0;
+  display: block;
 }

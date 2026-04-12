@@ -1,11 +1,75 @@
-<app-page-header title="Business Profiles Overview"></app-page-header>
-<app-filter-header [filters]="sectorFilters" activeFilter="geselecteerdeSector"></app-filter-header>
+<app-page-header title="Business Profiles"></app-page-header>
+<app-filter-header
+  [filters]="sectorFilters"
+  [(activeFilter)]="geselecteerdeSector"
+  [(searchTerm)]="zoekterm">
+</app-filter-header>
+
 <main>
-  @for (profile of businessProfiles; track $index) {
+  @for (profile of pagedProfiles; track profile.kbonummer) {
     <app-business-profile
         [companyName]="profile.naam"
         [province]="profile.gemeente"
         [countryCode]="profile.landcode"
-        [jobDomain]="profile.jobdomein">
-    </app-business-profile>}
+        [jobDomain]="profile.jobdomein"
+        [kbonummer]="profile.kbonummer"
+        (cardClick)="router.navigate(['/business-profiles', profile.kbonummer], { state: { profile } })">
+    </app-business-profile>
+  } @empty {
+    <p class="empty">Geen bedrijven gevonden voor deze filter.</p>
+  }
 </main>
+
+<!-- Pagina balk -->
+<div class="pagination-bar">
+  <div class="pagination-info">
+    <span>{{ pageStart }}–{{ pageEnd }} van {{ filteredCount }} bedrijven</span>
+  </div>
+
+  <div class="pagination-controls">
+    <!-- Vorige knop -->
+    <button class="page-btn arrow" [disabled]="currentPage === 1" (click)="prevPage()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+        <path d="M15 18l-6-6 6-6"/>
+      </svg>
+    </button>
+
+    <!-- Eerste pagina -->
+    @if (visiblePageNumbers[0] > 1) {
+      <button class="page-btn" (click)="goToPage(1)">1</button>
+      @if (visiblePageNumbers[0] > 2) {
+        <span class="page-ellipsis">…</span>
+      }
+    }
+
+    <!-- Genummerde pagina's -->
+    @for (p of visiblePageNumbers; track p) {
+      <button class="page-btn" [class.active]="p === currentPage" (click)="goToPage(p)">{{ p }}</button>
+    }
+
+    <!-- Laatste pagina -->
+    @if (visiblePageNumbers[visiblePageNumbers.length - 1] < totalPages) {
+      @if (visiblePageNumbers[visiblePageNumbers.length - 1] < totalPages - 1) {
+        <span class="page-ellipsis">…</span>
+      }
+      <button class="page-btn" (click)="goToPage(totalPages)">{{ totalPages }}</button>
+    }
+
+    <!-- Volgende knop + functie -->
+    <button class="page-btn arrow" [disabled]="currentPage === totalPages" (click)="nextPage()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+        <path d="M9 18l6-6-6-6"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Pagina grootte -->
+  <div class="page-size-selector">
+    <label>Per pagina</label>
+    <select [(ngModel)]="pageSize">
+      @for (opt of pageSizeOptions; track opt) {
+        <option [value]="opt">{{ opt }}</option>
+      }
+    </select>
+  </div>
+</div>

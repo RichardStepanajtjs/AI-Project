@@ -1,0 +1,77 @@
+import time
+from datetime import datetime
+from collections import defaultdict
+from api import VDAB_api, Ollama, Voyage_api
+from database import Database
+
+class Pipeline:
+    def __init__(self, vdab, ollama, voyage, database):
+        self.vdab = vdab
+        self.ollama = ollama
+        self.voyage = voyage
+        self.database = database
+
+    def groepeer_per_bedrijf(self, vacatures):
+        bedrijven = defaultdict(lambda: {
+            "naam": None, "type": None, "gemeente": None, "postcode": None,
+            "beroepen": set(), "vereisten": set(),
+        })
+        
+        for v in vacatures:
+            kbo = v.get("leverancier", {}).get("kboNummer")
+            if not kbo:
+                continue
+            b = bedrijven[kbo]
+            b["naam"] = b["naam"] or v.get("leverancier", {}).get("naam")
+            b["type"] = b["type"] or v.get("leverancier", {}).get("type")
+            b["gemeente"] = b["gemeente"] or v.get("tewerkstellingsadres", {}).get("gemeente")
+            b["postcode"] = b["postcode"] or v.get("tewerkstellingsadres", {}).get("postcode")
+
+            functie = v.get("functie", {}).get("beroepsprofiel", {}).get("label")
+            if functie:
+                b["beroepen"].add(functie)
+
+            for vereiste in v.get("profiel", {}).get("vereisten", []):
+                if label := vereiste.get("label"):
+                    b["vereisten"].add(label)
+
+        for b in bedrijven.values():
+            b["beroepen"] = sorted(b["beroepen"])
+            b["vereisten"] = sorted(b["vereisten"])
+
+        return dict(bedrijven)
+
+    def verwerk_bedrijven(self, bedrijven):
+        count = 0
+        for kbo, data in bedrijven.items():
+            print(f"Processing: {data['naam']} ({kbo})")
+            result = self.ollama.genereer_profiel(data)
+            embedding = self.voyage.embed(result["text"])
+            profiel = {
+                "kbo_nummer": kbo,
+                "naam": data["naam"],
+                "gemeente": data["gemeente"],
+                "postcode": data["postcode"],
+                "beroepen": data["beroepen"],
+                "vereisten": data["vereisten"],
+                "text": result["text"],
+                "jobdomein": result["jobdomein"],
+                "embedding": embedding,
+            }
+            self.database.save_profiel(profiel)
+            count += 1
+            time.sleep(0.2)
+        return count
+
+    def run(self):
+        print(f"[{datetime.now().strftime('%H:%M:%S')}] Starting...")
+
+        vacatures = self.vdab.get_recent_vacatures()
+        self.database.save_vacatures(vacatures)
+        print(f"{len(vacatures)} vacancies saved.")
+
+        bedrijven = self.groepeer_per_bedrijf(vacatures)
+        print(f"{len(bedrijven)} unique companies found.")
+
+        count = self.verwerk_bedrijven(bedrijven)
+        print(f"[{datetime.now().strftime('%H:%M:%S')}] Done. {count} companies processed.")

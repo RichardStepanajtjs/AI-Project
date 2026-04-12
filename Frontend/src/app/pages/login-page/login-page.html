@@ -1,13 +1,29 @@
 <main>
-  <form (ngSubmit)="onSubmit()">
-    <h2>Welkom!</h2>
+  <div class="login-wrapper">
+    <div class="login-brand">
+      <div class="login-logo">S</div>
+      <span class="login-brand-name">SOKRATES</span>
+    </div>
 
-    <label for="username">Gebruikersnaam</label>
-    <input type="text" id="username" name="username" [(ngModel)]="email" placeholder="naam@bedrijf.be"/>
+    <form (ngSubmit)="onSubmit()">
+      <h2>Welkom terug</h2>
+      <p class="subtitle">Log in op je account om verder te gaan.</p>
 
-    <label for="password">Wachtwoord</label>
-    <input type="password" id="password" name="password" [(ngModel)]="password" placeholder="••••••••"/>
+      @if (errorMessage) {
+        <p class="error-msg">{{ errorMessage }}</p>
+      }
 
-    <button type="submit">Inloggen</button>
-  </form>
+      <div class="field">
+        <label for="username">E-mailadres</label>
+        <input type="text" id="username" name="username" [(ngModel)]="email" placeholder="naam@bedrijf.be" autocomplete="email"/>
+      </div>
+
+      <div class="field">
+        <label for="password">Wachtwoord</label>
+        <input type="password" id="password" name="password" [(ngModel)]="password" placeholder="••••••••" autocomplete="current-password"/>
+      </div>
+
+      <button type="submit">Inloggen</button>
+    </form>
+  </div>
 </main>

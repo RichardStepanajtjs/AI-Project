@@ -1,9 +1,27 @@
-<div class="business-card">
+<div class="business-card" (click)="cardClick.emit()">
+    <div class="profile">
+        {{ companyName.charAt(0).toUpperCase() }}
+    </div>
     <div class="info">
         <p class="title">{{ companyName }}</p>
         <div class="tags">
-            <span>Country: {{ countryCode }} | Province: {{ province }}</span>
-            <span>Jobdomain: {{ jobDomain }}</span>
+            <span class="tag">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+                {{ countryCode }} · {{ province }}
+            </span>
+            <span class="tag">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+                {{ jobDomain }}
+            </span>
         </div>
     </div>
+    <button
+        class="favorite-btn"
+        [class.active]="isFavorite"
+        (click)="toggleFavorite($event)"
+        [title]="isFavorite ? 'Verwijder uit favorieten' : 'Voeg toe aan favorieten'">
+        <svg width="15" height="15" viewBox="0 0 24 24" [attr.fill]="isFavorite ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="2">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+        </svg>
+    </button>
 </div>
