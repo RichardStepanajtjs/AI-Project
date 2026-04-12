@@ -1,62 +1,62 @@
 const express = require("express");
 const router = express.Router();
 const {
-    getAllForums,
-    getForumById,
-    createForum,
-    updateForum,
-    deleteForum
-} = require("../crud/forumsCrud");
+    getAllForms,
+    getFormById,
+    createForm,
+    updateForm,
+    deleteForm
+} = require("../crud/formsCrud");
 
-// FORUMS ROUTES
+// Forms ROUTES
 
-// Get all forums
+// Get all forms
 router.get("/", async (req, res) => {
     try {
-        const forums = await getAllForums();
+        const forms = await getAllForms();
         res.json({
             success: true,
-            data: forums,
-            count: forums.length,
+            data: forms,
+            count: forms.length,
         });
     } catch (error) {
-        console.error("Error fetching forums:", error);
+        console.error("Error fetching forms:", error);
         res.status(500).json({
             success: false,
-            message: "Error fetching forums",
+            message: "Error fetching forms",
             error: error.message,
         });
     }
 });
 
-// Get forum by ID
+// Get form by ID
 router.get("/:id", async (req, res) => {
     try {
         const { id } = req.params;
-        const forum = await getForumById(id);
+        const form = await getFormById(id);
 
-        if (!forum) {
+        if (!form) {
             return res.status(404).json({
                 success: false,
-                message: "Forum not found",
+                message: "form not found",
             });
         }
 
         res.json({
             success: true,
-            data: forum,
+            data: form,
         });
     } catch (error) {
-        console.error("Error fetching forum:", error);
+        console.error("Error fetching form:", error);
         res.status(500).json({
             success: false,
-            message: "Error fetching forum",
+            message: "Error fetching form",
             error: error.message,
         });
     }
 });
 
-// Create new forum
+// Create new form
 router.post("/", async (req, res) => {
     try {
         const { partner_name } = req.body;
@@ -68,75 +68,75 @@ router.post("/", async (req, res) => {
             });
         }
 
-        const newForum = await createForum(req.body);
+        const newform = await createForm(req.body);
 
         res.status(201).json({
             success: true,
-            message: "Forum successfully created",
-            data: newForum,
+            message: "form successfully created",
+            data: newform,
         });
 
     } catch (error) {
-        console.error("Error creating forum:", error);
+        console.error("Error creating form:", error);
         res.status(500).json({
             success: false,
-            message: "Error creating forum",
+            message: "Error creating form",
             error: error.message,
         });
     }
 });
 
-// Update forum
+// Update form
 router.put("/:id", async (req, res) => {
     try {
         const { id } = req.params;
-        const forum = await updateForum(id, req.body);
+        const form = await updateForm(id, req.body);
 
-        if (!forum) {
+        if (!form) {
             return res.status(404).json({
                 success: false,
-                message: "Forum not found or no fields to update",
+                message: "form not found or no fields to update",
             });
         }
 
         res.json({
             success: true,
-            message: "Forum updated successfully",
-            data: forum,
+            message: "form updated successfully",
+            data: form,
         });
     } catch (error) {
-        console.error("Error updating forum:", error);
+        console.error("Error updating form:", error);
         res.status(500).json({
             success: false,
-            message: "Error updating forum",
+            message: "Error updating form",
             error: error.message,
         });
     }
 });
 
-// Delete forum
+// Delete form
 router.delete("/:id", async (req, res) => {
     try {
         const { id } = req.params;
-        const forum = await deleteForum(id);
+        const form = await deleteForm(id);
 
-        if (!forum) {
+        if (!form) {
             return res.status(404).json({
                 success: false,
-                message: "Forum not found",
+                message: "form not found",
             });
         }
 
         res.json({
             success: true,
-            message: "Forum deleted successfully",
-            data: forum,
+            message: "form deleted successfully",
+            data: form,
         });
     } catch (error) {
-        console.error("Error deleting forum:", error);
+        console.error("Error deleting form:", error);
         res.status(500).json({
             success: false,
-            message: "Error deleting forum",
+            message: "Error deleting form",
             error: error.message,
         });
     }

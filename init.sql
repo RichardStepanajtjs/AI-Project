@@ -1,3 +1,4 @@
+/* User tabel (GH-...) */
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     email VARCHAR(255) UNIQUE NOT NULL,
@@ -12,7 +13,7 @@ VALUES
     ('user@sokrates.be', '$2a$10$sVTZ9XC/0Net2Q/fzHpYbuJCO352bA0Wi7q5EHzqdStx.LbRGEMvS', 'user')
 ON CONFLICT (email) DO NOTHING;
 
-
+/* Vacancy tabel (GH-...) */
 CREATE TABLE IF NOT EXISTS vacancies (
     id SERIAL PRIMARY KEY,
     interne_referentie UUID UNIQUE NOT NULL,
@@ -30,7 +31,7 @@ CREATE TABLE IF NOT EXISTS vacancies (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-/* Bedrijven tabel (GH-43) */
+/* Company tabel (GH-43) */
 CREATE TABLE IF NOT EXISTS companies (
     id SERIAL PRIMARY KEY,
     naam VARCHAR(255) NOT NULL,
@@ -47,7 +48,6 @@ CREATE TABLE IF NOT EXISTS companies (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-/* Dummy data voor Bedrijven (GH-43) */
 INSERT INTO companies (naam, kbonummer, postcode, gemeente, landcode, email, telefoonnummer, jobdomein, text) -- GEEN ID want serial
 VALUES
 ('Rich-Hard Capital', '1', '2000', 'Antwerpen', 'BE', 'contact@rich-hardcapital.be', '+3231234567', 'ICT', 'Rich-Hard Capital is een toonaangevende durfkapitaalverstrekker die zich richt op de tech-sector in Antwerpen. We bieden strategische ondersteuning en financiering voor innovatieve startups met een sterke groeiambitie. Ons team van experts helpt ondernemers om hun technologische visie om te zetten in marktconforme oplossingen.'),
@@ -56,7 +56,7 @@ VALUES
 ON CONFLICT (kbonummer) DO NOTHING;
 
 
-/* Prospectielijsten tabel (GH-46) */
+/* Prospectlist tabel (GH-46) */
 CREATE TABLE IF NOT EXISTS prospect_lists (
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL,
@@ -66,11 +66,11 @@ CREATE TABLE IF NOT EXISTS prospect_lists (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-INSERT INTO prospect_lists (user_id, naam, jobdomein, company_ids) -- GEEN ID want serial
+INSERT INTO prospect_lists (user_id, naam, jobdomein, company_ids)
 VALUES
-(1, 'Prospect 1', 'ICT', 1),
-(1, 'Prospect 2', 'Horeca en toerisme', 2),
-(1, 'Prospect 3', 'Andere', 3)
+(1, 'Prospect 1', 'ICT', ARRAY[1]),
+(1, 'Prospect 2', 'Horeca en toerisme', ARRAY[2]),
+(1, 'Prospect 3', 'Andere', ARRAY[3])
 ;
 
 CREATE TABLE IF NOT EXISTS models (
@@ -82,7 +82,7 @@ CREATE TABLE IF NOT EXISTS models (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     description TEXT                     
 );
-
+/* Model Tabel (GH-...) */
 CREATE INDEX idx_active_model ON models (is_active) WHERE is_active = TRUE;
 CREATE OR REPLACE FUNCTION set_single_active_model()
     RETURNS TRIGGER AS $$
@@ -101,11 +101,21 @@ BEFORE INSERT OR UPDATE ON models
 FOR EACH ROW
 EXECUTE FUNCTION set_single_active_model();
 
-CREATE TABLE IF NOT EXISTS forums (
+/* Form Tabel (GH-52) */
+CREATE TABLE IF NOT EXISTS forms (
     id SERIAL PRIMARY KEY,
     partner_name VARCHAR(255) NOT NULL,
     sector VARCHAR(100),
-    description TEXT,
     technologies VARCHAR(50)[],
+    description TEXT,
+    embedding FLOAT4[],
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT INTO forms (partner_name, sector, technologies, description)
+VALUES(
+    'VDAB Innovatielab',
+    'IT en Technologie',
+    ARRAY['React', 'Node.js', 'Python', 'PostgreSQL', 'Docker'],
+    'Een exclusief samenwerkingsforum gericht op de integratie van nieuwe webtechnologieën en AI binnen het Vlaamse werklandschap.'
 );

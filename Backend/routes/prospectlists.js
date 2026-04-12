@@ -10,7 +10,8 @@ const {
   deleteProspectList,
 } = require("../crud/prospectlistCrud");
 
-// (GH-03) Lijst filteren - pak de domein van de url
+// PROSPECT LISTS ROUTES
+
 router.get("/filter/:tag", async (req, res) => {
   try {
     const { tag } = req.params;

@@ -12,7 +12,7 @@ const vacanciesRoute = require('./routes/vacancies');
 const companiesRoute = require('./routes/companies');
 const prospectListsRoute = require('./routes/prospectlists');
 const modelsRoute = require('./routes/models');
-const forumsRoute = require('./routes/forums');
+const formsRoute = require('./routes/forms');
 
 // Initialize database connection
 require('./db/connection');
@@ -30,7 +30,7 @@ app.use('/vacancies', vacanciesRoute);
 app.use('/companies', companiesRoute);
 app.use('/prospects', prospectListsRoute);
 app.use('/models', modelsRoute);
-app.use('/forums', forumsRoute);
+app.use('/forms', formsRoute);
 
 // Health check
 app.get('/health', (req, res) => {
@@ -85,12 +85,20 @@ app.listen(port, () => {
   console.log('  PATCH  /models/:id/activate');
   console.log('  DELETE /models/:id');
 
-  console.log('Forums:');
-  console.log('  GET    /forums');
-  console.log('  GET    /forums/:id');
-  console.log('  POST   /forums');
-  console.log('  PUT    /forums/:id');
-  console.log('  DELETE /forums/:id');
+  console.log('Forms:');
+  console.log('  GET    /forms');
+  console.log('  GET    /forms/:id');
+  console.log('  POST   /forms');
+  console.log('  PUT    /forms/:id');
+  console.log('  DELETE /forms/:id');
+
+  console.log('Prospect Lists:');
+  console.log('  GET    /prospects');
+  console.log('  GET    /prospects/:id');
+  console.log('  GET    /prospects/user/:userId');
+  console.log('  POST   /prospects');
+  console.log('  PUT    /prospects/:id');
+  console.log('  DELETE /prospects/:id');
 });
 
 module.exports = app;
