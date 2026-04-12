@@ -1,3 +1,4 @@
 *.env
 /Data
 /Backend/node_modules
+/Model/__pycache__
