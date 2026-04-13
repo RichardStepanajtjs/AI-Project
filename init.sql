@@ -4,6 +4,9 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(255) UNIQUE NOT NULL,
     password_hash TEXT NOT NULL,
     role VARCHAR(50) DEFAULT 'sales',
+    naam VARCHAR(255),
+    achternaam VARCHAR(255),
+    status BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -27,7 +30,6 @@ CREATE TABLE IF NOT EXISTS vacancies (
     beroepsprofiel_code VARCHAR(50),
     beroepsprofiel_label VARCHAR(255),
     vereisten JSONB,
-    text TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -70,8 +72,7 @@ INSERT INTO prospect_lists (user_id, naam, jobdomein, company_ids)
 VALUES
 (1, 'Prospect 1', 'ICT', ARRAY[1]),
 (1, 'Prospect 2', 'Horeca en toerisme', ARRAY[2]),
-(1, 'Prospect 3', 'Andere', ARRAY[3])
-;
+(1, 'Prospect 3', 'Andere', ARRAY[3]);
 
 CREATE TABLE IF NOT EXISTS models (
     id SERIAL PRIMARY KEY,
@@ -80,8 +81,9 @@ CREATE TABLE IF NOT EXISTS models (
     metadata_pkl BYTEA NOT NULL,         
     is_active BOOLEAN DEFAULT FALSE,     
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    description TEXT                     
+    description TEXT                  
 );
+
 /* Model Tabel (GH-...) */
 CREATE INDEX idx_active_model ON models (is_active) WHERE is_active = TRUE;
 CREATE OR REPLACE FUNCTION set_single_active_model()

@@ -1,0 +1,24 @@
+import { HttpClient } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+
+export interface FormPayload {
+  partner_name: string;
+  sector: string;
+  description?: string;
+  target_group?: string;
+  technologies: string[];
+  amount_of_prospects?: number;
+  is_job?: boolean;
+}
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FormsService {
+  private http = inject(HttpClient);
+  private apiUrl = 'https://nest.sokrates.traefik.me';
+
+  createForm(data: FormPayload) {
+    return this.http.post(`${this.apiUrl}/forms`, data);
+  }
+}

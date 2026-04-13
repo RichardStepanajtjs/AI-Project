@@ -5,6 +5,7 @@ import { Prospect } from '../../page-components/prospect/prospect';
 import { PageHeader } from "../../page-components/page-header/page-header";
 import { FilterHeader } from '../../page-components/filter-header/filter-header';
 import { ProspectslistService } from '../../services/prospectslist/prospectslist-service';
+import { FormsService } from '../../services/forms/forms-service';
 
 const FAVORITES_KEY = 'prospect-favorites';
 
@@ -19,6 +20,7 @@ export class ProspectsPage {
   public router = inject(Router);
   private fb = inject(FormBuilder);
   private cdr = inject(ChangeDetectorRef);
+  private formService = inject(FormsService)
 
   alleLijsten: any[] = [];
   favoriteIds: Set<string | number> = new Set();
@@ -41,7 +43,7 @@ export class ProspectsPage {
     partnerName: ['', Validators.required],
     sector: ['', Validators.required],
     description: [''],
-    targetGroup: ['', Validators.required],
+    targetGroup: [''],
     technologies: ['', Validators.required],
     amountOfProspects: ['25', [Validators.required, Validators.min(1), Validators.max(50)]],
   });
@@ -95,15 +97,26 @@ export class ProspectsPage {
 
   onSubmit() {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
-    this.prospectsService.createProspect(this.form.value).subscribe({
+
+    const v = this.form.value;
+    const payload = {
+      partner_name: this.isJobMode ? (v.partnerName ?? '') : (v.productName ?? ''),
+      sector: v.sector ?? '',
+      description: v.description ?? '',
+      target_group: v.targetGroup ?? '',
+      technologies: (v.technologies ?? '').split(',').map((t: string) => t.trim()).filter(Boolean),
+      amount_of_prospects: Number(v.amountOfProspects ?? 25),
+      is_job: this.isJobMode,
+    };
+
+    this.formService.createForm(payload).subscribe({
       next: () => {
-        this.closeForm();
-        this.prospectsService.getProspects().subscribe({
-          next: (res: any) => {
-            this.alleLijsten = res.data ?? res ?? [];
-            this.cdr.detectChanges();
-          }
-        });
+        // this.prospectsService.getProspects().subscribe({
+        //   next: (res: any) => {
+        //     this.alleLijsten = res.data ?? res ?? [];
+        //     this.cdr.detectChanges();
+        //   }
+        // });
       },
       error: (err) => console.error(err)
     });

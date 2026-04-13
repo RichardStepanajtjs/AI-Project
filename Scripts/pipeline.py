@@ -1,8 +1,6 @@
 import time
 from datetime import datetime
 from collections import defaultdict
-from api import VDAB_api, Ollama, Voyage_api
-from database import Database
 
 class Pipeline:
     def __init__(self, vdab, ollama, voyage, database):
@@ -56,6 +54,7 @@ class Pipeline:
                 "vereisten": data["vereisten"],
                 "text": result["text"],
                 "jobdomein": result["jobdomein"],
+                "technologies": result.get("technologies", []),
                 "embedding": embedding,
             }
             self.database.save_profiel(profiel)

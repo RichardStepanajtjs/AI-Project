@@ -1,4 +1,3 @@
-from datetime import datetime
 from sqlalchemy import MetaData, Table
 from sqlalchemy.dialects.postgresql import insert
 
@@ -25,8 +24,6 @@ class Database:
                     "beroepsprofiel_code": v.get("functie", {}).get("beroepsprofiel", {}).get("code"),
                     "beroepsprofiel_label": v.get("functie", {}).get("beroepsprofiel", {}).get("label"),
                     "vereisten": [x.get("label", "") for x in v.get("profiel", {}).get("vereisten", [])],
-                    "text": v.get("text"),
-                    "embedding": v.get("embedding"),
                 }
                 try:
                     conn.execute(
@@ -49,6 +46,7 @@ class Database:
                     "postcode": profiel["postcode"],
                     "gemeente": profiel["gemeente"],
                     "jobdomein": profiel["jobdomein"],
+                    "technologies": profiel["technologies"],
                     "text": profiel["text"],
                     "embedding": profiel["embedding"],
                 }
@@ -60,6 +58,7 @@ class Database:
                         set_={
                             "naam": row["naam"],
                             "jobdomein": row["jobdomein"],
+                            "technologies": row["technologies"],
                             "text": row["text"],
                             "embedding": row["embedding"],
                         }
