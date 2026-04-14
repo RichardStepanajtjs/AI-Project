@@ -3,13 +3,15 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { BusinessProfilesServices } from '../../services/business-profiles/business-profiles-service';
 import { BusinessProfile } from '../../models/business-profile';
+import { PageHeader } from '../../page-components/page-header/page-header';
 
 @Component({
   selector: 'app-business-profile-detail-page',
-  imports: [DatePipe],
+  imports: [DatePipe, PageHeader],
   templateUrl: './business-profile-detail-page.html',
   styleUrl: './business-profile-detail-page.css',
 })
+
 export class BusinessProfileDetailPage {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
@@ -21,15 +23,23 @@ export class BusinessProfileDetailPage {
 
   ngOnInit() {
     const stateProfile = history.state?.profile as BusinessProfile;
+
     if (stateProfile?.naam) {
       this.profile = stateProfile;
       this.loading = false;
+
+      if (!stateProfile.text && stateProfile.id) {
+        this.service.getBusinessProfileById(stateProfile.id).subscribe({
+          next: (res: any) => { this.profile = res.data ?? res; },
+          error: () => {}
+        });
+      }
       return;
     }
 
-    const id = this.route.snapshot.paramMap.get('kbonummer');
-    const numId = Number(id);
-    if (!id || isNaN(numId)) {
+    const kbo = this.route.snapshot.paramMap.get('kbonummer');
+    const numId = Number(kbo);
+    if (!kbo || isNaN(numId)) {
       this.error = 'Bedrijf niet gevonden.';
       this.loading = false;
       return;

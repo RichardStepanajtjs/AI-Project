@@ -1,93 +1,178 @@
+<app-page-header title="Bedrijfsprofiel"></app-page-header>
+
 @if (loading) {
-  <div class="state-msg">Laden...</div>
+  <div class="state-wrapper">
+    <div class="spinner"></div>
+    <span class="state-msg">Profiel laden…</span>
+  </div>
 } @else if (error) {
-  <div class="state-msg error">{{ error }}</div>
+  <div class="state-wrapper">
+    <div class="error-icon">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    </div>
+    <span class="state-msg error">{{ error }}</span>
+  </div>
 } @else if (profile) {
   <div class="detail-page">
 
     <button class="back-btn" (click)="goBack()">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
-      Terug
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+      Terug naar overzicht
     </button>
 
-    <div class="hero">
-      <div class="avatar">{{ profile.naam.charAt(0).toUpperCase() }}</div>
-      <div>
-        <h1>{{ profile.naam }}</h1>
-        <p class="subtitle">{{ profile.jobdomein }} · {{ profile.gemeente }}, {{ profile.landcode }}</p>
+    <div class="two-col">
+
+      <!-- Links: AI Beschrijving -->
+      <div class="col-main">
+
+        <div class="hero-card">
+          <div class="hero-bg"></div>
+          <div class="hero-content">
+            <div class="avatar">{{ profile.naam.charAt(0).toUpperCase() }}</div>
+            <div class="hero-info">
+              <h1>{{ profile.naam }}</h1>
+              <div class="hero-meta">
+                <span class="badge">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                  {{ profile.jobdomein }}
+                </span>
+                <span class="badge">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  {{ profile.gemeente }}, {{ profile.landcode }}
+                </span>
+                <span class="badge badge--mono">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+                  KBO {{ profile.kbonummer }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI Beschrijving -->
+        <div class="info-panel ai-panel">
+          <div class="panel-header">
+            <span class="panel-icon panel-icon--amber">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </span>
+            AI Beschrijving
+          </div>
+          <div class="panel-body">
+            @if (profile.text) {
+              <p class="description-text">{{ profile.text }}</p>
+            } @else {
+              <p class="none-text">Geen AI-beschrijving beschikbaar voor dit bedrijf.</p>
+            }
+          </div>
+        </div>
+
+        <!-- Technologieën -->
+        <div class="info-panel">
+          <div class="panel-header">
+            <span class="panel-icon panel-icon--blue">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            </span>
+            Technologieën
+          </div>
+          <div class="panel-body">
+            @if (profile.technologies && profile.technologies.length) {
+              <div class="tags">
+                @for (tech of profile.technologies; track tech) {
+                  <span class="tag">{{ tech }}</span>
+                }
+              </div>
+            } @else {
+              <p class="none-text">Geen technologieën opgegeven.</p>
+            }
+          </div>
+        </div>
+
       </div>
-    </div>
 
-    <div class="grid">
+      <!-- Rechts: Info cards -->
+      <div class="col-side">
 
-      <section class="card">
-        <h2>Bedrijfsinfo</h2>
-        <dl>
-          <div class="row">
-            <dt>KBO-nummer</dt>
-            <dd>{{ profile.kbonummer }}</dd>
+        <!-- Bedrijfsinfo -->
+        <div class="info-panel">
+          <div class="panel-header">
+            <span class="panel-icon panel-icon--blue">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+            </span>
+            Bedrijfsinfo
           </div>
-          <div class="row">
-            <dt>Sector</dt>
-            <dd>{{ profile.jobdomein }}</dd>
-          </div>
-          <div class="row">
-            <dt>Aangemaakt op</dt>
-            <dd>{{ profile.created_at | date:'dd/MM/yyyy' }}</dd>
-          </div>
-        </dl>
-      </section>
+          <dl>
+            <div class="row">
+              <dt>KBO-nummer</dt>
+              <dd><span class="mono">{{ profile.kbonummer }}</span></dd>
+            </div>
+            <div class="row">
+              <dt>Sector</dt>
+              <dd>{{ profile.jobdomein }}</dd>
+            </div>
+            <div class="row">
+              <dt>Aangemaakt op</dt>
+              <dd>{{ profile.created_at | date:'dd/MM/yyyy' }}</dd>
+            </div>
+          </dl>
+        </div>
 
-      <section class="card">
-        <h2>Locatie</h2>
-        <dl>
-          <div class="row">
-            <dt>Gemeente</dt>
-            <dd>{{ profile.gemeente }}</dd>
+        <!-- Locatie -->
+        <div class="info-panel">
+          <div class="panel-header">
+            <span class="panel-icon panel-icon--green">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </span>
+            Locatie
           </div>
-          <div class="row">
-            <dt>Postcode</dt>
-            <dd>{{ profile.postcode }}</dd>
-          </div>
-          <div class="row">
-            <dt>Land</dt>
-            <dd>{{ profile.landcode }}</dd>
-          </div>
-        </dl>
-      </section>
+          <dl>
+            <div class="row">
+              <dt>Gemeente</dt>
+              <dd>{{ profile.gemeente }}</dd>
+            </div>
+            <div class="row">
+              <dt>Postcode</dt>
+              <dd>{{ profile.postcode }}</dd>
+            </div>
+            <div class="row">
+              <dt>Land</dt>
+              <dd>{{ profile.landcode }}</dd>
+            </div>
+          </dl>
+        </div>
 
-      <section class="card">
-        <h2>Contact</h2>
-        <dl>
-          <div class="row">
-            <dt>E-mail</dt>
-            <dd>
-              @if (profile.email) {
-                <a [href]="'mailto:' + profile.email">{{ profile.email }}</a>
-              } @else {
-                <span class="muted">Niet beschikbaar</span>
-              }
-            </dd>
+        <!-- Contact -->
+        <div class="info-panel">
+          <div class="panel-header">
+            <span class="panel-icon panel-icon--purple">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13 19.79 19.79 0 0 1 1.6 4.38 2 2 0 0 1 3.57 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6 6l.92-.92a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21.72 17z"/></svg>
+            </span>
+            Contact
           </div>
-          <div class="row">
-            <dt>Telefoon</dt>
-            <dd>
-              @if (profile.telefoonnummer) {
-                <a [href]="'tel:' + profile.telefoonnummer">{{ profile.telefoonnummer }}</a>
-              } @else {
-                <span class="muted">Niet beschikbaar</span>
-              }
-            </dd>
-          </div>
-        </dl>
-      </section>
+          <dl>
+            <div class="row">
+              <dt>E-mail</dt>
+              <dd>
+                @if (profile.email) {
+                  <a [href]="'mailto:' + profile.email">{{ profile.email }}</a>
+                } @else {
+                  <span class="muted">Niet beschikbaar</span>
+                }
+              </dd>
+            </div>
+            <div class="row">
+              <dt>Telefoon</dt>
+              <dd>
+                @if (profile.telefoonnummer) {
+                  <a [href]="'tel:' + profile.telefoonnummer">{{ profile.telefoonnummer }}</a>
+                } @else {
+                  <span class="muted">Niet beschikbaar</span>
+                }
+              </dd>
+            </div>
+          </dl>
+        </div>
 
-      @if (profile.text) {
-        <section class="card wide">
-          <h2>AI Beschrijving</h2>
-          <p class="description-text">{{ profile.text }}</p>
-        </section>
-      }
+      </div>
 
     </div>
   </div>

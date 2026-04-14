@@ -8,6 +8,7 @@ export interface BusinessProfile {
     email: string,
     telefoonnummer: string,
     jobdomein: string,
+    technologies?: string[],
     text: string,
     created_at: string
 }
