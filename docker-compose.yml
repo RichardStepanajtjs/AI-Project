@@ -103,7 +103,9 @@ services:
     volumes:
       - ollama_data:/root/.ollama
     entrypoint: ["ollama"]
-    command: ["pull", "llama3.2"]
+    command: ["pull", "qwen2.5:1.5b"]
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
     env_file: Env/api_keys.env
     depends_on:
       ollama:
