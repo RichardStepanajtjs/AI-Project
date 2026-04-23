@@ -7,13 +7,23 @@
 } @else if (prospect) {
   <div class="detail-page">
 
-    <button class="back-btn" (click)="goBack()">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
-      Terug
-    </button>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <button class="back-btn" (click)="goBack()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+        Terug
+      </button>
+
+      <div style="display: flex; gap: 8px;">
+        <button (click)="toggleEdit()" style="padding: 6px 12px; cursor: pointer; border-radius: 4px; border: 1px solid #ccc; background: white;">
+          {{ isEditing ? 'Annuleren' : 'Bewerken' }}
+        </button>
+        <button (click)="deleteList()" style="padding: 6px 12px; cursor: pointer; border-radius: 4px; border: 1px solid #ef4444; background: white; color: #ef4444;">
+          Verwijderen
+        </button>
+      </div>
+    </div>
 
     <div class="two-col">
-      <!-- Links prospects -->
       <div class="col-profiles">
         <div class="col-header">
           <span class="col-title">Verbonden bedrijfsprofielen</span>
@@ -63,7 +73,6 @@
         }
       </div>
 
-      <!-- Rechts prospect info -->
       <div class="col-config">
         <div class="col-header">
           <span class="col-title">Configuratie</span>
@@ -73,7 +82,13 @@
           <dl>
             <div class="row">
               <dt>Naam</dt>
-              <dd>{{ listName }}</dd>
+              <dd>
+                @if (isEditing) {
+                  <input [(ngModel)]="prospect.naam" style="width: 100%; padding: 4px; border: 1px solid #ddd; border-radius: 4px;">
+                } @else {
+                  {{ listName }}
+                }
+              </dd>
             </div>
             <div class="row">
               <dt>Type</dt>
@@ -82,17 +97,35 @@
             @if (isJobMode) {
               <div class="row">
                 <dt>Partnernaam</dt>
-                <dd>{{ prospect.partnerName ?? prospect.partnername ?? '–' }}</dd>
+                <dd>
+                  @if (isEditing) {
+                    <input [(ngModel)]="prospect.partnerName" style="width: 100%; padding: 4px; border: 1px solid #ddd; border-radius: 4px;">
+                  } @else {
+                    {{ prospect.partnerName ?? prospect.partnername ?? '–' }}
+                  }
+                </dd>
               </div>
             } @else {
               <div class="row">
                 <dt>Productnaam</dt>
-                <dd>{{ prospect.productname ?? prospect.productName ?? '–' }}</dd>
+                <dd>
+                  @if (isEditing) {
+                    <input [(ngModel)]="prospect.productname" style="width: 100%; padding: 4px; border: 1px solid #ddd; border-radius: 4px;">
+                  } @else {
+                    {{ prospect.productname ?? prospect.productName ?? '–' }}
+                  }
+                </dd>
               </div>
             }
             <div class="row">
               <dt>Sector</dt>
-              <dd>{{ sector || '–' }}</dd>
+              <dd>
+                @if (isEditing) {
+                  <input [(ngModel)]="prospect.jobdomein" style="width: 100%; padding: 4px; border: 1px solid #ddd; border-radius: 4px;">
+                } @else {
+                  {{ sector || '–' }}
+                }
+              </dd>
             </div>
             <div class="row">
               <dt>Aantal prospects</dt>
@@ -106,32 +139,32 @@
             }
           </dl>
 
-          @if (tagsList.length) {
-            <div class="tags-block">
-              <p class="tags-label">Technologieën & Tags</p>
+          <div class="tags-block">
+            <p class="tags-label">Technologieën & Tags</p>
+            @if (tagsList.length) {
               <div class="tags">
                 @for (tag of tagsList; track tag) {
                   <span class="tag">{{ tag }}</span>
                 }
               </div>
-            </div>
-          } @else {
-            <div class="tags-block">
-              <p class="tags-label">Technologieën & Tags</p>
+            } @else {
               <p class="none-text">Niet opgegeven</p>
-            </div>
-          }
+            }
+          </div>
 
-          @if (prospect.description) {
-            <div class="desc-block">
-              <p class="tags-label">Beschrijving</p>
-              <p class="description-text">{{ prospect.description }}</p>
-            </div>
-          } @else {
-            <div class="desc-block">
-              <p class="tags-label">Beschrijving</p>
-              <p class="none-text">Niet opgegeven</p>
-            </div>
+          <div class="desc-block">
+            <p class="tags-label">Beschrijving</p>
+            @if (isEditing) {
+              <textarea [(ngModel)]="prospect.description" style="width: 100%; padding: 4px; border: 1px solid #ddd; border-radius: 4px; min-height: 100px;"></textarea>
+            } @else {
+              <p class="description-text">{{ prospect.description || 'Niet opgegeven' }}</p>
+            }
+          </div>
+
+          @if (isEditing) {
+            <button (click)="saveChanges()" style="width: 100%; margin-top: 1rem; padding: 10px; background: #2563eb; color: white; border: none; border-radius: 6px; cursor: pointer;">
+              Wijzigingen Opslaan
+            </button>
           }
         </div>
       </div>

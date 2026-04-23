@@ -24,6 +24,7 @@ export class ProspectDetailPage {
   loading = true;
   error = '';
   sortOrder = 'accuracy-desc';
+  isEditing = false;
 
   ngOnInit() {
     // Loading animation
@@ -77,6 +78,29 @@ export class ProspectDetailPage {
       },
       error: () => {}
     });
+  }
+
+  toggleEdit() {
+    this.isEditing = !this.isEditing;
+  }
+
+  saveChanges() {
+    this.service.updateProspect(this.prospect.id, this.prospect).subscribe({
+      next: () => {
+        this.isEditing = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Update failed', err)
+    });
+  }
+
+  deleteList() {
+    if (confirm('Wilt u deze lijst definitief verwijderen?')) {
+      this.service.deleteProspect(this.prospect.id).subscribe({
+        next: () => this.router.navigate(['/prospects']),
+        error: (err) => console.error('Delete failed', err)
+      });
+    }
   }
 
   // Sort

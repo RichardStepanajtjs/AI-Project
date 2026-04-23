@@ -8,6 +8,9 @@ const {
     deleteForm
 } = require("../crud/formsCrud");
 
+// maak prospects via form aan
+const { createProspectList } = require("../crud/prospectlistCrud");
+
 // Forms ROUTES
 
 // Get all forms
@@ -59,7 +62,7 @@ router.get("/:id", async (req, res) => {
 // Create new form
 router.post("/", async (req, res) => {
     try {
-        const { partner_name } = req.body;
+        const { partner_name, sector } = req.body;
 
         if (!partner_name) {
             return res.status(400).json({
@@ -70,9 +73,16 @@ router.post("/", async (req, res) => {
 
         const newform = await createForm(req.body);
 
+        await createProspectList({
+            user_id: 1,
+            naam: partner_name,
+            jobdomein: sector || 'Algemeen',
+            company_ids: [1]
+        });
+
         res.status(201).json({
             success: true,
-            message: "form successfully created",
+            message: "Form saved and Prospect List created!",
             data: newform,
         });
 
