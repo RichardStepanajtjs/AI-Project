@@ -5,7 +5,7 @@ import { Prospect } from '../../page-components/prospect/prospect';
 import { PageHeader } from "../../page-components/page-header/page-header";
 import { FilterHeader } from '../../page-components/filter-header/filter-header';
 import { ProspectslistService } from '../../services/prospectslist/prospectslist-service';
-import { FormsService } from '../../services/forms/forms-service';
+import { FormPayload, FormsService } from '../../services/forms/forms-service';
 
 const FAVORITES_KEY = 'prospect-favorites';
 
@@ -39,8 +39,8 @@ export class ProspectsPage {
   zoekterm = '';
 
   form = this.fb.group({
-    productName: ['', Validators.required],
-    partnerName: ['', Validators.required],
+    productName: [''],
+    partnerName: [''],
     sector: ['', Validators.required],
     description: [''],
     targetGroup: [''],
@@ -99,26 +99,37 @@ export class ProspectsPage {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
 
     const v = this.form.value;
-    const payload = {
-      partner_name: this.isJobMode ? (v.partnerName ?? '') : (v.productName ?? ''),
+    const payload: FormPayload = {
+      partner_name: this.isJobMode ? (v.partnerName || 'Onbekend') : (v.productName || 'Onbekend'),
       sector: v.sector ?? '',
       description: v.description ?? '',
-      target_group: v.targetGroup ?? '',
-      technologies: (v.technologies ?? '').split(',').map((t: string) => t.trim()).filter(Boolean),
-      amount_of_prospects: Number(v.amountOfProspects ?? 25),
-      is_job: this.isJobMode,
+      technologies: (v.technologies ?? '').split(',').map((t: string) => t.trim()),
+      amount_of_prospects: Number(v.amountOfProspects),
+      is_job: this.isJobMode
     };
 
     this.formService.createForm(payload).subscribe({
-      next: () => {
-        // this.prospectsService.getProspects().subscribe({
-        //   next: (res: any) => {
-        //     this.alleLijsten = res.data ?? res ?? [];
-        //     this.cdr.detectChanges();
-        //   }
-        // });
-      },
-      error: (err) => console.error(err)
-    });
-  }
+        next: (response) => {
+          console.log('Database succesvol bijgewerkt!', response);
+          
+          // update de scherm real-time
+          this.refreshList(); 
+          
+          // Sluit form
+          this.closeForm();
+        },
+        error: (err) => {
+          console.error('Database schrijf-fout:', err);
+          alert('Er ging iets mis bij het opslaan.');
+        }
+      });
+    }
+  private refreshList() {
+  this.prospectsService.getProspects().subscribe({
+    next: (res: any) => {
+      this.alleLijsten = res.data ?? res ?? [];
+      this.cdr.detectChanges();
+    }
+  });
+}
 }
