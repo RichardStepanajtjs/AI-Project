@@ -30,7 +30,7 @@ def main():
 
     pipeline.run()
 
-    schedule.every().day.at("18:00").do(pipeline.run)
+    schedule.every().day.at("03:00").do(pipeline.run)
 
     while True:
         schedule.run_pending()
