@@ -20,6 +20,25 @@
     </div>
   }
 
+  <!-- Gemeente dropdown menu -->
+    <div class="dropdown" [class.open]="locationDropdownOpen">
+      <button class="dropdown-trigger" (click)="locationDropdownOpen = !locationDropdownOpen">
+        {{ activeLocation || 'Gemeente' }}
+        <span class="icon">▾</span>
+      </button>
+      <div class="dropdown-menu">
+        @for (filter of locationFilters; track filter) {
+          <button
+            class="dropdown-item"
+            [class.active]="activeLocation === filter"
+            (click)="activeLocationChange.emit(filter); locationDropdownOpen = false">
+            {{ filter }}
+          </button>
+        }
+      </div>
+    </div>
+  
+
 <!-- searchbar -->
   @if (showSearch) {
     <div class="search-wrapper">

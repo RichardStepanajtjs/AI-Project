@@ -52,6 +52,27 @@ export class BusinessProfilesPage {
   get pageSize() { return this._pageSize; }
   set pageSize(v: number) { this._pageSize = v; this.resetPagination(); }
 
+  gemeenteFilters: string[] = [
+    'Alle gemeentes', 
+    'Antwerpen', 
+    'Brussel', 
+    'Gent', 
+    'Brugge', 
+    'Leuven', 
+    'Mechelen', 
+    'Aalst', 
+    'Kortrijk', 
+    'Hasselt', 
+    'Oostende', 
+    'Genk', 
+    'Roeselare', 
+    'Sint-Niklaas'
+  ];  
+  private _gemeente = 'Alle gemeentes';
+
+  get geselecteerdeGemeente() { return this._gemeente; }
+  set geselecteerdeGemeente(v: string) { this._gemeente = v; this.resetPagination(); }
+
   ngOnInit() {
     this.businessProfilesService.getAllBusinessProfiles().subscribe({
       next: (response: any) => {
@@ -72,36 +93,39 @@ export class BusinessProfilesPage {
 
   private computePage() {
     const filtered = this.businessProfiles
+      // Filter op Sector
       .filter(p => this._sector === 'Alle sectoren' || p.jobdomein === this._sector)
+      
+      // Filter op Gemeente
+      .filter(p => this._gemeente === 'Alle gemeentes' || p.gemeente === this._gemeente)
+      
+      // Filter op zoekterm
       .filter(p => {
-        // Geen zoekterm = laat alles zien
         if (!this._zoekterm) return true;
-
+        
         const term = this._zoekterm.toLowerCase();
-
-        // Zoeken op naam
+        
         const naamMatch = p.naam?.toLowerCase().includes(term);
-
-        // Zoeken op beschrijving
         const beschrijvingMatch = p.text?.toLowerCase().includes(term);
-
-        // Zoeken op technologien
         const technologieMatch = p.technologies?.some(tech => 
           tech.toLowerCase().includes(term)
         );
-
-        // Zoeken op domein
         const domeinMatch = p.jobdomein?.toLowerCase().includes(term);
 
         return naamMatch || beschrijvingMatch || technologieMatch || domeinMatch;
       });
 
+    // Pagination logica
     this.filteredCount = filtered.length;
     this.totalPages = Math.max(1, Math.ceil(filtered.length / this._pageSize));
-    if (this.currentPage > this.totalPages) this.currentPage = this.totalPages;
+    
+    if (this.currentPage > this.totalPages) {
+      this.currentPage = this.totalPages;
+    }
 
     const start = (this.currentPage - 1) * this._pageSize;
     const end = Math.min(start + this._pageSize, filtered.length);
+    
     this.pagedProfiles = filtered.slice(start, end);
     this.pageStart = filtered.length === 0 ? 0 : start + 1;
     this.pageEnd = end;

@@ -8,18 +8,26 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './filter-header.css',
 })
 export class FilterHeader {
+    // dropdown voor domeinen
     @Input() filters: string[] = [];
     @Input() activeFilter: string = '';
+    @Output() activeFilterChange = new EventEmitter<string>();
+
+    // dropdown voor gemeentes
+    @Input() locationFilters: string[] = [];
+    @Input() activeLocation: string = '';
+    @Output() activeLocationChange = new EventEmitter<string>();
+
     @Input() addLabel: string = '+ Add';
     @Input() searchTerm: string = '';
     @Input() searchPlaceholder: string = 'Zoeken...';
     @Input() showSearch: boolean = true;
     @Input() showAddTag: boolean = false;
-    @Output() activeFilterChange = new EventEmitter<string>();
     @Output() searchTermChange = new EventEmitter<string>();
     @Output() addTag = new EventEmitter<string>();
-
+    
     dropdownOpen = false;
+    locationDropdownOpen = false; // Voor gemeente dropdown
     tagValue = '';
 
     constructor(private el: ElementRef) {}
