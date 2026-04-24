@@ -12,7 +12,7 @@ export class FilterHeader {
     @Input() activeFilter: string = '';
     @Input() addLabel: string = '+ Add';
     @Input() searchTerm: string = '';
-    @Input() searchPlaceholder: string = 'Zoek op naam...';
+    @Input() searchPlaceholder: string = 'Zoeken...';
     @Input() showSearch: boolean = true;
     @Input() showAddTag: boolean = false;
     @Output() activeFilterChange = new EventEmitter<string>();

@@ -73,7 +73,28 @@ export class BusinessProfilesPage {
   private computePage() {
     const filtered = this.businessProfiles
       .filter(p => this._sector === 'Alle sectoren' || p.jobdomein === this._sector)
-      .filter(p => !this._zoekterm || p.naam.toLowerCase().includes(this._zoekterm.toLowerCase()));
+      .filter(p => {
+        // Geen zoekterm = laat alles zien
+        if (!this._zoekterm) return true;
+
+        const term = this._zoekterm.toLowerCase();
+
+        // Zoeken op naam
+        const naamMatch = p.naam?.toLowerCase().includes(term);
+
+        // Zoeken op beschrijving
+        const beschrijvingMatch = p.text?.toLowerCase().includes(term);
+
+        // Zoeken op technologien
+        const technologieMatch = p.technologies?.some(tech => 
+          tech.toLowerCase().includes(term)
+        );
+
+        // Zoeken op domein
+        const domeinMatch = p.jobdomein?.toLowerCase().includes(term);
+
+        return naamMatch || beschrijvingMatch || technologieMatch || domeinMatch;
+      });
 
     this.filteredCount = filtered.length;
     this.totalPages = Math.max(1, Math.ceil(filtered.length / this._pageSize));
