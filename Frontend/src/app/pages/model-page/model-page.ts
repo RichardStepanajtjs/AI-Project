@@ -1,6 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { PageHeader } from '../../page-components/page-header/page-header';
 import { FormsModule } from '@angular/forms';
+import { ModelsService } from '../../services/models/models-service';
+import { CommonModule } from '@angular/common';
+import { Model } from '../../models/model';
 
 @Component({
   selector: 'app-model-page',
@@ -8,26 +11,38 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './model-page.html',
   styleUrl: './model-page.css',
 })
-export class ModelPage {
+
+export class ModelPage implements OnInit {
   showScreen = false;
   trainingStarted = false;
+  versions: Model[] = [];
 
-  // TODO: te connecteren met de backend
-  versions = [
-    { version: 'v2.4.1', date: '1 mrt 2026', score: 84, f1: 0.79, active: true  },
-    { version: 'v2.4.0', date: '15 feb 2026', score: 81, f1: 0.75, active: false },
-    { version: 'v2.3.0', date: '3 jan 2026', score: 79, f1: 0.73, active: false },
-    { version: 'v2.2.0', date: '10 nov 2025', score: 76, f1: 0.70, active: false },
-  ];
+  constructor(private modelsService: ModelsService) {}
 
-  activate(selected: any) {
-    this.versions.forEach(v => v.active = false);
-    selected.active = true;
+    ngOnInit(): void {
+      this.loadModels();
+    }
+
+    loadModels(): void {
+      this.modelsService.getAllModels().subscribe({
+        next: (response) => {
+          this.versions = response.data;
+        },
+          error: (err) => console.error('Data ophalen mislukt', err)
+      });
+    }
+
+    activate(model: Model): void {
+      this.modelsService.activateModel(model.id.toString()).subscribe(() => {
+      this.loadModels();
+      });
+    }
+
+    startTraining(): void {
+      this.modelsService.createModel('Handmatige hertraining').subscribe(() => {
+        this.showScreen = false;
+        this.trainingStarted = true;
+        this.loadModels();
+      });
+    }
   }
-
-  startTraining() {
-    this.trainingStarted = true;
-    this.showScreen = false;
-    console.log('Hertraining gestart');
-  }
-}
