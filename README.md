@@ -1,7 +1,7 @@
 <div align="center">
 
 ![Downloads](https://img.shields.io/badge/Downloads-67-blue?style=flat&logo=github)
-[![Support](https://img.shields.io/badge/Support-Help%20Sokrates-orange?style=flat&logo=buy-me-a-coffee)](https://www.facebook.com/photo?fbid=147954622429123&set=a.107469846477601)
+[![Support](https://img.shields.io/badge/Support-Help%20Sokrates-orange?style=flat&logo=buy-me-a-coffee)](https://github.com/RichardStepanajtjs/AI-Project)
 ![Stars](https://img.shields.io/badge/Stars-67-yellow?style=flat&logo=github)
 ![GitHub issues](https://img.shields.io/github/issues/RichardStepanajtjs/AI-Project)
 
