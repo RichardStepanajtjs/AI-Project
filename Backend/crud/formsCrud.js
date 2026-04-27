@@ -1,15 +1,15 @@
 const pool = require('../db/connection');
 
-// Get all forms
+// Get all forms (without embedding data)
 const getAllForms = async () => {
-    const { rows } = await pool.query('SELECT * FROM forms ORDER BY created_at DESC');
+    const { rows } = await pool.query('SELECT id, partner_name, sector, description, technologies FROM forms ORDER BY created_at DESC');
     return rows;
 };
 
-// Get form by ID
+// Get form by ID (with embedding data)
 const getFormById = async (id) => {
     const { rows } = await pool.query('SELECT * FROM forms WHERE id = $1', [id]);
-    return rows[0];
+    return rows;
 };
 
 // Create a new form
@@ -26,7 +26,8 @@ const createForm = async (data) => {
         partner_name, 
         sector, 
         description, 
-        technologies, embedding
+        technologies,
+        embedding
     ]);
     
     return rows[0];

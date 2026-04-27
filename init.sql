@@ -81,6 +81,7 @@ CREATE TABLE IF NOT EXISTS models (
     metadata_pkl BYTEA NOT NULL,         
     is_active BOOLEAN DEFAULT FALSE,     
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    f1_score FLOAT4,
     description TEXT                  
 );
 
@@ -114,7 +115,7 @@ CREATE TABLE IF NOT EXISTS forms (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-INSERT INTO forms (partner_name, sector, technologies, description)
+'INSERT INTO forms (partner_name, sector, technologies, description)
 VALUES(
     'VDAB Innovatielab',
     'IT en Technologie',
