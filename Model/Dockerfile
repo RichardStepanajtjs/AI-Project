@@ -15,4 +15,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY *.py /app/
 
-CMD ["python", "training.py"]
+CMD sh -c "python training.py && python ranking.py && sleep infinity"

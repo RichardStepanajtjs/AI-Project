@@ -5,11 +5,10 @@ from datetime import datetime
 import requests
 import urllib3
 from preprocessing import fetch_data, format
-from setup import create_faiss_index
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-model_url = "https://nest.sokrates.traefik.me/models"
+model_url = "http://backend:3000/models"
 
 def train():
     raw_data = fetch_data("companies/embeddings")
@@ -34,7 +33,7 @@ def train():
     faiss.normalize_L2(company_vectors)
     d = company_vectors.shape[1]
     
-    index = create_faiss_index(d)
+    index = faiss.IndexFlatIP(d)
     index.add(company_vectors)
     
     chunk = faiss.serialize_index(index)
