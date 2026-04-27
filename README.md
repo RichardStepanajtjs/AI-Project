@@ -1,5 +1,10 @@
 <div align="center">
 
+![GitHub All Releases](https://img.shields.io/github/downloads/RichardStepanajtjs/AI-Project/total)
+[![Support](https://img.shields.io/badge/Support-Help%20Sokrates-orange?style=flat&logo=buy-me-a-coffee)](https://www.facebook.com/photo?fbid=147954622429123&set=a.107469846477601)
+[![GitHub stars](https://img.shields.io/github/stars/RichardStepanajtjs/AI-Project.svg?style=social&label=Star)](https://github.com/RichardStepanajtjs/AI-Project)
+![GitHub issues](https://img.shields.io/github/issues/RichardStepanajtjs/AI-Project)
+
 # Sokrates AI Project
 
 <img src="./Public/img/image_0.jpg" alt="Socrates Bust" width="300">
