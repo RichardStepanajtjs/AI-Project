@@ -5,11 +5,27 @@ from datetime import datetime
 import requests
 import urllib3
 from preprocessing import fetch_data, format
-from setup import create_faiss_index
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-model_url = "https://nest.sokrates.traefik.me/models"
+model_url = "http://backend:3000/models"
+
+def get_next_version_name():
+    try:
+        response = requests.get(model_url, verify=False)
+        response.raise_for_status()
+        
+        response_json = response.json()
+        models = response_json.get('data', []) if isinstance(response_json, dict) else response_json
+
+        if(len(models) == 0):
+            return "v1"
+        
+        next_num = len(models) + 1
+        return f"v{next_num}"
+    
+    except Exception as e:
+        print(f"{e}. Using date as version.")
 
 def train():
     raw_data = fetch_data("companies/embeddings")
@@ -34,7 +50,7 @@ def train():
     faiss.normalize_L2(company_vectors)
     d = company_vectors.shape[1]
     
-    index = create_faiss_index(d)
+    index = faiss.IndexFlatIP(d)
     index.add(company_vectors)
     
     chunk = faiss.serialize_index(index)
@@ -45,7 +61,7 @@ def train():
     index_b64 = base64.b64encode(index_bytes).decode('utf-8')
     metadata_b64 = base64.b64encode(metadata_bytes).decode('utf-8')
 
-    version_name = f"v-{datetime.now().strftime('%Y%m%d-%H%M')}"
+    version_name = get_next_version_name()
 
     payload = {
         "version_label": version_name,

@@ -16,9 +16,9 @@ export interface FormPayload {
 })
 export class FormsService {
   private http = inject(HttpClient);
-  private apiUrl = 'https://nest.sokrates.traefik.me';
+  private apiUrl = 'https://nest.sokrates.traefik.me/forms';
 
   createForm(data: FormPayload) {
-    return this.http.post(`${this.apiUrl}/forms`, data);
+    return this.http.post(`${this.apiUrl}`, data);
   }
 }

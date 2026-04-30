@@ -4,13 +4,17 @@
 	"name": "Ubuntu",
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
 	"build": { "dockerfile": "Dockerfile" },
-	"features": {},
-
+	
 	// Features to add to the dev container. More info: https://containers.dev/features.
-	// "features": {},
-
+	"features": {
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {
+			"version": "latest",
+			"enableNonRootDocker": "true",
+			"moby": "true"
+		}
+	},
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [],
+	"forwardPorts": [4200, 3000, 5050, 80, 443],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
 	// "postCreateCommand": "uname -a",
@@ -23,7 +27,8 @@
 				"repreng.csv",
 				"ckolkman.vscode-postgres",
 				"angular.ng-template",
-				"postman.postman-for-vscode"
+				"postman.postman-for-vscode",
+				"ms-azuretools.vscode-docker"
 			]
 		}
 	}

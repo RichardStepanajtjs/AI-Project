@@ -1,8 +1,8 @@
 const pool = require('../db/connection');
 
-// Get all models
+// Get all models without model data
 const getAllModels = async () => {
-    const { rows } = await pool.query('SELECT * FROM models ORDER BY created_at DESC');
+    const { rows } = await pool.query('SELECT id, version_label, description, is_active, created_at, f1_score FROM models ORDER BY created_at DESC');
     return rows;
 };
 
@@ -20,23 +20,24 @@ const getModelById = async (id) => {
 
 // Create a new model
 const createModel = async (data) => {
-    const { version_label, description, is_active, faiss_index, metadata_pkl } = data;
+    const { version_label, faiss_index, metadata_pkl, is_active, f1_score, description} = data;
 
     const faissBuffer = Buffer.from(faiss_index, 'base64');
     const metadataBuffer = Buffer.from(metadata_pkl, 'base64');
 
     const query = `
-        INSERT INTO models (version_label, description, is_active, faiss_index, metadata_pkl) 
-        VALUES ($1, $2, $3, $4, $5) 
-        RETURNING id, version_label, is_active, created_at, description;
+        INSERT INTO models (version_label, faiss_index, metadata_pkl, is_active, f1_score, description) 
+        VALUES ($1, $2, $3, $4, $5, $6) 
+        RETURNING id, version_label, is_active, f1_score, description, created_at;
     `;
     
     const { rows } = await pool.query(query, [
-        version_label, 
-        description, 
-        is_active, 
+        version_label,
         faissBuffer, 
-        metadataBuffer
+        metadataBuffer,  
+        is_active, 
+        f1_score,
+        description
     ]);
     
     return rows[0];
@@ -59,13 +60,17 @@ const updateModel = async (id, data) => {
         sets.push(`metadata_pkl = $${sets.length + 1}`); 
         values.push(data.metadata_pkl); 
     }
-    if (data.description !== undefined) { 
-        sets.push(`description = $${sets.length + 1}`); 
-        values.push(data.description); 
-    }
     if (data.is_active !== undefined) { 
         sets.push(`is_active = $${sets.length + 1}`); 
         values.push(data.is_active); 
+    }
+    if (data.f1_score !== undefined) { 
+        sets.push(`f1_score = $${sets.length + 1}`); 
+        values.push(data.f1_score); 
+    }
+    if (data.description !== undefined) { 
+        sets.push(`description = $${sets.length + 1}`); 
+        values.push(data.description); 
     }
 
     if (sets.length === 0) return null;

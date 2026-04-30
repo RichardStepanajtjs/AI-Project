@@ -6,25 +6,25 @@ import { inject, Injectable } from '@angular/core';
 })
 export class BusinessProfilesServices {
   private http = inject(HttpClient);
-  private apiUrl = 'https://nest.sokrates.traefik.me';
+  private apiUrl = 'https://nest.sokrates.traefik.me/companies';
 
   getAllBusinessProfiles() {
-    return this.http.get(`${this.apiUrl}/companies`);
+    return this.http.get(`${this.apiUrl}`);
   }
 
   createBusinessProfiles(data: any) {
-    return this.http.post(`${this.apiUrl}/companies`, data);
+    return this.http.post(`${this.apiUrl}`, data);
   }
 
   getBusinessProfileById(id: number) {
-    return this.http.get(`${this.apiUrl}/companies/${id}`);
+    return this.http.get(`${this.apiUrl}/${id}`);
   }
 
   updateBusinessProfile(id: number, data: any) {
-    return this.http.put(`${this.apiUrl}/companies/${id}`, data);
+    return this.http.put(`${this.apiUrl}/${id}`, data);
   }
 
   deleteBusinessProfile(id: number) {
-    return this.http.delete(`${this.apiUrl}/companies/${id}`);
+    return this.http.delete(`${this.apiUrl}/${id}`);
   }
 }
