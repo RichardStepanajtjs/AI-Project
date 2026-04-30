@@ -2,7 +2,7 @@ const pool = require('../db/connection');
 
 // Get all models without model data
 const getAllModels = async () => {
-    const { rows } = await pool.query('SELECT id, version_label, description, is_active, f1_score FROM models ORDER BY created_at DESC');
+    const { rows } = await pool.query('SELECT id, version_label, description, is_active, created_at, f1_score FROM models ORDER BY created_at DESC');
     return rows;
 };
 
@@ -28,7 +28,7 @@ const createModel = async (data) => {
     const query = `
         INSERT INTO models (version_label, faiss_index, metadata_pkl, is_active, f1_score, description) 
         VALUES ($1, $2, $3, $4, $5, $6) 
-        RETURNING id, version_label, is_active, created_at, description;
+        RETURNING id, version_label, is_active, f1_score, description, created_at;
     `;
     
     const { rows } = await pool.query(query, [

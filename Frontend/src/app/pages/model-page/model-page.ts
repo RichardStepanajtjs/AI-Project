@@ -1,13 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { PageHeader } from '../../page-components/page-header/page-header';
 import { FormsModule } from '@angular/forms';
 import { ModelsService } from '../../services/models/models-service';
+import { BusinessProfilesServices } from '../../services/business-profiles/business-profiles-service';
 import { CommonModule } from '@angular/common';
 import { Model } from '../../models/model';
 
 @Component({
   selector: 'app-model-page',
-  imports: [PageHeader, FormsModule],
+  imports: [PageHeader, FormsModule, CommonModule],
   templateUrl: './model-page.html',
   styleUrl: './model-page.css',
 })
@@ -16,10 +17,17 @@ export class ModelPage implements OnInit {
   showScreen = false;
   trainingStarted = false;
   versions: Model[] = [];
+  activeModel: Model | null = null;
+  totalBusinessProfiles: number = 0;
+  loading = true;
+
+  private businessService = inject(BusinessProfilesServices);
+  cdr = inject(ChangeDetectorRef);
 
   constructor(private modelsService: ModelsService) {}
 
     ngOnInit(): void {
+      this.loadProfiles();
       this.loadModels();
     }
 
@@ -27,8 +35,14 @@ export class ModelPage implements OnInit {
       this.modelsService.getAllModels().subscribe({
         next: (response) => {
           this.versions = response.data;
+          this.activeModel = this.versions.find(v => v.is_active) || null;
+          this.cdr.detectChanges();
+          this.checkDone();
         },
-          error: (err) => console.error('Data ophalen mislukt', err)
+          error: (err) => {
+          console.error('Models laden mislukt', err);
+          this.checkDone();
+        }
       });
     }
 
@@ -44,5 +58,26 @@ export class ModelPage implements OnInit {
         this.trainingStarted = true;
         this.loadModels();
       });
+    }
+
+    loadProfiles(){
+      this.businessService.getAllBusinessProfiles().subscribe({
+      next: (res: any) => {
+        this.totalBusinessProfiles = res?.count ?? 0;
+        this.checkDone();
+      },
+      error: (err) => {
+        console.error('Profielen laden mislukt', err);
+        this.checkDone();
+      }
+    });
+    }
+
+    private _doneCount = 0;
+    private checkDone() {
+      if (++this._doneCount >= 2) {
+          this.loading = false;
+          this.cdr.detectChanges();
+      }
     }
   }

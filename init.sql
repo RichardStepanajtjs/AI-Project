@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS users (
     naam VARCHAR(255),
     achternaam VARCHAR(255),
     status BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT (NOW() AT TIME ZONE 'Europe/Brussels')
 );
 
 INSERT INTO users (email, password_hash, role) 
@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS vacancies (
     beroepsprofiel_code VARCHAR(50),
     beroepsprofiel_label VARCHAR(255),
     vereisten JSONB,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT (NOW() AT TIME ZONE 'Europe/Brussels')
 );
 
 /* Company tabel (GH-43) */
@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS companies (
     technologies VARCHAR(50)[],
     text TEXT,
     embedding FLOAT4[],
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT (NOW() AT TIME ZONE 'Europe/Brussels')
 );
 
 INSERT INTO companies (naam, kbonummer, postcode, gemeente, landcode, email, telefoonnummer, jobdomein, text) -- GEEN ID want serial
@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS prospect_lists (
     naam VARCHAR(255) NOT NULL,
     jobdomein VARCHAR(100),
     company_ids INTEGER[] NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT (NOW() AT TIME ZONE 'Europe/Brussels')
 );
 
 INSERT INTO prospect_lists (user_id, naam, jobdomein, company_ids)
@@ -80,8 +80,8 @@ CREATE TABLE IF NOT EXISTS models (
     faiss_index BYTEA NOT NULL,          
     metadata_pkl BYTEA NOT NULL,         
     is_active BOOLEAN DEFAULT FALSE,     
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    f1_score FLOAT4,
+    created_at TIMESTAMP DEFAULT (NOW() AT TIME ZONE 'Europe/Brussels'),
+    f1_score FLOAT4 DEFAULT 0.0,
     description TEXT                  
 );
 
@@ -112,10 +112,10 @@ CREATE TABLE IF NOT EXISTS forms (
     technologies VARCHAR(50)[],
     description TEXT,
     embedding FLOAT4[],
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT (NOW() AT TIME ZONE 'Europe/Brussels')
 );
 
-'INSERT INTO forms (partner_name, sector, technologies, description)
+INSERT INTO forms (partner_name, sector, technologies, description)
 VALUES(
     'VDAB Innovatielab',
     'IT en Technologie',

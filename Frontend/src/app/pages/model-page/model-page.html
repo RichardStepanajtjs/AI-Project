@@ -5,19 +5,23 @@
   <div class="stats-grid">
     <div class="stat-card">
       <div class="stat-label">Actieve versie</div>
-      <div class="stat-value">v0</div>
+      <div class="stat-value">{{ activeModel?.version_label || 'Geen' }}</div>
     </div>
     <div class="stat-card">
-      <div class="stat-label">Gem. match-score</div>
+      <div class="stat-label">Match-score</div>
       <div class="stat-value">0</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">F1-Score</div>
-      <div class="stat-value">0</div>
+      <div class="stat-value">{{ activeModel?.f1_score ?? 0 }}</div>
     </div>
     <div class="stat-card">
-      <div class="stat-label">Aantal vacatures</div>
-      <div class="stat-value">0</div>
+      <div class="stat-label">Totaal Aantal bedrijfsprofielen</div>
+      @if (loading) {
+        <div class="stat-value skeleton"></div>
+      } @else {
+        <div class="stat-value">{{ totalBusinessProfiles }}</div>
+      }
     </div>
   </div>
 
@@ -44,7 +48,7 @@
         @for (v of versions; track v.id) {
           <tr>
             <td><strong>{{ v.version_label }}</strong></td>
-            <td>{{ v.created_at }}</td>
+            <td>{{ v.created_at | date:'d MMMM y' }}</td>
             <td>0%</td>
             <td>{{ v.f1_score }}</td>
             <td>{{ v.is_active ? '● Actief' : 'Archief' }}</td>
