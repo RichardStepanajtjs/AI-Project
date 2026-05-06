@@ -24,7 +24,7 @@ def search_best_matches(k=20, form_id=0):
     form_vector, form_metadata = format(raw_form_data)
 
     if len(form_vector) == 0:
-        print(f"Error: No embedding of form {form_id} found.")
+        print(f"Error: No embedding from form {form_id} found.")
         return 
     
     faiss.normalize_L2(form_vector)

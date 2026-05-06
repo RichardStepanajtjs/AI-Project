@@ -1,33 +1,83 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { PageHeader } from '../../page-components/page-header/page-header';
 import { FormsModule } from '@angular/forms';
+import { ModelsService } from '../../services/models/models-service';
+import { BusinessProfilesServices } from '../../services/business-profiles/business-profiles-service';
+import { CommonModule } from '@angular/common';
+import { Model } from '../../models/model';
 
 @Component({
   selector: 'app-model-page',
-  imports: [PageHeader, FormsModule],
+  imports: [PageHeader, FormsModule, CommonModule],
   templateUrl: './model-page.html',
   styleUrl: './model-page.css',
 })
-export class ModelPage {
+
+export class ModelPage implements OnInit {
   showScreen = false;
   trainingStarted = false;
+  versions: Model[] = [];
+  activeModel: Model | null = null;
+  totalBusinessProfiles: number = 0;
+  loading = true;
 
-  // TODO: te connecteren met de backend
-  versions = [
-    { version: 'v2.4.1', date: '1 mrt 2026', score: 84, f1: 0.79, active: true  },
-    { version: 'v2.4.0', date: '15 feb 2026', score: 81, f1: 0.75, active: false },
-    { version: 'v2.3.0', date: '3 jan 2026', score: 79, f1: 0.73, active: false },
-    { version: 'v2.2.0', date: '10 nov 2025', score: 76, f1: 0.70, active: false },
-  ];
+  private businessService = inject(BusinessProfilesServices);
+  cdr = inject(ChangeDetectorRef);
 
-  activate(selected: any) {
-    this.versions.forEach(v => v.active = false);
-    selected.active = true;
+  constructor(private modelsService: ModelsService) {}
+
+    ngOnInit(): void {
+      this.loadProfiles();
+      this.loadModels();
+    }
+
+    loadModels(): void {
+      this.modelsService.getAllModels().subscribe({
+        next: (response) => {
+          this.versions = response.data;
+          this.activeModel = this.versions.find(v => v.is_active) || null;
+          this.cdr.detectChanges();
+          this.checkDone();
+        },
+          error: (err) => {
+          console.error('Models laden mislukt', err);
+          this.checkDone();
+        }
+      });
+    }
+
+    activate(model: Model): void {
+      this.modelsService.activateModel(model.id.toString()).subscribe(() => {
+      this.loadModels();
+      });
+    }
+
+    startTraining(): void {
+      this.modelsService.createModel('Handmatige hertraining').subscribe(() => {
+        this.showScreen = false;
+        this.trainingStarted = true;
+        this.loadModels();
+      });
+    }
+
+    loadProfiles(){
+      this.businessService.getAllBusinessProfiles().subscribe({
+      next: (res: any) => {
+        this.totalBusinessProfiles = res?.count ?? 0;
+        this.checkDone();
+      },
+      error: (err) => {
+        console.error('Profielen laden mislukt', err);
+        this.checkDone();
+      }
+    });
+    }
+
+    private _doneCount = 0;
+    private checkDone() {
+      if (++this._doneCount >= 2) {
+          this.loading = false;
+          this.cdr.detectChanges();
+      }
+    }
   }
-
-  startTraining() {
-    this.trainingStarted = true;
-    this.showScreen = false;
-    console.log('Hertraining gestart');
-  }
-}

@@ -5,19 +5,23 @@
   <div class="stats-grid">
     <div class="stat-card">
       <div class="stat-label">Actieve versie</div>
-      <div class="stat-value">v2.4.1</div>
+      <div class="stat-value">{{ activeModel?.version_label || 'Geen' }}</div>
     </div>
     <div class="stat-card">
-      <div class="stat-label">Gem. match-score</div>
-      <div class="stat-value">84%</div>
+      <div class="stat-label">Match-score</div>
+      <div class="stat-value">0</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">F1-Score</div>
-      <div class="stat-value">0.79</div>
+      <div class="stat-value">{{ activeModel?.f1_score ?? 0 }}</div>
     </div>
     <div class="stat-card">
-      <div class="stat-label">Aantal vacatures</div>
-      <div class="stat-value">47.2k</div>
+      <div class="stat-label">Totaal Aantal bedrijfsprofielen</div>
+      @if (loading) {
+        <div class="stat-value skeleton"></div>
+      } @else {
+        <div class="stat-value">{{ totalBusinessProfiles }}</div>
+      }
     </div>
   </div>
 
@@ -41,15 +45,15 @@
         </tr>
       </thead>
       <tbody>
-        @for (v of versions; track v.version) {
+        @for (v of versions; track v.id) {
           <tr>
-            <td><strong>{{ v.version }}</strong></td>
-            <td>{{ v.date }}</td>
-            <td>{{ v.score }}%</td>
-            <td>{{ v.f1 }}</td>
-            <td>{{ v.active ? '● Actief' : 'Archief' }}</td>
+            <td><strong>{{ v.version_label }}</strong></td>
+            <td>{{ v.created_at | date:'d MMMM y' }}</td>
+            <td>0%</td>
+            <td>{{ v.f1_score }}</td>
+            <td>{{ v.is_active ? '● Actief' : 'Archief' }}</td>
             <td>
-              @if (!v.active) {
+              @if (!v.is_active) {
                 <button (click)="activate(v)">Activeer</button>
               }
             </td>

@@ -3,6 +3,11 @@ services:
     build: ./Frontend
     container_name: frontend
     restart: unless-stopped
+    # Alleen voor development, in productie zou je dit moeten verwijderen en een statische build gebruiken
+    volumes:
+      - ./Frontend:/Frontend             # Koppelt lokale code aan de container
+      - /Frontend/node_modules           # Zorgt dat de lokale node_modules de container niet overschrijven
+
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.frontend.rule=Host(`sokrates.traefik.me`)"
@@ -36,7 +41,6 @@ services:
     image: postgres:16-alpine
     container_name: database
     restart: unless-stopped
-    # Dit is om te controleren of de database goed werkt.
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U data_user -d data_inventory"]
       interval: 10s
@@ -69,57 +73,57 @@ services:
       - "traefik.http.routers.pgadmin.tls=true"
       - "traefik.http.services.pgadmin.loadbalancer.server.port=80"
 
-  python_container:
-    build: ./Scripts
-    container_name: python_container
-    restart: unless-stopped
-    depends_on:
-      database:
-        condition: service_healthy
-      ollama_pull:
-        condition: service_completed_successfully
-    networks:
-      - backend
-      - api
-    env_file: Env/api_keys.env
+  # python_container:
+  #   build: ./Scripts
+  #   container_name: python_container
+  #   restart: unless-stopped
+  #   depends_on:
+  #     database:
+  #       condition: service_healthy
+  #     ollama_pull:
+  #       condition: service_completed_successfully
+  #   networks:
+  #     - backend
+  #     - api
+  #   env_file: Env/api_keys.env
 
-  ollama:
-    image: ollama/ollama
-    volumes:
-      - ollama_data:/root/.ollama
-    restart: unless-stopped
-    networks:
-      - backend
-      - api
-    healthcheck:
-      test: ["CMD", "ollama", "list"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
-
-  ollama_pull:
-    image: ollama/ollama
-    volumes:
-      - ollama_data:/root/.ollama
-    entrypoint: ["ollama"]
-    command: ["pull", "qwen2.5:1.5b"]
-    environment:
-      - OLLAMA_HOST=http://ollama:11434
-    env_file: Env/api_keys.env
-    depends_on:
-      ollama:
-        condition: service_healthy
-    networks:
-      - backend
-
-  #ai_model:
-  #  build: ./Model
-  #  container_name: ai_model
-  #  depends_on:
-  #    - backend 
+  # ollama:
+  #  image: ollama/ollama
+  #  volumes:
+  #    - ollama_data:/root/.ollama
+  #  restart: unless-stopped
   #  networks:
   #    - backend
+  #    - api
+  #  healthcheck:
+  #    test: ["CMD", "ollama", "list"]
+  #    interval: 10s
+  #    timeout: 5s
+  #    retries: 5
+  #    start_period: 10s
+
+  # ollama_pull:
+  #   image: ollama/ollama
+  #   volumes:
+  #     - ollama_data:/root/.ollama
+  #   entrypoint: ["ollama"]
+  #   command: ["pull", "qwen2.5:1.5b"]
+  #   environment:
+  #     - OLLAMA_HOST=http://ollama:11434
+  #   env_file: Env/api_keys.env
+  #   depends_on:
+  #     ollama:
+  #       condition: service_healthy
+  #   networks:
+  #     - backend
+
+  ai_model:
+    build: ./Model
+    container_name: ai_model
+    depends_on:
+      - backend 
+    networks:
+      - backend
 
 networks:
   gateway:
