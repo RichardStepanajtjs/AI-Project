@@ -13,11 +13,6 @@ export class FilterHeader {
     @Input() activeFilter: string = '';
     @Output() activeFilterChange = new EventEmitter<string>();
 
-    // dropdown voor gemeentes
-    @Input() locationFilters: string[] = [];
-    @Input() activeLocation: string = '';
-    @Output() activeLocationChange = new EventEmitter<string>();
-
     @Input() addLabel: string = '+ Add';
     @Input() searchTerm: string = '';
     @Input() searchPlaceholder: string = 'Zoeken...';
@@ -27,7 +22,6 @@ export class FilterHeader {
     @Output() addTag = new EventEmitter<string>();
     
     dropdownOpen = false;
-    locationDropdownOpen = false; // Voor gemeente dropdown
     tagValue = '';
 
     constructor(private el: ElementRef) {}

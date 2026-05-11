@@ -39,8 +39,8 @@ export class ProspectsPage {
   zoekterm = '';
 
   form = this.fb.group({
-    productName: [''],
-    partnerName: [''],
+    productName: ['', Validators.required],
+    partnerName: ['', Validators.required],
     sector: ['', Validators.required],
     description: [''],
     targetGroup: [''],

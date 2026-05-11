@@ -45,4 +45,4 @@ services:
 
 networks:
   gateway:
-    external: true
+    name: gateway
