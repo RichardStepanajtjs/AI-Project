@@ -43,6 +43,15 @@
   <div class="card">
     <div class="card-header">
       <span>Gebruikers</span>
+      <div class="search-wrapper">
+        <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input 
+          type="text" 
+          placeholder="Zoeken..." 
+          [(ngModel)]="searchTerm"
+          class="search-input"
+        />
+      </div>
       <button class="btn-add" (click)="showScreen = true">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         Nieuwe gebruiker
@@ -51,17 +60,32 @@
     <table>
       <thead>
         <tr>
-          <th>Email</th>
-          <th>Rol</th>
-          <th>Status</th>
+          <th (click)="sortUsers('email')" style="cursor: pointer;">
+            Email 
+            @if (currentSortKey === 'email') {
+              <span>{{ isAscending ? '↑' : '↓' }}</span>
+            }
+          </th>
+          <th (click)="sortUsers('role')" style="cursor: pointer;">
+            Rol 
+            @if (currentSortKey === 'role') {
+              <span>{{ isAscending ? '↑' : '↓' }}</span>
+            }
+          </th>
+          <th (click)="sortUsers('active')" style="cursor: pointer;">
+            Status 
+            @if (currentSortKey === 'active') {
+              <span>{{ isAscending ? '↑' : '↓' }}</span>
+            }
+          </th>
           <th>Acties</th>
         </tr>
       </thead>
       <tbody>
-        @for (user of users; track user.email) {
+        @for (user of filteredUsers; track user.email) {
           <tr class="clickable-row" (click)="openDetail(user)">
             <td>{{ user.email }}</td>
-            <td><span class="role-pill" [class.admin]="user.role?.toLowerCase() === 'admin'">{{ user.role }}</span></td>
+            <td><span class="role-pill" [class.admin]="user.role.toLowerCase() === 'admin'">{{ user.role }}</span></td>
             <td (click)="$event.stopPropagation()">
               <button class="status-badge"
                 [class.status-active]="user.active !== false"
@@ -142,7 +166,7 @@
           <div>
             <div class="detail-email">{{ selectedUser.email }}</div>
             <div class="detail-meta">
-              <span class="role-pill" [class.admin]="selectedUser.role?.toLowerCase() === 'admin'">{{ selectedUser.role }}</span>
+              <span class="role-pill" [class.admin]="selectedUser.role.toLowerCase() === 'admin'">{{ selectedUser.role }}</span>
               <button class="status-badge"
                 [class.status-active]="selectedUser.active !== false"
                 [class.status-inactive]="selectedUser.active === false"
@@ -204,7 +228,7 @@
           </div>
           <div class="form-group">
             <label>Rol</label>
-            @if (selectedUser?.role?.toLowerCase() === 'admin') {
+            @if (selectedUser.role.toLowerCase() === 'admin') {
               <input type="text" [value]="editData.role" disabled class="input-disabled" title="De rol van een admin kan niet gewijzigd worden"/>
               <span class="field-note">De rol van een admin kan niet worden gewijzigd.</span>
             } @else {

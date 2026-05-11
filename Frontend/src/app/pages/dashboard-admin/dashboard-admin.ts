@@ -23,15 +23,30 @@ export class DashboardAdmin {
   usersService = inject(UsersService);
   router = inject(Router);
   cdr = inject(ChangeDetectorRef);
-
+  
   users: User[] = [];
   new_user = {} as User;
   selectedUser: User | null = null;
-
+  
   aantal_gebruikers = 0;
   aantal_admins = 0;
   aantal_actieve = 0;
+  
+  currentSortKey: string = '';
+  searchTerm: string = '';
+  isAscending: boolean = true;
 
+  get filteredUsers() {
+    const search = this.searchTerm.toLowerCase().trim();
+    
+    return this.users.filter(user => {
+      const emailMatch = user.email.toLowerCase().includes(search);
+      // const nameMatch = user.name ? user.name.toLowerCase().includes(search) : false;
+      
+      return emailMatch /*|| nameMatch*/;
+    });
+  }
+  
   ngOnInit() {
     this.usersService.getAllUsers().subscribe({
       next: (response: any) => {
@@ -180,4 +195,31 @@ export class DashboardAdmin {
       }
     });
   }
+
+  sortUsers(key: string) {
+    if (this.currentSortKey === key) {
+      this.isAscending = !this.isAscending;
+    } else {
+      this.currentSortKey = key;
+      this.isAscending = true;
+    }
+
+    this.users.sort((a: any, b: any) => {
+      let valA = a[key];
+      let valB = b[key];
+
+      if (key === 'active') {
+        valA = valA ? 1 : 0;
+        valB = valB ? 1 : 0;
+      } else {
+        valA = valA?.toString().toLowerCase();
+        valB = valB?.toString().toLowerCase();
+      }
+
+      if (valA < valB) return this.isAscending ? -1 : 1;
+      if (valA > valB) return this.isAscending ? 1 : -1;
+      return 0;
+    });
+  }
+  
 }
