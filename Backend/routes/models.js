@@ -7,7 +7,8 @@ const {
     createModel,
     updateModel,
     deleteModel,
-    setModelActive
+    setModelActive,
+    trainModel
 } = require("../crud/modelsCrud");
 
 // MODELS ROUTES
@@ -195,6 +196,26 @@ router.patch("/:id/activate", async (req, res) => {
         res.status(500).json({
             success: false,
             message: "Error activating model",
+            error: error.message,
+        });
+    }
+});
+
+router.post("/train", async (req, res) => {
+    try {
+        trainModel()
+            .then(() => console.log("Training finished in the background"))
+            .catch((err) => console.error("Error during training:", err));
+
+        res.status(202).json({
+            success: true,
+            message: "Training process started successfully in the background",
+        });
+    } catch (error) {
+        console.error("Error starting training:", error);
+        res.status(500).json({
+            success: false,
+            message: "Error starting training",
             error: error.message,
         });
     }

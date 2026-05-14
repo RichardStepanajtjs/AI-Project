@@ -81,6 +81,7 @@ app.listen(port, () => {
   console.log('  GET    /models/active');
   console.log('  GET    /models/:id');
   console.log('  POST   /models');
+  console.log('  POST   /models/train');
   console.log('  PUT    /models/:id');
   console.log('  PATCH  /models/:id/activate');
   console.log('  DELETE /models/:id');
