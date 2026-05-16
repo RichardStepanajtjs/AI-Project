@@ -53,12 +53,20 @@ export class ModelPage implements OnInit {
     }
 
     startTraining(): void {
-      this.modelsService.createModel('Handmatige hertraining').subscribe(() => {
+    this.modelsService.trainModel().subscribe({
+      next: (response) => {
         this.showScreen = false;
         this.trainingStarted = true;
+        console.log('Training gestart:', response.message);
         this.loadModels();
-      });
-    }
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Er is iets misgegaan bij het starten van de training:', err);
+        this.showScreen = false;
+      }
+    });
+  }
 
     loadProfiles(){
       this.businessService.getAllBusinessProfiles().subscribe({
