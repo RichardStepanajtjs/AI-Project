@@ -1,71 +1,82 @@
-from sqlalchemy import MetaData, Table
-from sqlalchemy.dialects.postgresql import insert
-
+import requests
 
 class Database:
-    def __init__(self, engine):
-        self.engine = engine
-        metadata = MetaData()
-        self.vacatures_tabel = Table("vacancies", metadata, autoload_with=engine)
-        self.bedrijfsprofielen_tabel = Table("companies", metadata, autoload_with=engine)
+    def __init__(self, base_url: str):
+        self.base_url = base_url.rstrip("/")
 
     def save_vacatures(self, vacatures):
-        with self.engine.connect() as conn:
-            for v in vacatures:
-                row = {
-                    "vdab_referentie": v.get("vacatureReferentie", {}).get("vdabReferentie"),
-                    "interne_referentie": v.get("vacatureReferentie", {}).get("interneReferentie"),
-                    "kbo_nummer": v.get("leverancier", {}).get("kboNummer"),
-                    "leverancier_naam": v.get("leverancier", {}).get("naam"),
-                    "leverancier_type": v.get("leverancier", {}).get("type"),
-                    "postcode": v.get("tewerkstellingsadres", {}).get("postcode"),
-                    "gemeente": v.get("tewerkstellingsadres", {}).get("gemeente"),
-                    "land_code": v.get("tewerkstellingsadres", {}).get("landCode"),
-                    "beroepsprofiel_code": v.get("functie", {}).get("beroepsprofiel", {}).get("code"),
-                    "beroepsprofiel_label": v.get("functie", {}).get("beroepsprofiel", {}).get("label"),
-                    "vereisten": [x.get("label", "") for x in v.get("profiel", {}).get("vereisten", [])],
-                }
-                try:
-                    conn.execute(
-                        insert(self.vacatures_tabel)
-                        .values(row)
-                        .on_conflict_do_nothing(index_elements=["interne_referentie"])
-                    )
-                    conn.commit()
-
-                except Exception as e:
-                    print(f"Database error (vacature): {e}")
-                    conn.rollback()
+        for v in vacatures:
+            interne_ref = v.get("vacatureReferentie", {}).get("interneReferentie", "?")
+            try:
+                response = requests.post(
+                    f"{self.base_url}/vacancies",
+                    json=v,
+                    timeout=10,
+                )
+                if response.status_code == 409:
+                    # Duplicate interne_referentie: overslaan (equivalent aan ON CONFLICT DO NOTHING)
+                    continue
+                response.raise_for_status()
+            except requests.HTTPError as e:
+                print(f"Error saving vacancy {interne_ref}: {e}")
+            except requests.RequestException as e:
+                print(f"Network error saving vacancy {interne_ref}: {e}")
 
     def save_profiel(self, profiel):
-        with self.engine.connect() as conn:
-            try:
-                row = {
-                    "kbonummer": profiel["kbo_nummer"],
-                    "naam": profiel["naam"],
-                    "postcode": profiel["postcode"],
-                    "gemeente": profiel["gemeente"],
-                    "jobdomein": profiel["jobdomein"],
-                    "technologies": profiel["technologies"],
-                    "text": profiel["text"],
-                    "embedding": profiel["embedding"],
-                }
-                conn.execute(
-                    insert(self.bedrijfsprofielen_tabel)
-                    .values(row)
-                    .on_conflict_do_update(
-                        index_elements=["kbonummer"],
-                        set_={
-                            "naam": row["naam"],
-                            "jobdomein": row["jobdomein"],
-                            "technologies": row["technologies"],
-                            "text": row["text"],
-                            "embedding": row["embedding"],
-                        }
-                    )
-                )
-                conn.commit()
-                print(f"Saved: {profiel['naam']}")
-            except Exception as e:
-                print(f"[Database error (profiel) {profiel['kbo_nummer']}]: {e}")
-                conn.rollback()
+        payload = {
+            "kbonummer": profiel["kbo_nummer"],
+            "naam": profiel["naam"],
+            "postcode": profiel["postcode"],
+            "gemeente": profiel["gemeente"],
+            "jobdomein": profiel["jobdomein"],
+            "technologies": profiel["technologies"],
+            "text": profiel["text"],
+            "embedding": profiel["embedding"],
+        }
+        try:
+            response = requests.post(
+                f"{self.base_url}/companies",
+                json=payload,
+                timeout=10,
+            )
+
+            if response.status_code == 409:
+                # Duplicate kbonummer: bestaand bedrijf opzoeken en updaten
+                # (equivalent aan ON CONFLICT DO UPDATE)
+                self.update_existing_company(profiel["kbo_nummer"], payload)
+                return
+
+            response.raise_for_status()
+            print(f"Saved: {profiel['naam']}")
+
+        except requests.HTTPError as e:
+            print(f"[Database error (profiel) {profiel['kbo_nummer']}]: {e}")
+        except requests.RequestException as e:
+            print(f"[Network error (profiel) {profiel['kbo_nummer']}]: {e}")
+
+    def update_existing_company(self, kbonummer: str, payload: dict):
+        try:
+            resp = requests.get(f"{self.base_url}/companies", timeout=10)
+            resp.raise_for_status()
+            companies = resp.json().get("data", [])
+
+            existing = next(
+                (c for c in companies if c.get("kbonummer") == kbonummer),
+                None,
+            )
+            if existing is None:
+                print(f"[Warning] Conflict maar bedrijf niet gevonden: {kbonummer}")
+                return
+
+            put_resp = requests.put(
+                f"{self.base_url}/companies/{existing['id']}",
+                json=payload,
+                timeout=10,
+            )
+            put_resp.raise_for_status()
+            print(f"Updated: {payload['naam']}")
+
+        except requests.HTTPError as e:
+            print(f"[Database error (update profiel) {kbonummer}]: {e}")
+        except requests.RequestException as e:
+            print(f"[Network error (update profiel) {kbonummer}]: {e}")

@@ -32,23 +32,23 @@ const createVacancy = async (data) => {
   const beroepsprofielCode = data.functie?.beroepsprofiel?.code;
   const beroepsprofielLabel = data.functie?.beroepsprofiel?.label;
   const vereisten = data.profiel?.vereisten || [];
-  const { text, embedding } = data;
-  
+
+
   if (!interneReferentie) {
     throw new Error('interne_referentie (vacatureReferentie.interneReferentie) is required');
   }
-  
+
   const result = await pool.query(
     `INSERT INTO vacancies 
       (interne_referentie, vdab_referentie, kbo_nummer, leverancier_naam, leverancier_type, 
-       postcode, gemeente, land_code, beroepsprofiel_code, beroepsprofiel_label, vereisten, text, embedding) 
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) 
+       postcode, gemeente, land_code, beroepsprofiel_code, beroepsprofiel_label, vereisten) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) 
       RETURNING *`,
-    [interneReferentie, vdabReferentie, kboNummer, leverancierNaam, leverancierType, 
-     postcode, gemeente, landCode, beroepsprofielCode, beroepsprofielLabel, 
-     JSON.stringify(vereisten), text, embedding]
+    [interneReferentie, vdabReferentie, kboNummer, leverancierNaam, leverancierType,
+     postcode, gemeente, landCode, beroepsprofielCode, beroepsprofielLabel,
+     JSON.stringify(vereisten)]
   );
-  
+
   return result.rows[0];
 };
 
@@ -64,8 +64,7 @@ const updateVacancy = async (id, data) => {
   let paramCount = 1;
 
   const updateData = {};
-  
-  // Handle nested structure
+
   if (data.vacatureReferentie?.interneReferentie !== undefined) {
     updateData.interne_referentie = data.vacatureReferentie.interneReferentie;
   }
@@ -99,24 +98,17 @@ const updateVacancy = async (id, data) => {
   if (data.profiel?.vereisten !== undefined) {
     updateData.vereisten = JSON.stringify(data.profiel.vereisten);
   }
-  if (data.text !== undefined) {
-    updateData.text = data.text;
-  }
-  if (data.embedding !== undefined) {
-    updateData.embedding = data.embedding;
-  }
 
-  const allowedFields = ['interne_referentie', 'vdab_referentie', 'kbo_nummer', 'leverancier_naam', 
-                         'leverancier_type', 'postcode', 'gemeente', 'land_code', 
-                         'beroepsprofiel_code', 'beroepsprofiel_label', 'vereisten', 'text', 'embedding'];
-  
+  const allowedFields = ['interne_referentie', 'vdab_referentie', 'kbo_nummer', 'leverancier_naam',
+                         'leverancier_type', 'postcode', 'gemeente', 'land_code',
+                         'beroepsprofiel_code', 'beroepsprofiel_label', 'vereisten'];
+
   allowedFields.forEach(field => {
     if (data[field] !== undefined && updateData[field] === undefined) {
       updateData[field] = data[field];
     }
   });
 
-  // Build the query
   Object.entries(updateData).forEach(([field, value]) => {
     updateQuery += `${field} = $${paramCount}, `;
     updateValues.push(value);
@@ -141,11 +133,11 @@ const deleteVacancy = async (id) => {
     'DELETE FROM vacancies WHERE id = $1 RETURNING id, interne_referentie, leverancier_naam',
     [id]
   );
-  
+
   if (result.rows.length === 0) {
     throw new Error('Vacancy not found');
   }
-  
+
   return result.rows[0];
 };
 
