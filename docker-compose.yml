@@ -7,7 +7,6 @@ services:
     volumes:
       - ./Frontend:/Frontend             # Koppelt lokale code aan de container
       - /Frontend/node_modules           # Zorgt dat de lokale node_modules de container niet overschrijven
-
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.frontend.rule=Host(`sokrates.traefik.me`)"
@@ -73,49 +72,51 @@ services:
       - "traefik.http.routers.pgadmin.tls=true"
       - "traefik.http.services.pgadmin.loadbalancer.server.port=80"
 
-  # python_container:
-  #   build: ./Scripts
-  #   container_name: python_container
-  #   restart: unless-stopped
-  #   depends_on:
-  #     database:
-  #       condition: service_healthy
-  #     ollama_pull:
-  #       condition: service_completed_successfully
-  #   networks:
-  #     - backend
-  #     - api
-  #   env_file: Env/api_keys.env
+  python_container:
+    build: ./Scripts
+    container_name: python_container
+    restart: unless-stopped
+    depends_on:
+      database:
+        condition: service_healthy
+      ollama_pull:
+        condition: service_completed_successfully
+      backend:
+        condition: service_started
+    networks:
+      - backend
+      - api
+    env_file: Env/api_keys.env
 
-  # ollama:
-  #  image: ollama/ollama
-  #  volumes:
-  #    - ollama_data:/root/.ollama
-  #  restart: unless-stopped
-  #  networks:
-  #    - backend
-  #    - api
-  #  healthcheck:
-  #    test: ["CMD", "ollama", "list"]
-  #    interval: 10s
-  #    timeout: 5s
-  #    retries: 5
-  #    start_period: 10s
+  ollama:
+   image: ollama/ollama
+   volumes:
+     - ollama_data:/root/.ollama
+   restart: unless-stopped
+   networks:
+     - backend
+     - api
+   healthcheck:
+     test: ["CMD", "ollama", "list"]
+     interval: 10s
+     timeout: 5s
+     retries: 5
+     start_period: 10s
 
-  # ollama_pull:
-  #   image: ollama/ollama
-  #   volumes:
-  #     - ollama_data:/root/.ollama
-  #   entrypoint: ["ollama"]
-  #   command: ["pull", "qwen2.5:1.5b"]
-  #   environment:
-  #     - OLLAMA_HOST=http://ollama:11434
-  #   env_file: Env/api_keys.env
-  #   depends_on:
-  #     ollama:
-  #       condition: service_healthy
-  #   networks:
-  #     - backend
+  ollama_pull:
+    image: ollama/ollama
+    volumes:
+      - ollama_data:/root/.ollama
+    entrypoint: ["ollama"]
+    command: ["pull", "qwen2.5:1.5b"]
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+    env_file: Env/api_keys.env
+    depends_on:
+      ollama:
+        condition: service_healthy
+    networks:
+      - backend
 
   ai_model:
     build: ./Model

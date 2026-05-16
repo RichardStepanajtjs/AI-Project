@@ -94,3 +94,21 @@ CREATE TABLE IF NOT EXISTS forms (
     embedding FLOAT4[],
     created_at TIMESTAMP DEFAULT (NOW() AT TIME ZONE 'Europe/Brussels')
 );
+
+/* KBO tabel */
+CREATE TABLE IF NOT EXISTS kbo_companies (
+    id SERIAL PRIMARY KEY,
+    enterprise_number VARCHAR(20) UNIQUE NOT NULL,
+    naam VARCHAR(255),
+    juridical_form VARCHAR(20),
+    start_date VARCHAR(20),
+    postcode VARCHAR(10),
+    gemeente VARCHAR(100),
+    straat VARCHAR(255),
+    huisnummer VARCHAR(20),
+    email VARCHAR(255),
+    telefoonnummer VARCHAR(50),
+    nace_main VARCHAR(10),
+    nace_omschrijving VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
