@@ -89,7 +89,9 @@ export class BusinessProfilesPage {
         );
         const domeinMatch = p.jobdomein?.toLowerCase().includes(term);
 
-        return naamMatch || beschrijvingMatch || technologieMatch || domeinMatch;
+        const gemeenteMatch = p.gemeente?.toLowerCase().includes(term);
+
+        return naamMatch || beschrijvingMatch || technologieMatch || domeinMatch || gemeenteMatch;
       });
 
     // Pagination logica

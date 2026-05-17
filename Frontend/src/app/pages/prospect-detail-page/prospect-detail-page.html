@@ -35,6 +35,7 @@
               <path d="M3 6h18M7 12h10M11 18h2"/>
             </svg>
             <select [(ngModel)]="sortOrder">
+              <option value="manual">Handmatig / Eigen volgorde</option>
               <option value="accuracy-desc">Accuracy: hoog → laag</option>
               <option value="accuracy-asc">Accuracy: laag → hoog</option>
               <option value="name-asc">Naam: A → Z</option>
@@ -45,8 +46,22 @@
 
         @if (sortedProfiles.length) {
           <div class="profiles-list">
-            @for (p of sortedProfiles; track p.kbonummer ?? p.id ?? $index) {
-              <div class="profile-card">
+            @for (p of sortedProfiles; track p.kbonummer ?? p.id ?? $index; let i = $index) {
+              <div class="profile-card"
+                   draggable="true"
+                   (dragstart)="onDragStart(i)"
+                   (dragover)="onDragOver($event)"
+                   (drop)="onDrop(i, $event)"
+                   [style.opacity]="draggedIndex === i ? '0.5' : '1'"
+                   style="cursor: grab;">
+                
+                <div style="display: flex; align-items: center; margin-right: 12px; color: #9ca3af;">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/>
+                    <circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/>
+                  </svg>
+                </div>
+
                 <div class="p-avatar">{{ (p.naam ?? p.name ?? '?').charAt(0).toUpperCase() }}</div>
                 <div class="p-info">
                   <p class="p-name">{{ p.naam ?? p.name }}</p>
