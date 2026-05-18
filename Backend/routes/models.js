@@ -17,7 +17,7 @@ const {
 router.get("/", async (req, res) => {
     try {
         const models = await getAllModels();
-        res.json({
+        res.status(200).json({
             success: true,
             data: models,
             count: models.length,

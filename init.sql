@@ -47,7 +47,8 @@ CREATE TABLE IF NOT EXISTS companies (
 /* Prospectlist tabel (GH-46) */
 CREATE TABLE IF NOT EXISTS prospect_lists (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER NOT NULL,
+    user_id INT REFERENCES users(id) ON DELETE CASCADE,
+    form_id INT REFERENCES forms(id) ON DELETE CASCADE,
     naam VARCHAR(255) NOT NULL,
     jobdomein VARCHAR(100),
     company_ids INTEGER[] NOT NULL,
@@ -87,6 +88,7 @@ EXECUTE FUNCTION set_single_active_model();
 /* Form Tabel (GH-52) */
 CREATE TABLE IF NOT EXISTS forms (
     id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id) ON DELETE CASCADE,
     partner_name VARCHAR(255) NOT NULL,
     sector VARCHAR(100),
     technologies VARCHAR(50)[],
@@ -95,6 +97,12 @@ CREATE TABLE IF NOT EXISTS forms (
     created_at TIMESTAMP DEFAULT (NOW() AT TIME ZONE 'Europe/Brussels')
 );
 
+/* Test Data Tabel (GH-63) */
+CREATE TABLE IF NOT EXISTS test_data (
+    id SERIAL PRIMARY KEY,
+    prospect_list_id FOREIGN KEY (id) REFERENCES prospect_lists(id) ON DELETE CASCADE,
+    created_at TIMESTAMP DEFAULT (NOW() AT TIME ZONE 'Europe/Brussels')
+);
 /* KBO tabel */
 CREATE TABLE IF NOT EXISTS kbo_companies (
     id SERIAL PRIMARY KEY,

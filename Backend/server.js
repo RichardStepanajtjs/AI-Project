@@ -103,6 +103,13 @@ app.listen(port, () => {
   console.log('  POST   /prospects');
   console.log('  PUT    /prospects/:id');
   console.log('  DELETE /prospects/:id');
+
+  console.log('Test Data:');
+  console.log('  GET    /testdata');
+  console.log('  GET    /testdata/:id');
+  console.log('  POST   /testdata');
+  console.log('  PUT    /testdata/:id');
+  console.log('  DELETE /testdata/:id');
   
   console.log('KBO Companies:');
   console.log('  GET    /kbo-companies');
