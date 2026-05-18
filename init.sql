@@ -128,7 +128,6 @@ VALUES(
 /* Test Data Tabel (GH-63) */
 CREATE TABLE IF NOT EXISTS test_data (
     id SERIAL PRIMARY KEY,
-    form_id FOREIGN KEY (id) REFERENCES forms(id) ON DELETE CASCADE,
     prospect_list_id FOREIGN KEY (id) REFERENCES prospect_lists(id) ON DELETE CASCADE,
     created_at TIMESTAMP DEFAULT (NOW() AT TIME ZONE 'Europe/Brussels')
 );

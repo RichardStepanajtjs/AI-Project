@@ -7,7 +7,8 @@ const {
     createModel,
     updateModel,
     deleteModel,
-    setModelActive
+    setModelActive,
+    trainModel
 } = require("../crud/modelsCrud");
 
 // MODELS ROUTES
@@ -16,7 +17,7 @@ const {
 router.get("/", async (req, res) => {
     try {
         const models = await getAllModels();
-        res.json({
+        res.status(200).json({
             success: true,
             data: models,
             count: models.length,
@@ -197,6 +198,20 @@ router.patch("/:id/activate", async (req, res) => {
             message: "Error activating model",
             error: error.message,
         });
+    }
+});
+
+// Train new model
+router.post("/train", async (req, res) => {
+    try {
+        const result = await trainModel();
+        res.status(202).json({
+            success: true,
+            message: "Training started",
+            details: result
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
     }
 });
 
