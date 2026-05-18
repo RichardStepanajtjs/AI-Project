@@ -45,3 +45,4 @@ services:
 
 networks:
   gateway:
+    name: gateway

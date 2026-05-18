@@ -1,6 +1,5 @@
-sqlalchemy
-psycopg2-binary
 voyageai
 python-dotenv
 requests
 schedule
+pandas

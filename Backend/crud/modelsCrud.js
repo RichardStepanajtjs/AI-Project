@@ -1,4 +1,6 @@
 const pool = require('../db/connection');
+const { spawn } = require('child_process');
+const path = require('path');
 
 // Get all models without model data
 const getAllModels = async () => {
@@ -95,6 +97,25 @@ const setModelActive = async (id) => {
     return rows[0];
 };
 
+// Train new model
+const trainModel = async () => {
+    try {
+        const response = await fetch('http://ai_model:5000/train', { 
+            method: 'POST' 
+        });
+
+        if (!response.ok) {
+            throw new Error(`Python API status: ${response.status}`);
+        }
+
+        console.log('[Backend] Succesfully signal send to Python to start training.');
+        return true;
+    } catch (error) {
+        console.error('[Backend Error] Could not reach Python container:', error.message);
+        throw error;
+    }
+};
+
 module.exports = {
     getAllModels,
     getActiveModel,
@@ -102,5 +123,6 @@ module.exports = {
     createModel,
     updateModel,
     deleteModel,
-    setModelActive
+    setModelActive,
+    trainModel
 };

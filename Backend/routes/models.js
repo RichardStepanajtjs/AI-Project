@@ -201,17 +201,23 @@ router.patch("/:id/activate", async (req, res) => {
     }
 });
 
-// Train new model
 router.post("/train", async (req, res) => {
     try {
-        const result = await trainModel();
+        trainModel()
+            .then(() => console.log("Training finished in the background"))
+            .catch((err) => console.error("Error during training:", err));
+
         res.status(202).json({
             success: true,
-            message: "Training started",
-            details: result
+            message: "Training process started successfully in the background",
         });
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        console.error("Error starting training:", error);
+        res.status(500).json({
+            success: false,
+            message: "Error starting training",
+            error: error.message,
+        });
     }
 });
 

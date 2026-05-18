@@ -52,27 +52,6 @@ export class BusinessProfilesPage {
   get pageSize() { return this._pageSize; }
   set pageSize(v: number) { this._pageSize = v; this.resetPagination(); }
 
-  gemeenteFilters: string[] = [
-    'Alle gemeentes', 
-    'Antwerpen', 
-    'Brussel', 
-    'Gent', 
-    'Brugge', 
-    'Leuven', 
-    'Mechelen', 
-    'Aalst', 
-    'Kortrijk', 
-    'Hasselt', 
-    'Oostende', 
-    'Genk', 
-    'Roeselare', 
-    'Sint-Niklaas'
-  ];  
-  private _gemeente = 'Alle gemeentes';
-
-  get geselecteerdeGemeente() { return this._gemeente; }
-  set geselecteerdeGemeente(v: string) { this._gemeente = v; this.resetPagination(); }
-
   ngOnInit() {
     this.businessProfilesService.getAllBusinessProfiles().subscribe({
       next: (response: any) => {
@@ -96,8 +75,6 @@ export class BusinessProfilesPage {
       // Filter op Sector
       .filter(p => this._sector === 'Alle sectoren' || p.jobdomein === this._sector)
       
-      // Filter op Gemeente
-      .filter(p => this._gemeente === 'Alle gemeentes' || p.gemeente === this._gemeente)
       
       // Filter op zoekterm
       .filter(p => {
@@ -112,7 +89,9 @@ export class BusinessProfilesPage {
         );
         const domeinMatch = p.jobdomein?.toLowerCase().includes(term);
 
-        return naamMatch || beschrijvingMatch || technologieMatch || domeinMatch;
+        const gemeenteMatch = p.gemeente?.toLowerCase().includes(term);
+
+        return naamMatch || beschrijvingMatch || technologieMatch || domeinMatch || gemeenteMatch;
       });
 
     // Pagination logica

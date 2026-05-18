@@ -10,12 +10,6 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMP DEFAULT (NOW() AT TIME ZONE 'Europe/Brussels')
 );
 
-INSERT INTO users (email, password_hash, role) 
-VALUES
-    ('admin@sokrates.be', '$2a$10$sVTZ9XC/0Net2Q/fzHpYbuJCO352bA0Wi7q5EHzqdStx.LbRGEMvS', 'admin'),
-    ('user@sokrates.be', '$2a$10$sVTZ9XC/0Net2Q/fzHpYbuJCO352bA0Wi7q5EHzqdStx.LbRGEMvS', 'user')
-ON CONFLICT (email) DO NOTHING;
-
 /* Vacancy tabel (GH-...) */
 CREATE TABLE IF NOT EXISTS vacancies (
     id SERIAL PRIMARY KEY,
@@ -50,14 +44,6 @@ CREATE TABLE IF NOT EXISTS companies (
     created_at TIMESTAMP DEFAULT (NOW() AT TIME ZONE 'Europe/Brussels')
 );
 
-INSERT INTO companies (naam, kbonummer, postcode, gemeente, landcode, email, telefoonnummer, jobdomein, text) -- GEEN ID want serial
-VALUES
-('Rich-Hard Capital', '1', '2000', 'Antwerpen', 'BE', 'contact@rich-hardcapital.be', '+3231234567', 'ICT', 'Rich-Hard Capital is een toonaangevende durfkapitaalverstrekker die zich richt op de tech-sector in Antwerpen. We bieden strategische ondersteuning en financiering voor innovatieve startups met een sterke groeiambitie. Ons team van experts helpt ondernemers om hun technologische visie om te zetten in marktconforme oplossingen.'),
-('Souf-souf Soufflés', '2', '1000', 'Brussel', 'BE', 'souf@soufiwoufi.be', '+3267676767', 'Horeca en toerisme', 'Souf-souf Soufflés brengt de authentieke Franse patisserie naar het hartje van onze hoofdstad Brussel. Wij specialiseren ons in het bereiden van vederlichte soufflés met zowel klassieke als moderne smaakcombinaties. Elke creatie wordt met de hand gemaakt door onze meester-banketbakkers voor een unieke gastronomische ervaring.'),
-('Sharp Angles INC', '3', '3000', 'Gent', 'BE', 'hallo@bye.be', '+32042069', 'Andere', 'Sharp Angles INC is een multidisciplinair ontwerpbureau gevestigd in de creatieve hub van Gent. Wij combineren scherpe esthetiek met functioneel design voor uiteenlopende projecten in de publieke ruimte. Onze aanpak kenmerkt zich door een onconventionele kijk op architectuur en visuele communicatie.')
-ON CONFLICT (kbonummer) DO NOTHING;
-
-
 /* Prospectlist tabel (GH-46) */
 CREATE TABLE IF NOT EXISTS prospect_lists (
     id SERIAL PRIMARY KEY,
@@ -68,12 +54,6 @@ CREATE TABLE IF NOT EXISTS prospect_lists (
     company_ids INTEGER[] NOT NULL,
     created_at TIMESTAMP DEFAULT (NOW() AT TIME ZONE 'Europe/Brussels')
 );
-
-INSERT INTO prospect_lists (user_id, naam, jobdomein, company_ids)
-VALUES
-(1, 'Prospect 1', 'ICT', ARRAY[1]),
-(1, 'Prospect 2', 'Horeca en toerisme', ARRAY[2]),
-(1, 'Prospect 3', 'Andere', ARRAY[3]);
 
 CREATE TABLE IF NOT EXISTS models (
     id SERIAL PRIMARY KEY,
@@ -122,4 +102,21 @@ CREATE TABLE IF NOT EXISTS test_data (
     id SERIAL PRIMARY KEY,
     prospect_list_id FOREIGN KEY (id) REFERENCES prospect_lists(id) ON DELETE CASCADE,
     created_at TIMESTAMP DEFAULT (NOW() AT TIME ZONE 'Europe/Brussels')
+);
+/* KBO tabel */
+CREATE TABLE IF NOT EXISTS kbo_companies (
+    id SERIAL PRIMARY KEY,
+    enterprise_number VARCHAR(20) UNIQUE NOT NULL,
+    naam VARCHAR(255),
+    juridical_form VARCHAR(20),
+    start_date VARCHAR(20),
+    postcode VARCHAR(10),
+    gemeente VARCHAR(100),
+    straat VARCHAR(255),
+    huisnummer VARCHAR(20),
+    email VARCHAR(255),
+    telefoonnummer VARCHAR(50),
+    nace_main VARCHAR(10),
+    nace_omschrijving VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

@@ -39,4 +39,7 @@ export class ModelsService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
+  trainModel(): Observable<{success: boolean, message: string}> {
+    return this.http.post<{success: boolean, message: string}>(`${this.apiUrl}/train`, {});
+  }
 }

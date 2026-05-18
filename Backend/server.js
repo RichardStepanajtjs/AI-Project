@@ -13,6 +13,7 @@ const companiesRoute = require('./routes/companies');
 const prospectListsRoute = require('./routes/prospectlists');
 const modelsRoute = require('./routes/models');
 const formsRoute = require('./routes/forms');
+const kboCompaniesRoute = require('./routes/kbocompanies');
 
 // Initialize database connection
 require('./db/connection');
@@ -22,7 +23,8 @@ const port = 3000;
 
 // Middleware
 app.use(cors());
-app.use(express.json());
+// Verhoogd naar 1 mb voor de kbo data
+app.use(express.json({ limit: '1mb' }));
 
 // Api routes
 app.use('/users', usersRoute);
@@ -31,6 +33,7 @@ app.use('/companies', companiesRoute);
 app.use('/prospects', prospectListsRoute);
 app.use('/models', modelsRoute);
 app.use('/forms', formsRoute);
+app.use('/kbo-companies', kboCompaniesRoute);
 
 // Health check
 app.get('/health', (req, res) => {
@@ -81,6 +84,7 @@ app.listen(port, () => {
   console.log('  GET    /models/active');
   console.log('  GET    /models/:id');
   console.log('  POST   /models');
+  console.log('  POST   /models/train');
   console.log('  PUT    /models/:id');
   console.log('  PATCH  /models/:id/activate');
   console.log('  DELETE /models/:id');
@@ -106,6 +110,13 @@ app.listen(port, () => {
   console.log('  POST   /testdata');
   console.log('  PUT    /testdata/:id');
   console.log('  DELETE /testdata/:id');
+  
+  console.log('KBO Companies:');
+  console.log('  GET    /kbo-companies');
+  console.log('  GET    /kbo-companies/count');
+  console.log('  GET    /kbo-companies/:enterpriseNumber');
+  console.log('  POST   /kbo-companies');
+  console.log('  POST   /kbo-companies/bulk');
 });
 
 module.exports = app;

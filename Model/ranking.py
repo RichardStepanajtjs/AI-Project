@@ -43,8 +43,3 @@ def search_best_matches(k=20, form_id=0):
         print(f"Rank #{i+1} | Score: {score:.4f}")
         print(f"Bedrijf: {matched_company.get('naam', 'Onbekend')} (KBO: {matched_company.get('kbonummer', 'Onbekend')})")
         print(f"Beschrijving: {matched_company.get('text', 'Geen omschrijving beschikbaar')}\n")
-
-if __name__ == "__main__":
-    k = 20
-    form_id = 1
-    search_best_matches(k, form_id)

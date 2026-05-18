@@ -25,6 +25,7 @@ export class ProspectDetailPage {
   error = '';
   sortOrder = 'accuracy-desc';
   isEditing = false;
+  draggedIndex: number | null = null;
 
   ngOnInit() {
     // Loading animation
@@ -115,9 +116,46 @@ export class ProspectDetailPage {
         return list.sort((a, b) => (a.naam ?? '').localeCompare(b.naam ?? ''));
       case 'name-desc':
         return list.sort((a, b) => (b.naam ?? '').localeCompare(a.naam ?? ''));
+      case 'manual':
       default:
-        return list;
+        return list; 
     }
+  }
+  
+  onDragStart(index: number) {
+    this.draggedIndex = index;
+  }
+
+  onDragOver(event: DragEvent) {
+    // Dit is verplicht in HTML5, anders laat de browser de 'drop' niet toe
+    event.preventDefault(); 
+  }
+
+  onDrop(dropIndex: number, event: DragEvent) {
+    event.preventDefault();
+    
+    if (this.draggedIndex === null || this.draggedIndex === dropIndex) {
+      return;
+    }
+
+    // Pak de huidige visuele volgorde
+    const currentList = [...this.sortedProfiles];
+    
+    // Verwijder het versleepte item en voeg het in op de nieuwe plek
+    const itemToMove = currentList.splice(this.draggedIndex, 1)[0];
+    currentList.splice(dropIndex, 0, itemToMove);
+    
+    // Sla op en zet dropdown op 'manual'
+    this.connectedProfiles = currentList;
+    this.sortOrder = 'manual';
+
+    // Update het prospect object voor je backend save
+    this.prospect.company_ids = this.connectedProfiles.map(p => p.id); 
+    this.prospect.accuracy_scores = this.connectedProfiles.map(p => p.accuracy);
+    
+    // Reset en trigger update
+    this.draggedIndex = null;
+    this.cdr.detectChanges();
   }
 
   goBack() {
