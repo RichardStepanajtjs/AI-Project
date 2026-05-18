@@ -117,14 +117,6 @@ CREATE TABLE IF NOT EXISTS forms (
     created_at TIMESTAMP DEFAULT (NOW() AT TIME ZONE 'Europe/Brussels')
 );
 
-INSERT INTO forms (partner_name, sector, technologies, description)
-VALUES(
-    'VDAB Innovatielab',
-    'IT en Technologie',
-    ARRAY['React', 'Node.js', 'Python', 'PostgreSQL', 'Docker'],
-    'Een exclusief samenwerkingsforum gericht op de integratie van nieuwe webtechnologieën en AI binnen het Vlaamse werklandschap.'
-);
-
 /* Test Data Tabel (GH-63) */
 CREATE TABLE IF NOT EXISTS test_data (
     id SERIAL PRIMARY KEY,
