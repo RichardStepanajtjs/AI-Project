@@ -30,14 +30,22 @@ const getProspectListsByDomain = async (domain) => {
 };
 
 const createProspectList = async (data) => {
-    const { user_id, naam, jobdomein, company_ids } = data;
-    
+    const { user_id, form_id, naam, jobdomein, company_ids } = data;
+
     const query = `
-        INSERT INTO prospect_lists (user_id, naam, jobdomein, company_ids) 
-        VALUES ($1, $2, $3, $4) 
+        INSERT INTO prospect_lists (user_id, form_id, naam, jobdomein, company_ids)
+        VALUES ($1, $2, $3, $4, $5)
         RETURNING *`;
-    
-    const { rows } = await pool.query(query, [user_id, naam, jobdomein, company_ids]);
+
+    const { rows } = await pool.query(query, [user_id, form_id ?? null, naam, jobdomein, company_ids]);
+    return rows[0];
+};
+
+const getProspectListByFormId = async (formId) => {
+    const { rows } = await pool.query(
+        'SELECT * FROM prospect_lists WHERE form_id = $1 ORDER BY created_at DESC LIMIT 1',
+        [formId]
+    );
     return rows[0];
 };
 

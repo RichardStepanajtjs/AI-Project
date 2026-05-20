@@ -11,6 +11,8 @@ const {
 // maak prospects via form aan
 const { createProspectList } = require("../crud/prospectlistCrud");
 
+const PYTHON_CONTAINER_URL = process.env.PYTHON_CONTAINER_URL || "http://python_container:5001";
+
 // Forms ROUTES
 
 // Get all forms
@@ -75,9 +77,10 @@ router.post("/", async (req, res) => {
 
         await createProspectList({
             user_id: 1,
+            form_id: newform.id,
             naam: partner_name,
             jobdomein: sector || 'Algemeen',
-            company_ids: [1]
+            company_ids: []
         });
 
         res.status(201).json({
@@ -119,6 +122,41 @@ router.put("/:id", async (req, res) => {
         res.status(500).json({
             success: false,
             message: "Error updating form",
+            error: error.message,
+        });
+    }
+});
+
+// Process form: genereer description + embedding via Python container
+router.post("/:id/process", async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const response = await fetch(`${PYTHON_CONTAINER_URL}/process-form`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ form_id: parseInt(id) }),
+        });
+
+        if (!response.ok) {
+            const errData = await response.json().catch(() => ({}));
+            return res.status(502).json({
+                success: false,
+                message: "Form verwerking mislukt",
+                error: errData.message || `Python container status: ${response.status}`,
+            });
+        }
+
+        const data = await response.json();
+        res.json({
+            success: true,
+            message: data.message || "Form succesvol verwerkt",
+        });
+    } catch (error) {
+        console.error("Error processing form:", error);
+        res.status(500).json({
+            success: false,
+            message: "Error processing form",
             error: error.message,
         });
     }

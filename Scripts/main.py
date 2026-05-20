@@ -1,13 +1,32 @@
 import os
 import time
+import threading
 import schedule
 import requests
+from flask import Flask, jsonify, request
 from api import VDAB_api, Ollama, Voyage_api
 from database import Database
 from pipeline import Pipeline
+from form_pipeline import FormPipeline
 from kbo import KBO
 
 BACKEND_URL = os.getenv("BACKEND_URL", "http://backend:3000")
+
+app = Flask(__name__)
+form_pipeline: FormPipeline = None
+
+
+@app.route("/process-form", methods=["POST"])
+def process_form():
+    data = request.get_json() or {}
+    form_id = data.get("form_id")
+    if not form_id:
+        return jsonify({"success": False, "message": "form_id is vereist"}), 400
+
+    success = form_pipeline.process_form(form_id)
+    if success:
+        return jsonify({"success": True, "message": f"Form {form_id} succesvol verwerkt"}), 200
+    return jsonify({"success": False, "message": f"Verwerking van form {form_id} mislukt"}), 500
 
 
 def run_kbo_if_first_start():
@@ -33,7 +52,17 @@ def run_kbo_if_first_start():
 
 
 def main():
-    run_kbo_if_first_start()
+    global form_pipeline
+
+    ollama = Ollama(
+        host=os.getenv("OLLAMA_HOST"),
+        model=os.getenv("OLLAMA_MODEL"),
+    )
+    voyage = Voyage_api(
+        api_key=os.getenv("VOYAGE_API_KEY"),
+    )
+
+    form_pipeline = FormPipeline(ollama, voyage, BACKEND_URL)
 
     pipeline = Pipeline(
         vdab=VDAB_api(
@@ -41,16 +70,21 @@ def main():
             client_secret=os.getenv("CLIENT_SECRET"),
             x_ibm_client_id=os.getenv("X_IBM_CLIENT_ID"),
         ),
-        ollama=Ollama(
-            host=os.getenv("OLLAMA_HOST"),
-            model=os.getenv("OLLAMA_MODEL"),
-        ),
-        voyage=Voyage_api(
-            api_key=os.getenv("VOYAGE_API_KEY"),
-        ),
+        ollama=ollama,
+        voyage=voyage,
         database=Database(BACKEND_URL),
     )
 
+    # Start Flask EERST zodat /process-form meteen beschikbaar is, ook terwijl de pipeline of KBO-import nog bezig is.
+    flask_thread = threading.Thread(
+        target=lambda: app.run(host="0.0.0.0", port=5001, use_reloader=False),
+        daemon=True,
+    )
+    flask_thread.start()
+    print("Form processing API gestart op poort 5001.")
+
+    # KBO-import en pipeline daarna (kan lang duren)
+    run_kbo_if_first_start()
     pipeline.run()
 
     schedule.every().day.at("03:00").do(pipeline.run)

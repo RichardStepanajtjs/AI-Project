@@ -14,22 +14,23 @@ const getFormById = async (id) => {
 
 // Create a new form
 const createForm = async (data) => {
-    const { partner_name, sector, description, technologies, embedding } = data;
+    const { partner_name, sector, description, technologies, is_job, embedding } = data;
 
     const query = `
-        INSERT INTO forms (partner_name, sector, description, technologies, embedding) 
-        VALUES ($1, $2, $3, $4, $5) 
+        INSERT INTO forms (partner_name, sector, description, technologies, is_job, embedding)
+        VALUES ($1, $2, $3, $4, $5, $6)
         RETURNING *
     `;
-    
+
     const { rows } = await pool.query(query, [
-        partner_name, 
-        sector, 
-        description, 
+        partner_name,
+        sector,
+        description,
         technologies,
+        is_job ?? false,
         embedding
     ]);
-    
+
     return rows[0];
 };
 
@@ -46,13 +47,21 @@ const updateForm = async (id, data) => {
         sets.push(`sector = $${sets.length + 1}`); 
         values.push(data.sector); 
     }
-    if (data.description !== undefined) { 
-        sets.push(`description = $${sets.length + 1}`); 
-        values.push(data.description); 
+    if (data.description !== undefined) {
+        sets.push(`description = $${sets.length + 1}`);
+        values.push(data.description);
     }
-    if (data.technologies !== undefined) { 
-        sets.push(`technologies = $${sets.length + 1}`); 
-        values.push(data.technologies); 
+    if (data.generated_description !== undefined) {
+        sets.push(`generated_description = $${sets.length + 1}`);
+        values.push(data.generated_description);
+    }
+    if (data.technologies !== undefined) {
+        sets.push(`technologies = $${sets.length + 1}`);
+        values.push(data.technologies);
+    }
+    if (data.is_job !== undefined) {
+        sets.push(`is_job = $${sets.length + 1}`);
+        values.push(data.is_job);
     }
 
     if (data.embedding !== undefined) { 

@@ -46,7 +46,7 @@
 
           <div class="toggle-row">
             <span [class.active]="!isJobMode">Product</span>
-            <div class="toggle" [class.on]="isJobMode" (click)="isJobMode = !isJobMode"></div>
+            <div class="toggle" [class.on]="isJobMode" (click)="toggleMode()"></div>
             <span [class.active]="isJobMode">Job</span>
           </div>
 
@@ -103,8 +103,14 @@
           </div>
 
           <div class="drawer-footer">
-            <button type="button" class="btn-cancel" (click)="closeForm()">Annuleren</button>
-            <button type="submit" class="btn-submit">Genereer prospects</button>
+            <button type="button" class="btn-cancel" (click)="closeForm()" [disabled]="isGenerating">Annuleren</button>
+            <button type="submit" class="btn-submit" [disabled]="isGenerating">
+              @if (isGenerating) {
+                Verwerken...
+              } @else {
+                Genereer prospects
+              }
+            </button>
           </div>
 
         </form>

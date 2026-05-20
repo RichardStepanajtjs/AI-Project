@@ -1,6 +1,8 @@
 import time
+import requests
 from datetime import datetime
 from collections import defaultdict
+
 
 class Pipeline:
     def __init__(self, vdab, ollama, voyage, database):
@@ -14,7 +16,7 @@ class Pipeline:
             "naam": None, "type": None, "gemeente": None, "postcode": None,
             "beroepen": set(), "vereisten": set(),
         })
-        
+
         for v in vacatures:
             kbo = v.get("leverancier", {}).get("kboNummer")
             if not kbo:
@@ -39,17 +41,37 @@ class Pipeline:
 
         return dict(bedrijven)
 
+    def fetch_kbo_data(self, kbo_nummer):
+        try:
+            resp = requests.get(
+                f"{self.database.base_url}/kbo-companies/{kbo_nummer}",
+                timeout=10,
+            )
+            if resp.status_code == 404:
+                return None
+            resp.raise_for_status()
+            return resp.json().get("data")
+        except Exception as e:
+            print(f"[Pipeline] KBO lookup mislukt voor {kbo_nummer}: {e}")
+            return None
+
     def verwerk_bedrijven(self, bedrijven):
         count = 0
         for kbo, data in bedrijven.items():
             print(f"Processing: {data['naam']} ({kbo})")
-            result = self.ollama.genereer_profiel(data)
+
+            kbo_data = self.fetch_kbo_data(kbo)
+
+            result = self.ollama.genereer_profiel(data, kbo_data=kbo_data)
             embedding = self.voyage.embed(result["text"])
             profiel = {
                 "kbo_nummer": kbo,
                 "naam": data["naam"],
                 "gemeente": data["gemeente"],
                 "postcode": data["postcode"],
+                "landcode": "BE" if kbo_data else None,
+                "email": (kbo_data or {}).get("email") or None,
+                "telefoonnummer": (kbo_data or {}).get("telefoonnummer") or None,
                 "beroepen": data["beroepen"],
                 "vereisten": data["vereisten"],
                 "text": result["text"],

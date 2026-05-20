@@ -26,6 +26,7 @@ export class ProspectsPage {
   favoriteIds: Set<string | number> = new Set();
   showForm = false;
   isJobMode = false;
+  isGenerating = false;
 
   sectorFilters: string[] = [
     'Alle sectoren', 'Aankoop', 'Administratie', 'Bouw', 'Communicatie',
@@ -39,8 +40,8 @@ export class ProspectsPage {
   zoekterm = '';
 
   form = this.fb.group({
-    productName: ['', Validators.required],
-    partnerName: ['', Validators.required],
+    productName: ['', Validators.required],  // required in product mode (default)
+    partnerName: [''],
     sector: ['', Validators.required],
     description: [''],
     targetGroup: [''],
@@ -93,7 +94,31 @@ export class ProspectsPage {
   }
 
   openForm() { this.showForm = true; }
-  closeForm() { this.showForm = false; this.form.reset({ amountOfProspects: '25' }); }
+  closeForm() {
+    this.showForm = false;
+    this.isJobMode = false;
+    this.form.reset({ amountOfProspects: '25' });
+    // Reset validators back to product mode defaults
+    this.form.get('productName')!.setValidators([Validators.required]);
+    this.form.get('partnerName')!.clearValidators();
+    this.form.get('productName')!.updateValueAndValidity();
+    this.form.get('partnerName')!.updateValueAndValidity();
+  }
+
+  toggleMode() {
+    this.isJobMode = !this.isJobMode;
+    const productCtrl = this.form.get('productName')!;
+    const partnerCtrl = this.form.get('partnerName')!;
+    if (this.isJobMode) {
+      partnerCtrl.setValidators([Validators.required]);
+      productCtrl.clearValidators();
+    } else {
+      productCtrl.setValidators([Validators.required]);
+      partnerCtrl.clearValidators();
+    }
+    productCtrl.updateValueAndValidity();
+    partnerCtrl.updateValueAndValidity();
+  }
 
   onSubmit() {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
@@ -108,22 +133,42 @@ export class ProspectsPage {
       is_job: this.isJobMode
     };
 
+    this.isGenerating = true;
+
     this.formService.createForm(payload).subscribe({
-        next: (response) => {
-          console.log('Database succesvol bijgewerkt!', response);
-          
-          // update de scherm real-time
-          this.refreshList(); 
-          
-          // Sluit form
+      next: (response: any) => {
+        const formId = response?.data?.id;
+
+        if (!formId) {
+          this.isGenerating = false;
+          this.refreshList();
           this.closeForm();
-        },
-        error: (err) => {
-          console.error('Database schrijf-fout:', err);
-          alert('Er ging iets mis bij het opslaan.');
+          return;
         }
-      });
-    }
+
+        // Start de volledige pipeline (Ollama herformulering + Voyage embedding)
+        this.formService.processForm(formId).subscribe({
+          next: () => {
+            this.isGenerating = false;
+            this.refreshList();
+            this.closeForm();
+          },
+          error: (err) => {
+            // Processing is mislukt maar de form is wel opgeslagen
+            console.error('Form processing fout:', err);
+            this.isGenerating = false;
+            this.refreshList();
+            this.closeForm();
+          }
+        });
+      },
+      error: (err) => {
+        console.error('Database schrijf-fout:', err);
+        this.isGenerating = false;
+        alert('Er ging iets mis bij het opslaan.');
+      }
+    });
+  }
   private refreshList() {
   this.prospectsService.getProspects().subscribe({
     next: (res: any) => {

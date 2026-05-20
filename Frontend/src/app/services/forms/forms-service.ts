@@ -21,4 +21,8 @@ export class FormsService {
   createForm(data: FormPayload) {
     return this.http.post(`${this.apiUrl}`, data);
   }
+
+  processForm(formId: number) {
+    return this.http.post(`${this.apiUrl}/${formId}/process`, {});
+  }
 }

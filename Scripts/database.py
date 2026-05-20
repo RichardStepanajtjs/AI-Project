@@ -14,7 +14,6 @@ class Database:
                     timeout=10,
                 )
                 if response.status_code == 409:
-                    # Duplicate interne_referentie: overslaan (equivalent aan ON CONFLICT DO NOTHING)
                     continue
                 response.raise_for_status()
             except requests.HTTPError as e:
@@ -28,6 +27,9 @@ class Database:
             "naam": profiel["naam"],
             "postcode": profiel["postcode"],
             "gemeente": profiel["gemeente"],
+            "landcode": profiel.get("landcode"),
+            "email": profiel.get("email"),
+            "telefoonnummer": profiel.get("telefoonnummer"),
             "jobdomein": profiel["jobdomein"],
             "technologies": profiel["technologies"],
             "text": profiel["text"],
@@ -41,8 +43,7 @@ class Database:
             )
 
             if response.status_code == 409:
-                # Duplicate kbonummer: bestaand bedrijf opzoeken en updaten
-                # (equivalent aan ON CONFLICT DO UPDATE)
+                # bestaand bedrijf opzoeken en updaten
                 self.update_existing_company(profiel["kbo_nummer"], payload)
                 return
 
