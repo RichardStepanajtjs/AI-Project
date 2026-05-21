@@ -9,14 +9,12 @@ def search_best_matches(k=20, form_id=0):
     index, company_metadata = load_active_model()
     
     if index is None or company_metadata is None:
-        print("Ranking canceled: Could not load model.")
-        return
+        raise RuntimeError("Could not load model. Ensure that the model is trained and active.")
 
     raw_form_data = fetch_data(f"forms/{form_id}")
     
     if not raw_form_data:
-        print(f"Form with id {form_id} not found.")
-        return
+        raise ValueError(f"Form with id {form_id} not found.")
 
     if isinstance(raw_form_data, dict):
         raw_form_data = [raw_form_data]
@@ -24,13 +22,12 @@ def search_best_matches(k=20, form_id=0):
     form_vector, form_metadata = format(raw_form_data)
 
     if len(form_vector) == 0:
-        print(f"Error: No embedding from form {form_id} found.")
-        return 
+        raise ValueError(f"No embedding from form {form_id} found.")
     
     faiss.normalize_L2(form_vector)
     scores, matrix_indices = index.search(form_vector, k)
     
-    print("\n--- Top Matches ---")
+    results = []
     for i in range(k):
         match_index = matrix_indices[0][i]
         score = scores[0][i]
@@ -40,6 +37,9 @@ def search_best_matches(k=20, form_id=0):
             
         matched_company = company_metadata[match_index]
         
-        print(f"Rank #{i+1} | Score: {score:.4f}")
-        print(f"Bedrijf: {matched_company.get('naam', 'Onbekend')} (KBO: {matched_company.get('kbonummer', 'Onbekend')})")
-        print(f"Beschrijving: {matched_company.get('text', 'Geen omschrijving beschikbaar')}\n")
+        results.append({
+            "id": matched_company.get("id"),
+            "score": float(score)
+        })
+        
+    return results

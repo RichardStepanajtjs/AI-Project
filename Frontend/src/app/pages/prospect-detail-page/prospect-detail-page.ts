@@ -45,7 +45,7 @@ export class ProspectDetailPage {
       return;
     }
 
-    this.service.getProspectById(id).subscribe({
+    this.service.getProspectListById(id).subscribe({
       next: (res: any) => {
         this.prospect = res.data ?? res;
         this.loading = false;
@@ -86,7 +86,7 @@ export class ProspectDetailPage {
   }
 
   saveChanges() {
-    this.service.updateProspect(this.prospect.id, this.prospect).subscribe({
+    this.service.updateProspectList(this.prospect.id, this.prospect).subscribe({
       next: () => {
         this.isEditing = false;
         this.cdr.detectChanges();
@@ -97,8 +97,8 @@ export class ProspectDetailPage {
 
   deleteList() {
     if (confirm('Wilt u deze lijst definitief verwijderen?')) {
-      this.service.deleteProspect(this.prospect.id).subscribe({
-        next: () => this.router.navigate(['/prospects']),
+      this.service.deleteProspectList(this.prospect.id).subscribe({
+        next: () => this.router.navigate(['/prospect-lists']),
         error: (err) => console.error('Delete failed', err)
       });
     }
@@ -159,7 +159,7 @@ export class ProspectDetailPage {
   }
 
   goBack() {
-    this.router.navigate(['/prospects']);
+    this.router.navigate(['/prospect-lists']);
   }
 
   get listName(): string {

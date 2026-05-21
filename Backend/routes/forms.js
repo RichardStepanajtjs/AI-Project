@@ -8,6 +8,8 @@ const {
     deleteForm
 } = require("../crud/formsCrud");
 
+const { rankModel } = require("../crud/modelsCrud");
+
 // maak prospects via form aan
 const { createProspectList } = require("../crud/prospectlistCrud");
 
@@ -75,17 +77,9 @@ router.post("/", async (req, res) => {
 
         const newform = await createForm(req.body);
 
-        await createProspectList({
-            user_id: 1,
-            form_id: newform.id,
-            naam: partner_name,
-            jobdomein: sector || 'Algemeen',
-            company_ids: []
-        });
-
         res.status(201).json({
             success: true,
-            message: "Form saved and Prospect List created!",
+            message: "Form created successfully",
             data: newform,
         });
 
@@ -148,9 +142,46 @@ router.post("/:id/process", async (req, res) => {
         }
 
         const data = await response.json();
+
+        // Trigger ranking na succesvolle verwerking
+        try {
+            console.log(`[Backend] Triggering ranking for form ${id}...`);
+            const rankingResponse = await rankModel(parseInt(id), 20); // k=20 als default
+
+            const matches = rankingResponse.matches;
+
+            if (Array.isArray(matches)) {
+                const company_ids = matches
+                    .map(m => Number(m.id))
+                    .filter(val => Number.isInteger(val));
+
+                if (company_ids.length > 0) {
+                    const formData = await getFormById(id);
+                    
+                    if (formData) {
+                        await createProspectList({
+                            user_id: formData.user_id || 1, 
+                            // Verander dit naar naam gegeven bij het invullen van het form.
+                            naam: formData.partner_name || `Form ${id}`, 
+                            jobdomein: formData.sector || "Algemeen",
+                            form_id: parseInt(id),
+                            company_ids
+                        });
+                        console.log(`Prospectielijst '${formData.partner_name}' succesvol aangemaakt voor form ${id}`);
+                    }
+                } else {
+                    console.warn(`Geen geldige company_ids gevonden in matches voor form ${id}`);
+                }
+            } else {
+                console.warn(`Geen 'matches' array gevonden in ranking response voor form ${id}`);
+            }
+        } catch (rankError) {
+            console.error("Ranking or Prospect List creation failed after processing:", rankError);
+        }
+
         res.json({
             success: true,
-            message: data.message || "Form succesvol verwerkt",
+            message: data.message || "Form succesvol verwerkt en gerankt",
         });
     } catch (error) {
         console.error("Error processing form:", error);

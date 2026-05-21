@@ -116,6 +116,27 @@ const trainModel = async () => {
     }
 };
 
+const rankModel = async (form_id, k) => {
+    try {
+        const response = await fetch('http://ai_model:5000/rank', { 
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ form_id, k })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || `Python API status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('[Backend Error] Could not reach Python container or ranking failed:', error.message);
+        throw error;
+    }
+};
+
 module.exports = {
     getAllModels,
     getActiveModel,
@@ -124,5 +145,6 @@ module.exports = {
     updateModel,
     deleteModel,
     setModelActive,
-    trainModel
+    trainModel,
+    rankModel
 };

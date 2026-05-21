@@ -8,7 +8,8 @@ const {
     updateModel,
     deleteModel,
     setModelActive,
-    trainModel
+    trainModel,
+    rankModel
 } = require("../crud/modelsCrud");
 
 // MODELS ROUTES
@@ -216,6 +217,30 @@ router.post("/train", async (req, res) => {
         res.status(500).json({
             success: false,
             message: "Error starting training",
+            error: error.message,
+        });
+    }
+});
+
+router.post("/rank", async (req, res) => {
+    try {
+        const { form_id, k } = req.body;
+
+        if (!form_id) {
+            return res.status(400).json({
+                success: false,
+                message: "Missing required field: form_id",
+            });
+        }
+
+        const results = await rankModel(form_id, k);
+
+        res.status(200).json(results);
+    } catch (error) {
+        console.error("Error during ranking:", error);
+        res.status(500).json({
+            success: false,
+            message: "Error during ranking",
             error: error.message,
         });
     }

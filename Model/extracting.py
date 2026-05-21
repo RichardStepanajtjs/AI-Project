@@ -12,8 +12,7 @@ def load_active_model():
     model_data = fetch_data("models/active")
     
     if not model_data:
-        print("Error: No active model found in database.")
-        return None, None
+        raise RuntimeError("No active model found in database.")
         
     if isinstance(model_data, list) and len(model_data) > 0:
         model_data = model_data[0]
@@ -22,8 +21,7 @@ def load_active_model():
     metadata_raw = model_data.get("metadata_pkl")
     
     if not index_raw or not metadata_raw:
-        print("Error: Model data incomplete (missing faiss_index or metadata).")
-        return None, None
+        raise RuntimeError("Model data incomplete (missing faiss_index or metadata).")
         
     try:
         if isinstance(index_raw, dict) and index_raw.get("type") == "Buffer":
@@ -44,5 +42,4 @@ def load_active_model():
         return index, metadata
         
     except Exception as e:
-        print(f"Error while decoding or loading model: {e}")
-        return None, None
+        raise RuntimeError(f"Error while decoding or loading model: {e}")

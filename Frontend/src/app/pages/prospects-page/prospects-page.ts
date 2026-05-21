@@ -51,7 +51,7 @@ export class ProspectsPage {
 
   ngOnInit() {
     this.loadFavorites();
-    this.prospectsService.getProspects().subscribe({
+    this.prospectsService.getProspectLists().subscribe({
       next: (res: any) => {
         this.alleLijsten = res.data ?? res ?? [];
         this.cdr.detectChanges();
@@ -170,7 +170,7 @@ export class ProspectsPage {
     });
   }
   private refreshList() {
-  this.prospectsService.getProspects().subscribe({
+  this.prospectsService.getProspectLists().subscribe({
     next: (res: any) => {
       this.alleLijsten = res.data ?? res ?? [];
       this.cdr.detectChanges();

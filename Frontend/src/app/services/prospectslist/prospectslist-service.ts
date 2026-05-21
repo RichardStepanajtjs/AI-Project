@@ -6,29 +6,29 @@ import { inject, Injectable } from '@angular/core';
 })
 export class ProspectslistService {
   private http = inject(HttpClient);
-  private apiUrl = 'https://nest.sokrates.traefik.me/prospects';
+  private apiUrl = 'https://nest.sokrates.traefik.me/prospect-lists';
 
   getProspectsByTag(tag: string) {
     return this.http.get(`${this.apiUrl}/filter/${tag}`);
   }
   
-  createProspect(data: any) {
+  createProspectList(data: any) {
     return this.http.post(`${this.apiUrl}`, data);
   }
 
-  getProspects() {
+  getProspectLists() {
     return this.http.get(`${this.apiUrl}`);
   }
 
-  getProspectById(id: string) {
+  getProspectListById(id: string) {
     return this.http.get(`${this.apiUrl}/${id}`);
   }
 
-  updateProspect(id: string, data: any) {
+  updateProspectList(id: string, data: any) {
     return this.http.put(`${this.apiUrl}/${id}`, data);
   }
 
-  deleteProspect(id: string) {
+  deleteProspectList(id: string) {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
 }
