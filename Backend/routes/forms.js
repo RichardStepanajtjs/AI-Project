@@ -145,35 +145,32 @@ router.post("/:id/process", async (req, res) => {
 
         // Trigger ranking na succesvolle verwerking
         try {
-            console.log(`[Backend] Triggering ranking for form ${id}...`);
-            const rankingResponse = await rankModel(parseInt(id), 20); // k=20 als default
-
-            const matches = rankingResponse.matches;
-
-            if (Array.isArray(matches)) {
+            console.log(`Triggering ranking for form ${id}...`);
+            const formData = await getFormById(id);
+            if (formData){
+                console.log(formData);
+                const rankingResponse = await rankModel(parseInt(id), formData.amount_of_prospects || 20);
+                const matches = rankingResponse.matches;
+                if (Array.isArray(matches)) {
                 const company_ids = matches
                     .map(m => Number(m.id))
                     .filter(val => Number.isInteger(val));
 
-                if (company_ids.length > 0) {
-                    const formData = await getFormById(id);
-                    
-                    if (formData) {
+                    if (company_ids.length > 0) {                    
                         await createProspectList({
                             user_id: formData.user_id || 1, 
-                            // Verander dit naar naam gegeven bij het invullen van het form.
                             naam: formData.partner_name || `Form ${id}`, 
                             jobdomein: formData.sector || "Algemeen",
                             form_id: parseInt(id),
                             company_ids
                         });
-                        console.log(`Prospectielijst '${formData.partner_name}' succesvol aangemaakt voor form ${id}`);
+                        console.log(`Prospect list '${formData.partner_name}' succesfully created for form ${id}`);
+                    } else {
+                        console.warn(`No valid company_ids found in matches for form ${id}`);
                     }
                 } else {
-                    console.warn(`Geen geldige company_ids gevonden in matches voor form ${id}`);
+                    console.warn(`No 'matches' array found in ranking response for form ${id}`);
                 }
-            } else {
-                console.warn(`Geen 'matches' array gevonden in ranking response voor form ${id}`);
             }
         } catch (rankError) {
             console.error("Ranking or Prospect List creation failed after processing:", rankError);
@@ -181,7 +178,7 @@ router.post("/:id/process", async (req, res) => {
 
         res.json({
             success: true,
-            message: data.message || "Form succesvol verwerkt en gerankt",
+            message: data.message || "Form succesfully processed and ranked",
         });
     } catch (error) {
         console.error("Error processing form:", error);
