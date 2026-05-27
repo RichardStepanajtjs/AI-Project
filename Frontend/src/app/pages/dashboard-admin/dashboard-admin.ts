@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { PageHeader } from "../../page-components/page-header/page-header";
 import { Router } from '@angular/router';
 import { UsersService } from '../../services/users/users-service';
+import { ProspectslistService } from '../../services/prospectslist/prospectslist-service';
 import { User } from '../../models/user';
 import { FormsModule } from "@angular/forms";
 
@@ -21,6 +22,7 @@ export class DashboardAdmin {
   errorMessage = '';
 
   usersService = inject(UsersService);
+  prospectsService = inject(ProspectslistService);
   router = inject(Router);
   cdr = inject(ChangeDetectorRef);
   
@@ -31,6 +33,7 @@ export class DashboardAdmin {
   aantal_gebruikers = 0;
   aantal_admins = 0;
   aantal_actieve = 0;
+  aantal_aanvragen_week = 0;
   
   currentSortKey: string = '';
   searchTerm: string = '';
@@ -61,6 +64,21 @@ export class DashboardAdmin {
       },
       error: (err) => {
         this.errorMessage = err.error?.message ?? 'Fout bij het laden van gebruikers.';
+      }
+    });
+
+    this.prospectsService.getProspects().subscribe({
+      next: (response: any) => {
+        const prospects = response.data ?? [];
+        const now = new Date();
+        const startOfWeek = new Date(now);
+        startOfWeek.setDate(now.getDate() - now.getDay() + (now.getDay() === 0 ? -6 : 1));
+        startOfWeek.setHours(0, 0, 0, 0);
+
+        this.aantal_aanvragen_week = prospects.filter((p: any) =>
+          new Date(p.created_at) >= startOfWeek
+        ).length;
+        this.cdr.detectChanges();
       }
     });
   }
