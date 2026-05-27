@@ -134,6 +134,39 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+// Change password (verifies current password first)
+router.patch('/:id/change-password', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ success: false, message: 'Huidig en nieuw wachtwoord zijn verplicht' });
+    }
+
+    if (newPassword.length < 8) {
+      return res.status(400).json({ success: false, message: 'Nieuw wachtwoord moet minimaal 8 tekens bevatten' });
+    }
+
+    const result = await pool.query('SELECT * FROM users WHERE id = $1', [id]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    const user = result.rows[0];
+    const isMatch = await bcrypt.compare(currentPassword, user.password_hash);
+    if (!isMatch) {
+      return res.status(401).json({ success: false, message: 'Huidig wachtwoord is onjuist' });
+    }
+
+    await updateUser(id, { password: newPassword });
+    res.json({ success: true, message: 'Wachtwoord succesvol gewijzigd' });
+  } catch (error) {
+    console.error('Error changing password:', error);
+    res.status(500).json({ success: false, message: 'Error changing password', error: error.message });
+  }
+});
+
 // Update user
 router.put('/:id', async (req, res) => {
   try {

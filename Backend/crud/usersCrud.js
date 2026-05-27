@@ -14,7 +14,7 @@ const getAllUsers = async () => {
 // Get user by ID
 const getUserById = async (id) => {
   const result = await pool.query(
-    'SELECT id, email, role, created_at FROM users WHERE id = $1',
+    'SELECT id, email, role, naam, achternaam, created_at FROM users WHERE id = $1',
     [id]
   );
   return result.rows[0];
@@ -33,7 +33,7 @@ const createUser = async (email, password, role = 'user') => {
 };
 
 // Update user
-const updateUser = async (id, { email, password, role }) => {
+const updateUser = async (id, { email, password, role, naam, achternaam }) => {
   // Check if user exists
   const userCheck = await pool.query('SELECT id FROM users WHERE id = $1', [id]);
   if (userCheck.rows.length === 0) {
@@ -63,12 +63,24 @@ const updateUser = async (id, { email, password, role }) => {
     paramCount++;
   }
 
+  if (naam !== undefined) {
+    updateQuery += `naam = $${paramCount}, `;
+    updateValues.push(naam);
+    paramCount++;
+  }
+
+  if (achternaam !== undefined) {
+    updateQuery += `achternaam = $${paramCount}, `;
+    updateValues.push(achternaam);
+    paramCount++;
+  }
+
   if (updateValues.length === 0) {
     throw new Error('No fields to update');
   }
 
   updateQuery = updateQuery.slice(0, -2);
-  updateQuery += ` WHERE id = $${paramCount} RETURNING id, email, role, created_at`;
+  updateQuery += ` WHERE id = $${paramCount} RETURNING id, email, role, naam, achternaam, created_at`;
   updateValues.push(id);
 
   const result = await pool.query(updateQuery, updateValues);
