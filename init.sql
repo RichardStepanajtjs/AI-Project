@@ -10,10 +10,10 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMP DEFAULT (NOW() AT TIME ZONE 'Europe/Brussels')
 );
 
-INSERT INTO users (email, password_hash, role)
+INSERT INTO users (email, password_hash, role, naam, achternaam)
 VALUES
-    ('admin@sokrates.be', '$2a$10$sVTZ9XC/0Net2Q/fzHpYbuJCO352bA0Wi7q5EHzqdStx.LbRGEMvS', 'admin'),
-    ('user@sokrates.be', '$2a$10$sVTZ9XC/0Net2Q/fzHpYbuJCO352bA0Wi7q5EHzqdStx.LbRGEMvS', 'user')
+    ('admin@sokrates.be', '$2a$10$sVTZ9XC/0Net2Q/fzHpYbuJCO352bA0Wi7q5EHzqdStx.LbRGEMvS', 'admin', 'Admin', 'Sokrates'),
+    ('user@sokrates.be', '$2a$10$sVTZ9XC/0Net2Q/fzHpYbuJCO352bA0Wi7q5EHzqdStx.LbRGEMvS', 'user', 'John', 'Doe')
 ON CONFLICT (email) DO NOTHING;
 
 /* Vacancy tabel (GH-...) */

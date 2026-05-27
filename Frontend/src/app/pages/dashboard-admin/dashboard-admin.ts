@@ -41,10 +41,15 @@ export class DashboardAdmin {
     
     return this.users.filter(user => {
       const emailMatch = user.email.toLowerCase().includes(search);
-      // const nameMatch = user.name ? user.name.toLowerCase().includes(search) : false;
-      
-      return emailMatch /*|| nameMatch*/;
+      const naamMatch = user.naam ? user.naam.toLowerCase().includes(search) : false;
+      const achternaamMatch = user.achternaam ? user.achternaam.toLowerCase().includes(search) : false;
+      return emailMatch || naamMatch || achternaamMatch;
     });
+  }
+
+  fullName(user: User): string {
+    const parts = [user.naam, user.achternaam].filter(Boolean);
+    return parts.length > 0 ? parts.join(' ') : '—';
   }
   
   ngOnInit() {
@@ -83,7 +88,13 @@ export class DashboardAdmin {
 
   startEdit() {
     if (!this.selectedUser) return;
-    this.editData = { email: this.selectedUser.email, role: this.selectedUser.role, active: this.selectedUser.active };
+    this.editData = {
+      email: this.selectedUser.email,
+      role: this.selectedUser.role,
+      active: this.selectedUser.active,
+      naam: this.selectedUser.naam ?? '',
+      achternaam: this.selectedUser.achternaam ?? '',
+    };
     this.editPassword = '';
     this.editMode = true;
   }
@@ -101,6 +112,8 @@ export class DashboardAdmin {
       email: this.editData.email ?? this.selectedUser.email,
       role: this.editData.role ?? this.selectedUser.role,
       active: this.editData.active ?? this.selectedUser.active,
+      naam: this.editData.naam ?? this.selectedUser.naam,
+      achternaam: this.editData.achternaam ?? this.selectedUser.achternaam,
       password: this.editPassword || this.selectedUser.password,
     };
     this.usersService.updateUser(this.selectedUser.id, updated).subscribe({

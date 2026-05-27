@@ -60,20 +60,26 @@
     <table>
       <thead>
         <tr>
+          <th (click)="sortUsers('naam')" style="cursor: pointer;">
+            Naam
+            @if (currentSortKey === 'naam') {
+              <span>{{ isAscending ? '↑' : '↓' }}</span>
+            }
+          </th>
           <th (click)="sortUsers('email')" style="cursor: pointer;">
-            Email 
+            Email
             @if (currentSortKey === 'email') {
               <span>{{ isAscending ? '↑' : '↓' }}</span>
             }
           </th>
           <th (click)="sortUsers('role')" style="cursor: pointer;">
-            Rol 
+            Rol
             @if (currentSortKey === 'role') {
               <span>{{ isAscending ? '↑' : '↓' }}</span>
             }
           </th>
           <th (click)="sortUsers('active')" style="cursor: pointer;">
-            Status 
+            Status
             @if (currentSortKey === 'active') {
               <span>{{ isAscending ? '↑' : '↓' }}</span>
             }
@@ -84,6 +90,7 @@
       <tbody>
         @for (user of filteredUsers; track user.email) {
           <tr class="clickable-row" (click)="openDetail(user)">
+            <td>{{ fullName(user) }}</td>
             <td>{{ user.email }}</td>
             <td><span class="role-pill" [class.admin]="user.role.toLowerCase() === 'admin'">{{ user.role }}</span></td>
             <td (click)="$event.stopPropagation()">
@@ -117,6 +124,16 @@
         <button class="close-btn" (click)="showScreen = false">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Voornaam</label>
+          <input type="text" placeholder="Jan" [(ngModel)]="new_user.naam"/>
+        </div>
+        <div class="form-group">
+          <label>Achternaam</label>
+          <input type="text" placeholder="Peeters" [(ngModel)]="new_user.achternaam"/>
+        </div>
       </div>
       <div class="form-group">
         <label>E-mailadres</label>
@@ -180,6 +197,14 @@
 
         <div class="detail-rows">
           <div class="detail-row">
+            <span class="detail-label">Voornaam</span>
+            <span class="detail-value">{{ selectedUser.naam || '—' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Achternaam</span>
+            <span class="detail-value">{{ selectedUser.achternaam || '—' }}</span>
+          </div>
+          <div class="detail-row">
             <span class="detail-label">E-mail</span>
             <span class="detail-value">{{ selectedUser.email }}</span>
           </div>
@@ -222,6 +247,16 @@
         </div>
 
         <div class="edit-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Voornaam</label>
+              <input type="text" [(ngModel)]="editData.naam" placeholder="Voornaam"/>
+            </div>
+            <div class="form-group">
+              <label>Achternaam</label>
+              <input type="text" [(ngModel)]="editData.achternaam" placeholder="Achternaam"/>
+            </div>
+          </div>
           <div class="form-group">
             <label>E-mailadres</label>
             <input type="email" [(ngModel)]="editData.email" placeholder="E-mailadres"/>

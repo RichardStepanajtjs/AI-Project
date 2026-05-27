@@ -266,11 +266,19 @@ tr:last-child td { border-bottom: none; }
 
 .close-btn:hover { border-color: var(--text); color: var(--text); }
 
-.modal > .form-group {
+.modal > .form-group,
+.modal > .form-row {
   padding: 8px 22px 0;
 }
 
-.modal > .form-group:first-of-type { padding-top: 18px; }
+.modal > .form-group:first-of-type,
+.modal > .form-row:first-of-type { padding-top: 18px; }
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
 
 .form-group { display: flex; flex-direction: column; gap: 5px; }
 
