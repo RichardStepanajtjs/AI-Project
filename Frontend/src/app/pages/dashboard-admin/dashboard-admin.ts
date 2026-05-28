@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { PageHeader } from "../../page-components/page-header/page-header";
 import { Router } from '@angular/router';
 import { UsersService } from '../../services/users/users-service';
+import { ProspectslistService } from '../../services/prospectslist/prospectslist-service';
 import { User } from '../../models/user';
 import { FormsModule } from "@angular/forms";
 
@@ -21,6 +22,7 @@ export class DashboardAdmin {
   errorMessage = '';
 
   usersService = inject(UsersService);
+  prospectsService = inject(ProspectslistService);
   router = inject(Router);
   cdr = inject(ChangeDetectorRef);
   
@@ -31,6 +33,7 @@ export class DashboardAdmin {
   aantal_gebruikers = 0;
   aantal_admins = 0;
   aantal_actieve = 0;
+  aantal_aanvragen_week = 0;
   
   currentSortKey: string = '';
   searchTerm: string = '';
@@ -41,10 +44,15 @@ export class DashboardAdmin {
     
     return this.users.filter(user => {
       const emailMatch = user.email.toLowerCase().includes(search);
-      // const nameMatch = user.name ? user.name.toLowerCase().includes(search) : false;
-      
-      return emailMatch /*|| nameMatch*/;
+      const naamMatch = user.naam ? user.naam.toLowerCase().includes(search) : false;
+      const achternaamMatch = user.achternaam ? user.achternaam.toLowerCase().includes(search) : false;
+      return emailMatch || naamMatch || achternaamMatch;
     });
+  }
+
+  fullName(user: User): string {
+    const parts = [user.naam, user.achternaam].filter(Boolean);
+    return parts.length > 0 ? parts.join(' ') : '—';
   }
   
   ngOnInit() {
@@ -56,6 +64,21 @@ export class DashboardAdmin {
       },
       error: (err) => {
         this.errorMessage = err.error?.message ?? 'Fout bij het laden van gebruikers.';
+      }
+    });
+
+    this.prospectsService.getProspects().subscribe({
+      next: (response: any) => {
+        const prospects = response.data ?? [];
+        const now = new Date();
+        const startOfWeek = new Date(now);
+        startOfWeek.setDate(now.getDate() - now.getDay() + (now.getDay() === 0 ? -6 : 1));
+        startOfWeek.setHours(0, 0, 0, 0);
+
+        this.aantal_aanvragen_week = prospects.filter((p: any) =>
+          new Date(p.created_at) >= startOfWeek
+        ).length;
+        this.cdr.detectChanges();
       }
     });
   }
@@ -83,7 +106,13 @@ export class DashboardAdmin {
 
   startEdit() {
     if (!this.selectedUser) return;
-    this.editData = { email: this.selectedUser.email, role: this.selectedUser.role, active: this.selectedUser.active };
+    this.editData = {
+      email: this.selectedUser.email,
+      role: this.selectedUser.role,
+      active: this.selectedUser.active,
+      naam: this.selectedUser.naam ?? '',
+      achternaam: this.selectedUser.achternaam ?? '',
+    };
     this.editPassword = '';
     this.editMode = true;
   }
@@ -101,6 +130,8 @@ export class DashboardAdmin {
       email: this.editData.email ?? this.selectedUser.email,
       role: this.editData.role ?? this.selectedUser.role,
       active: this.editData.active ?? this.selectedUser.active,
+      naam: this.editData.naam ?? this.selectedUser.naam,
+      achternaam: this.editData.achternaam ?? this.selectedUser.achternaam,
       password: this.editPassword || this.selectedUser.password,
     };
     this.usersService.updateUser(this.selectedUser.id, updated).subscribe({

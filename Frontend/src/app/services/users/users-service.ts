@@ -27,4 +27,8 @@ export class UsersService {
   deleteUser(id: number) {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
+
+  changePassword(id: number, data: { currentPassword: string; newPassword: string }) {
+    return this.http.patch(`${this.apiUrl}/${id}/change-password`, data);
+  }
 }

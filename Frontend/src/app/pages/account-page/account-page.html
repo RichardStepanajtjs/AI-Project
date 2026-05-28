@@ -65,6 +65,14 @@
         <div class="settings-card">
           <div class="settings-card-header">Persoonlijke informatie</div>
           <div class="settings-card-body">
+
+            @if (profileError) {
+              <div class="alert alert-error">{{ profileError }}</div>
+            }
+            @if (profileSuccess) {
+              <div class="alert alert-success">{{ profileSuccess }}</div>
+            }
+
             <div class="form-row">
               <div class="form-group">
                 <label>Naam</label>

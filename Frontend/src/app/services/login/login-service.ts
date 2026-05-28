@@ -87,6 +87,13 @@ export class LoginService {
     return payload?.['email'] ?? payload?.['sub'] ?? null;
   }
 
+  getUserId(): number | null {
+    const token = sessionStorage.getItem('token');
+    if (!token) return null;
+    const payload = decodeJwtPayload(token);
+    return payload?.['id'] ?? null;
+  }
+
   getLogginStatus() {
     return this.isLoggedIn;
   }
