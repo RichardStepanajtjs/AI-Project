@@ -21,14 +21,14 @@ const getUserById = async (id) => {
 };
 
 // Create new user
-const createUser = async (email, password, role = 'user') => {
+const createUser = async (email, password, role = 'user', naam = null, achternaam = null) => {
   const password_hash = await bcrypt.hash(password, 10);
   
   const result = await pool.query(
-    'INSERT INTO users (email, password_hash, role) VALUES ($1, $2, $3) RETURNING id, email, role, created_at',
-    [email, password_hash, role]
+    'INSERT INTO users (email, password_hash, role, naam, achternaam) VALUES ($1, $2, $3, $4, $5) RETURNING id, email, role, naam, achternaam, created_at',
+    [email, password_hash, role, naam, achternaam]
   );
-  
+
   return result.rows[0];
 };
 

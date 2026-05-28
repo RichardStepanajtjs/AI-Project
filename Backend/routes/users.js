@@ -54,7 +54,7 @@ router.post('/login', async (req, res) => {
 // Create new user
 router.post('/', async (req, res) => {
   try {
-    const { email, password, role } = req.body; // fix zodat het niet crasht
+    const { email, password, role, naam, achternaam } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({
@@ -62,8 +62,8 @@ router.post('/', async (req, res) => {
         message: 'Email and password are required'
       });
     }
-    
-    const user = await createUser(email, password, role);
+
+    const user = await createUser(email, password, role, naam, achternaam);
     
     res.status(201).json({
       success: true,
