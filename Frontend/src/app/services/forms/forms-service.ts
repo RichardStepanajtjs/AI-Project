@@ -18,6 +18,10 @@ export class FormsService {
   private http = inject(HttpClient);
   private apiUrl = 'https://nest.sokrates.traefik.me/forms';
 
+  getFormById(id: number) {
+    return this.http.get(`${this.apiUrl}/${id}`);
+  }
+
   createForm(data: FormPayload) {
     return this.http.post(`${this.apiUrl}`, data);
   }

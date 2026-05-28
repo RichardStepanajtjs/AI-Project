@@ -4,6 +4,7 @@ import { forkJoin } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { ProspectslistService } from '../../services/prospectslist/prospectslist-service';
 import { BusinessProfilesServices } from '../../services/business-profiles/business-profiles-service';
+import { FormsService } from '../../services/forms/forms-service';
 import { PageHeader } from '../../page-components/page-header/page-header';
 
 @Component({
@@ -17,14 +18,15 @@ export class ProspectDetailPage {
   private router = inject(Router);
   private service = inject(ProspectslistService);
   private companiesService = inject(BusinessProfilesServices);
+  private formsService = inject(FormsService);
   private cdr = inject(ChangeDetectorRef);
 
   prospect: any = null;
+  form: any = null;
   connectedProfiles: any[] = [];
   loading = true;
   error = '';
   sortOrder = 'accuracy-desc';
-  isEditing = false;
   draggedIndex: number | null = null;
 
   ngOnInit() {
@@ -50,6 +52,9 @@ export class ProspectDetailPage {
         this.prospect = res.data ?? res;
         this.loading = false;
         this.loadConnectedProfiles();
+        if (this.prospect?.form_id) {
+          this.loadForm(this.prospect.form_id);
+        }
         this.cdr.detectChanges();
       },
       error: () => {
@@ -59,6 +64,16 @@ export class ProspectDetailPage {
         this.loading = false;
         this.cdr.detectChanges();
       }
+    });
+  }
+
+  private loadForm(formId: number) {
+    this.formsService.getFormById(formId).subscribe({
+      next: (res: any) => {
+        this.form = res.data ?? res;
+        this.cdr.detectChanges();
+      },
+      error: () => {}
     });
   }
 
@@ -78,20 +93,6 @@ export class ProspectDetailPage {
         this.cdr.detectChanges();
       },
       error: () => {}
-    });
-  }
-
-  toggleEdit() {
-    this.isEditing = !this.isEditing;
-  }
-
-  saveChanges() {
-    this.service.updateProspectList(this.prospect.id, this.prospect).subscribe({
-      next: () => {
-        this.isEditing = false;
-        this.cdr.detectChanges();
-      },
-      error: (err) => console.error('Update failed', err)
     });
   }
 
@@ -163,20 +164,31 @@ export class ProspectDetailPage {
   }
 
   get listName(): string {
-    return this.prospect?.naam ?? this.prospect?.productname ?? this.prospect?.partnerName ?? '?';
+    return this.prospect?.naam ?? '?';
   }
 
   get sector(): string {
-    return this.prospect?.jobdomein ?? this.prospect?.sector ?? '';
+    return this.form?.sector ?? this.prospect?.jobdomein ?? '';
   }
 
   get tagsList(): string[] {
-    const raw = this.prospect?.tags_technology ?? this.prospect?.technologies ?? '';
-    return raw ? raw.split(',').map((t: string) => t.trim()).filter(Boolean) : [];
+    const raw = this.form?.technologies;
+    if (!raw) return [];
+    // PostgreSQL array komt als JS array binnen, anders komma-string als fallback
+    if (Array.isArray(raw)) return raw.filter(Boolean);
+    return String(raw).split(',').map((t: string) => t.trim()).filter(Boolean);
   }
 
   get isJobMode(): boolean {
-    return !!(this.prospect?.partnerName ?? this.prospect?.partnername);
+    return !!(this.form?.is_job);
+  }
+
+  get partnerName(): string {
+    return this.form?.partner_name ?? '–';
+  }
+
+  get description(): string {
+    return this.form?.generated_description ?? this.form?.description ?? '';
   }
 
   get createdAt(): string {
