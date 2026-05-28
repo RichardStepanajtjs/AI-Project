@@ -25,8 +25,8 @@ class Ollama:
         kbo_sectie = ""
         if kbo_data:
             oprichtingsjaar = (kbo_data.get("start_date") or "")[:4] or "onbekend"
-            nace_label = kbo_data.get("nace_omschrijving") or "onbekend"
-            nace_code = kbo_data.get("nace_main") or ""
+            nace_activiteiten = kbo_data.get("nace_activiteiten") or []
+            nace_sector = "; ".join(nace_activiteiten[:3]) if nace_activiteiten else "onbekend"
             rechtsvorm = kbo_data.get("juridical_form") or "onbekend"
             straat = kbo_data.get("straat") or ""
             huisnummer = kbo_data.get("huisnummer") or ""
@@ -36,7 +36,7 @@ class Ollama:
             adres = " ".join(adres_delen) or gemeente
             kbo_sectie = (
                 f"\nKBO Bedrijfsinfo:"
-                f"\n- Sector (NACE): {nace_label} ({nace_code})"
+                f"\n- Sector (NACE): {nace_sector}"
                 f"\n- Rechtsvorm: {rechtsvorm}"
                 f"\n- Oprichtingsjaar: {oprichtingsjaar}"
                 f"\n- Adres: {adres}"
@@ -59,7 +59,7 @@ class Ollama:
         return f"Je bent een expert in arbeidsmarktanalyse.\nAnalyseer de onderstaande vacaturedata en geef een JSON terug met exact drie velden:\n- \"jobdomein\": kies exact één waarde uit deze lijst: {domeinen}\n- \"technologies\": een JSON-array van programmeertalen, frameworks, tools of technologieen die het bedrijf gebruikt (enkel op basis van de gevraagde competenties; lege array [] als er geen zijn)\n- \"text\": {text_instructie}\n\nBedrijf: {data['naam']}\nType: {data['type']}\nLocatie: {data['gemeente']} ({data['postcode']}){kbo_sectie}\nOpenstaande functies (enkel ter context voor de sector): {beroepen}\nGevraagde competenties (enkel ter context voor technologieen): {vereisten}\n\nGeef enkel de JSON terug, geen uitleg of extra tekst."
 
     def strip_fences(self, raw):
-        # Ollama wraps responses in ```json ... ``` sometimes, strip that away
+        # ollama sometimes wraps responses in ```json ... ```, this strips that away
         if raw.startswith("```"):
             lines = raw.splitlines()
             if lines[0].startswith("```"):
@@ -70,13 +70,13 @@ class Ollama:
         return raw
 
     def extract_json(self, raw):
-        # De output is al een geldige JSON
+        # try to parse it directly first
         try:
             return json.loads(raw)
         except json.JSONDecodeError:
             pass
 
-        # Probeer het eerste {...} blok uit de tekst te halen
+        # try to extract the first {} block
         match = re.search(r'\{.*\}', raw, re.DOTALL)
         if match:
             try:
@@ -84,7 +84,7 @@ class Ollama:
             except json.JSONDecodeError:
                 pass
 
-            # Match gevonden maar afgesneden dus dit probeert het string zelf te sluiten
+            # match found but cut off, try to close it
             candidate = match.group().rstrip()
             if not candidate.endswith("}"):
                 try:
@@ -92,7 +92,7 @@ class Ollama:
                 except json.JSONDecodeError:
                     pass
 
-        # Ollama is gestopt midden in een string zonder de JSON ooit te sluiten dit pakt alles vanaf de eerste { en plak een noodkap erop
+        # ollama stopped mid-string, grab from { and force close
         brace_idx = raw.find('{')
         if brace_idx != -1:
             candidate = raw[brace_idx:].rstrip()
@@ -122,13 +122,13 @@ class Ollama:
         prompt = self.build_prompt(data, kbo_data)
         last_error = None
 
-        for poging in range(1, max_retries + 1):
+        for attempt in range(1, max_retries + 1):
             try:
                 response = self.call_ollama(prompt, num_predict=800)
 
-                # 4xx betekent dat we iets fout sturen, retrying heeft geen zin
+                # 4xx means bad request, no point retrying
                 if 400 <= response.status_code < 500:
-                    print(f"[Ollama] 4xx ({response.status_code}) voor {data['naam']}, geen retry.")
+                    print(f"[Ollama] 4xx ({response.status_code}) for {data['naam']}, no retry")
                     break
 
                 response.raise_for_status()
@@ -137,44 +137,42 @@ class Ollama:
 
                 if result is None:
                     print(
-                        f"[Ollama] Poging {poging}/{max_retries}, JSON parse mislukt voor {data['naam']}. "
-                        f"Raw (200t): {raw[:200]!r}"
+                        f"[Ollama] attempt {attempt}/{max_retries}, JSON parse failed for {data['naam']}. "
+                        f"Raw: {raw[:200]!r}"
                     )
                     last_error = "json_parse"
                     continue
 
-                # Soms geeft het model "text" terug als lijst van zinnen in plaats van een string
+                # sometimes the model returns text as a list instead of a string
                 if isinstance(result.get("text"), list):
                     result["text"] = " ".join(result["text"])
 
                 return result
 
             except (requests.Timeout, requests.ConnectionError) as e:
-                print(f"[Ollama] Poging {poging}/{max_retries}, verbindingsfout voor {data['naam']}: {e}")
+                print(f"[Ollama] attempt {attempt}/{max_retries}, connection error for {data['naam']}: {e}")
                 last_error = e
-                if poging < max_retries:
+                if attempt < max_retries:
                     time.sleep(1)
 
             except requests.HTTPError as e:
-                print(f"[Ollama] Poging {poging}/{max_retries}, HTTP fout voor {data['naam']}: {e}")
+                print(f"[Ollama] attempt {attempt}/{max_retries}, HTTP error for {data['naam']}: {e}")
                 last_error = e
-                if poging < max_retries:
+                if attempt < max_retries:
                     time.sleep(1)
 
             except Exception as e:
-                print(f"[Ollama] Onverwachte fout voor {data['naam']}: {e}")
+                print(f"[Ollama] unexpected error for {data['naam']}: {e}")
                 break
 
-        print(
-            f"[Ollama] Alle pogingen mislukt voor {data['naam']} "
-            f"(laatste fout: {last_error}). Fallback gebruikt."
-        )
+        print(f"[Ollama] all retries failed for {data['naam']} (last error: {last_error}), using fallback")
         return self.fallback(data, kbo_data)
 
     def fallback(self, data, kbo_data=None):
         beroepen = ", ".join(data["beroepen"]) or "onbekend"
         if kbo_data:
-            nace = kbo_data.get("nace_omschrijving") or "onbekende sector"
+            nace_activiteiten = kbo_data.get("nace_activiteiten") or []
+            nace = "; ".join(nace_activiteiten[:2]) if nace_activiteiten else "onbekende sector"
             rechtsvorm = kbo_data.get("juridical_form") or ""
             prefix = f"{rechtsvorm} " if rechtsvorm else ""
             return {
@@ -196,7 +194,7 @@ class Ollama:
         }
 
     def genereer_zoekprofiel(self, form_data, max_retries=3):
-        # Zet ruwe formulierdata om naar een semantisch rijke zoektekst die goed matcht met bedrijfsprofielen
+        # converts raw form data into a rich search text for company matching
         is_job = form_data.get("is_job", False)
         sector = form_data.get("sector") or "onbekend"
         techs = ", ".join(form_data.get("technologies") or []) or "geen"
@@ -230,12 +228,12 @@ class Ollama:
         )
 
         last_error = None
-        for poging in range(1, max_retries + 1):
+        for attempt in range(1, max_retries + 1):
             try:
                 response = self.call_ollama(prompt, num_predict=600)
 
                 if 400 <= response.status_code < 500:
-                    print(f"[Ollama] 4xx ({response.status_code}) bij zoekprofiel, geen retry.")
+                    print(f"[Ollama] 4xx ({response.status_code}) for search profile, no retry")
                     break
 
                 response.raise_for_status()
@@ -244,8 +242,8 @@ class Ollama:
 
                 if result is None or "description" not in result:
                     print(
-                        f"[Ollama] Poging {poging}/{max_retries}, zoekprofiel parse mislukt. "
-                        f"Raw (200t): {raw[:200]!r}"
+                        f"[Ollama] attempt {attempt}/{max_retries}, search profile parse failed. "
+                        f"Raw: {raw[:200]!r}"
                     )
                     last_error = "json_parse"
                     continue
@@ -253,22 +251,22 @@ class Ollama:
                 return result["description"]
 
             except (requests.Timeout, requests.ConnectionError) as e:
-                print(f"[Ollama] Poging {poging}/{max_retries}, verbindingsfout bij zoekprofiel: {e}")
+                print(f"[Ollama] attempt {attempt}/{max_retries}, connection error for search profile: {e}")
                 last_error = e
-                if poging < max_retries:
+                if attempt < max_retries:
                     time.sleep(1)
 
             except requests.HTTPError as e:
-                print(f"[Ollama] Poging {poging}/{max_retries}, HTTP fout bij zoekprofiel: {e}")
+                print(f"[Ollama] attempt {attempt}/{max_retries}, HTTP error for search profile: {e}")
                 last_error = e
-                if poging < max_retries:
+                if attempt < max_retries:
                     time.sleep(1)
 
             except Exception as e:
-                print(f"[Ollama] Onverwachte fout bij zoekprofiel: {e}")
+                print(f"[Ollama] unexpected error for search profile: {e}")
                 break
 
-        print(f"[Ollama] Alle pogingen mislukt voor zoekprofiel (laatste fout: {last_error}). Fallback.")
+        print(f"[Ollama] all retries failed for search profile (last error: {last_error}), using fallback")
         return self.fallback_zoekprofiel(form_data)
 
     def fallback_zoekprofiel(self, form_data):

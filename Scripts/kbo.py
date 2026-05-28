@@ -20,7 +20,7 @@ class KBO():
         return dataframes
 
     def print_data(self):
-        # Dit was om te zien wat de datasets inhoud
+        # used to inspect the raw datasets
         dataframes = self.load_data()
         for df in dataframes.values():
             print(df.head())
@@ -28,7 +28,7 @@ class KBO():
     def combine_df(self):
         dfs = self.load_data()
 
-        # Hier start ik met enterprise als basis
+        # start with enterprise as the base
         enterprise = dfs["enterprise"]
         enterprise.rename(columns={"EnterpriseNumber": "enterprise_number"}, inplace=True)
 
@@ -36,11 +36,11 @@ class KBO():
         naam = denom[(denom["TypeOfDenomination"] == "001") & (denom["Language"] == "2")][["EntityNumber", "Denomination"]].drop_duplicates("EntityNumber")
         naam.rename(columns={"EntityNumber": "enterprise_number", "Denomination": "naam"}, inplace=True)
 
-        # dit is de fallback indien er geen nl naam is
+        # fallback if no dutch name is found
         fallback = denom[denom["TypeOfDenomination"] == "001"][["EntityNumber", "Denomination"]].drop_duplicates("EntityNumber")
         fallback.rename(columns={"EntityNumber": "enterprise_number", "Denomination": "naam"}, inplace=True)
 
-        # Adres
+        # address
         address = dfs["address"]
         addr = address[address["TypeOfAddress"] == "REGO"][["EntityNumber", "Zipcode", "MunicipalityNL", "StreetNL", "HouseNumber"]].drop_duplicates("EntityNumber")
         addr.rename(columns={
@@ -51,25 +51,31 @@ class KBO():
             "HouseNumber": "huisnummer"
         }, inplace=True)
 
-        # Contactgegevens: alleen ENT-contacten (niet vestigingen)
-        contact = dfs["contact"]
-        contact_ent = contact[contact["EntityContact"] == "ENT"]
-        email = contact_ent[contact_ent["ContactType"] == "EMAIL"][["EntityNumber", "Value"]].drop_duplicates("EntityNumber")
-        email.rename(columns={"EntityNumber": "enterprise_number", "Value": "email"}, inplace=True)
-
-        tel = contact_ent[contact_ent["ContactType"] == "TEL"][["EntityNumber", "Value"]].drop_duplicates("EntityNumber")
-        tel.rename(columns={"EntityNumber": "enterprise_number", "Value": "telefoonnummer"}, inplace=True)
-
-        # Opzoektabel: vestigingsnummer → ondernemingsnummer (activiteiten staan soms onder vestigingsnummer)
+        # lookup table built early, used for both contacts and activities
         establishment = dfs["establishment"]
         entity_to_enterprise = dict(zip(establishment["EstablishmentNumber"], establishment["EnterpriseNumber"]))
 
+        # map establishment numbers to enterprise numbers in contact.csv
+        # many companies only register email/phone under their main establishment
+        contact = dfs["contact"].copy()
+        contact["EntityNumber"] = contact["EntityNumber"].apply(
+            lambda x: entity_to_enterprise.get(x, x)
+        )
+        contact = contact.sort_values("EntityContact", ascending=True)
+
+        email = contact[contact["ContactType"] == "EMAIL"][["EntityNumber", "Value"]].drop_duplicates("EntityNumber")
+        email.rename(columns={"EntityNumber": "enterprise_number", "Value": "email"}, inplace=True)
+
+        tel = contact[contact["ContactType"] == "TEL"][["EntityNumber", "Value"]].drop_duplicates("EntityNumber")
+        tel.rename(columns={"EntityNumber": "enterprise_number", "Value": "telefoonnummer"}, inplace=True)
+
+        # map establishment numbers to enterprise numbers in activity.csv as well
         activity = dfs["activity"].copy()
         activity["EntityNumber"] = activity["EntityNumber"].apply(
             lambda x: entity_to_enterprise.get(x, x)
         )
 
-        # NL labels uit code.csv
+        # dutch labels from code.csv
         code = dfs["code"]
         nace_labels = code[code["Language"] == "NL"].copy()
         nace_labels["Category"] = nace_labels["Category"].str.strip('"')
@@ -77,11 +83,11 @@ class KBO():
         nace_labels["NaceVersion"] = nace_labels["Category"].str.extract(r"(\d+)")
         nace_labels = nace_labels[["NaceVersion", "Code", "Description"]].drop_duplicates(["NaceVersion", "Code"])
 
-        # Sorteer: NaceVersion DESC, ActivityGroup DESC zodat 2025 eerst komt en "006" (ONSS) vóór "001" (BTW)
+        # sort NaceVersion and ActivityGroup descending so 2025 comes first and "006" (ONSS) before "001" (VAT)
         main_activities = activity[activity["Classification"] == "MAIN"].copy()
         main_activities = main_activities.sort_values(["NaceVersion", "ActivityGroup"], ascending=[False, False])
 
-        # Koppel NL-beschrijving en bouw "CODE - Omschrijving" strings
+        # join dutch description and build "CODE - Description" strings
         main_activities = main_activities.merge(
             nace_labels,
             left_on=["NaceVersion", "NaceCode"],
@@ -91,17 +97,17 @@ class KBO():
         main_activities["nace_str"] = main_activities["NaceCode"] + " - " + main_activities["Description"].fillna("")
         main_activities.rename(columns={"EntityNumber": "enterprise_number"}, inplace=True)
 
-        # Per bedrijf: houd alleen activiteiten van de meest recente NaceVersion
+        # keep only activities from the most recent NaceVersion per company
         max_version = main_activities.groupby("enterprise_number")["NaceVersion"].max().reset_index()
         max_version.rename(columns={"NaceVersion": "max_version"}, inplace=True)
         main_activities = main_activities.merge(max_version, on="enterprise_number")
         main_activities = main_activities[main_activities["NaceVersion"] == main_activities["max_version"]]
 
-        # Groepeer alle activiteiten als lijst per bedrijf
+        # group all activities as a list per company
         nace_activiteiten = main_activities.groupby("enterprise_number")["nace_str"].apply(list).reset_index()
         nace_activiteiten.rename(columns={"nace_str": "nace_activiteiten"}, inplace=True)
 
-        # Alles samenvoegen op enterprise_number
+        # merge everything on enterprise_number
         result = enterprise[["enterprise_number", "JuridicalForm", "StartDate"]]
         result.rename(columns={"JuridicalForm": "juridical_form", "StartDate": "start_date"}, inplace=True)
 
@@ -120,11 +126,11 @@ class KBO():
     def upload_to_api(self, api_url: str, batch_size: int = 100):
         df = self.combine_df()
 
-        # Filter bedrijven zonder NACE-activiteiten vóór upload
+        # filter out companies with no NACE activities before uploading
         before_count = len(df)
         df = df[df["nace_activiteiten"].apply(lambda x: isinstance(x, list) and len(x) > 0)]
         skipped_nace = before_count - len(df)
-        print(f"NACE-filter: {skipped_nace} bedrijven weggelaten (geen activiteiten), {len(df)} resterend")
+        print(f"NACE filter: {skipped_nace} companies skipped (no activities), {len(df)} remaining")
 
         df = df.replace({np.nan: None})
 
@@ -151,9 +157,9 @@ class KBO():
                 print(f"Batch {i // batch_size + 1}: {result.get('inserted')} inserted, {result.get('skipped')} skipped")
             except Exception as e:
                 total_failed += 1
-                print(f"Batch {i // batch_size + 1} MISLUKT: {e}")
+                print(f"Batch {i // batch_size + 1} failed: {e}")
 
-        print(f"\nKlaar: {total_inserted} ingevoegd, {total_skipped} overgeslagen, {total_failed} batches mislukt")
+        print(f"\nDone: {total_inserted} inserted, {total_skipped} skipped, {total_failed} batches failed")
 
 
 if __name__ == "__main__":

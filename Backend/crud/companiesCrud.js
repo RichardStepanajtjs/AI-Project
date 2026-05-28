@@ -6,7 +6,7 @@ const getAllCompaniesWithEmbeddings = async () => {
 };
 
 const getAllCompaniesWithoutEmbeddings = async () => {
-    const { rows } = await pool.query('SELECT id, naam, kbonummer, postcode, gemeente, landcode, email, telefoonnummer, jobdomein, text, technologies FROM companies ORDER BY created_at DESC');
+    const { rows } = await pool.query('SELECT id, naam, kbonummer, postcode, gemeente, landcode, email, telefoonnummer, jobdomein, text, technologies, created_at FROM companies ORDER BY created_at DESC');
     return rows;
 }
 

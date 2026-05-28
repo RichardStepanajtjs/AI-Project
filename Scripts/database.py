@@ -43,7 +43,7 @@ class Database:
             )
 
             if response.status_code == 409:
-                # bestaand bedrijf opzoeken en updaten
+                # company already exists, update it
                 self.update_existing_company(profiel["kbo_nummer"], payload)
                 return
 
@@ -66,7 +66,7 @@ class Database:
                 None,
             )
             if existing is None:
-                print(f"[Warning] Conflict maar bedrijf niet gevonden: {kbonummer}")
+                print(f"[Warning] conflict but company not found: {kbonummer}")
                 return
 
             put_resp = requests.put(

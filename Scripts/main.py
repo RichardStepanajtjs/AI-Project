@@ -35,20 +35,20 @@ def run_kbo_if_first_start():
         resp.raise_for_status()
         count = resp.json().get("count", 0)
     except Exception as e:
-        print(f"KBO count check mislukt: {e}. KBO import overgeslagen.")
+        print(f"KBO count check failed: {e}, skipping import")
         return
 
     if count > 0:
-        print(f"KBO data al aanwezig ({count} records). Import overgeslagen.")
+        print(f"KBO data already present ({count} records), skipping import")
         return
 
-    print("Geen KBO data gevonden. KBO import wordt gestart...")
+    print("no KBO data found, starting import")
     try:
         kbo = KBO()
         kbo.upload_to_api(f"{BACKEND_URL}/kbo-companies/bulk")
-        print("KBO import voltooid.")
+        print("KBO import done")
     except Exception as e:
-        print(f"KBO import mislukt: {e}. Opstart gaat verder.")
+        print(f"KBO import failed: {e}, continuing startup")
 
 
 def main():
@@ -75,15 +75,15 @@ def main():
         database=Database(BACKEND_URL),
     )
 
-    # Start Flask EERST zodat /process-form meteen beschikbaar is, ook terwijl de pipeline of KBO-import nog bezig is.
+    # start flask first so /process-form is available right away
     flask_thread = threading.Thread(
         target=lambda: app.run(host="0.0.0.0", port=5001, use_reloader=False),
         daemon=True,
     )
     flask_thread.start()
-    print("Form processing API gestart op poort 5001.")
+    print("form processing API started on port 5001")
 
-    # KBO-import en pipeline daarna (kan lang duren)
+    # run kbo import and pipeline after, these can take a while
     run_kbo_if_first_start()
     pipeline.run()
 

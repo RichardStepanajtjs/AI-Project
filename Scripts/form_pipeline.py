@@ -8,7 +8,7 @@ class FormPipeline:
         self.backend_url = backend_url.rstrip("/")
 
     def process_form(self, form_id):
-        # Formulierdata ophalen
+        # fetch form data
         try:
             resp = requests.get(f"{self.backend_url}/forms/{form_id}", timeout=10)
             resp.raise_for_status()
@@ -17,26 +17,26 @@ class FormPipeline:
             if isinstance(form_data, list):
                 form_data = form_data[0] if form_data else None
         except Exception as e:
-            print(f"[FormPipeline] Fout bij ophalen form {form_id}: {e}")
+            print(f"[FormPipeline] failed to fetch form {form_id}: {e}")
             return False
 
         if not form_data:
-            print(f"[FormPipeline] Form {form_id} niet gevonden.")
+            print(f"[FormPipeline] form {form_id} not found")
             return False
 
-        # Zoekprofiel genereren via Ollama
+        # generate search profile
         description = self.ollama.genereer_zoekprofiel(form_data)
         if not description:
-            print(f"[FormPipeline] Geen beschrijving gegenereerd voor form {form_id}.")
+            print(f"[FormPipeline] no description generated for form {form_id}")
             return False
 
-        # Embedding genereren via Voyage
+        # generate embedding
         embedding = self.voyage.embed(description)
         if not embedding:
-            print(f"[FormPipeline] Geen embedding gegenereerd voor form {form_id}.")
+            print(f"[FormPipeline] no embedding generated for form {form_id}")
             return False
 
-        # Form bijwerken: sla de AI-tekst op in generated_description (originele description blijft bewaard)
+        # save the AI text back to the form, original description stays untouched
         try:
             put_resp = requests.put(
                 f"{self.backend_url}/forms/{form_id}",
@@ -44,8 +44,8 @@ class FormPipeline:
                 timeout=10,
             )
             put_resp.raise_for_status()
-            print(f"[FormPipeline] Form {form_id} succesvol verwerkt.")
+            print(f"[FormPipeline] form {form_id} processed")
             return True
         except Exception as e:
-            print(f"[FormPipeline] Fout bij opslaan form {form_id}: {e}")
+            print(f"[FormPipeline] failed to save form {form_id}: {e}")
             return False

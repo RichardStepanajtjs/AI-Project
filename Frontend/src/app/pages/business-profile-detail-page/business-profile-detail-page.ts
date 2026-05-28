@@ -60,4 +60,12 @@ export class BusinessProfileDetailPage {
   goBack() {
     this.router.navigate(['/business-profiles']);
   }
+
+  formatKbo(kbo: string): string {
+    const clean = (kbo ?? '').replace(/\./g, '');
+    if (clean.length === 10) {
+      return `${clean.slice(0, 4)}.${clean.slice(4, 7)}.${clean.slice(7)}`;
+    }
+    return kbo;
+  }
 }
