@@ -63,8 +63,7 @@ CREATE TABLE IF NOT EXISTS kbo_companies (
     huisnummer VARCHAR(20),
     email VARCHAR(255),
     telefoonnummer VARCHAR(50),
-    nace_main VARCHAR(10),
-    nace_omschrijving VARCHAR(255),
+    nace_activiteiten TEXT[],
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
