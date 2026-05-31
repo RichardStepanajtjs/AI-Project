@@ -41,9 +41,11 @@ def get_next_version_name():
         
         next_num = len(models) + 1
         return f"v{next_num}"
-    
+
     except Exception as e:
-        print(f"{e}. Using date as version.")
+        fallback = datetime.now().strftime("v%Y%m%d-%H%M%S")
+        print(f"{e}. Using date as version: {fallback}")
+        return fallback
 
 def train():
     raw_data = fetch_data("companies/embeddings")

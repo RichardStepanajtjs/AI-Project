@@ -23,8 +23,8 @@ const port = 3000;
 
 // Middleware
 app.use(cors());
-// Verhoogd naar 1 mb voor de kbo data
-app.use(express.json({ limit: '1mb' }));
+// Verhoogd voor grote payloads (KBO-data + getraind FAISS-model met embeddings)
+app.use(express.json({ limit: '100mb' }));
 
 // Api routes
 app.use('/users', usersRoute);
