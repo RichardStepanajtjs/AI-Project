@@ -3,10 +3,10 @@ services:
     build: ./Frontend
     container_name: frontend
     restart: unless-stopped
-    # Alleen voor development, in productie zou je dit moeten verwijderen en een statische build gebruiken
-    volumes:
-      - ./Frontend:/Frontend             # Koppelt lokale code aan de container
-      - /Frontend/node_modules           # Zorgt dat de lokale node_modules de container niet overschrijven
+    # # Alleen voor development, in productie zou je dit moeten verwijderen en een statische build gebruiken
+    # volumes:
+    #   - ./Frontend:/Frontend             # Koppelt lokale code aan de container
+    #   - /Frontend/node_modules           # Zorgt dat de lokale node_modules de container niet overschrijven
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.frontend.rule=Host(`sokrates.traefik.me`)"
