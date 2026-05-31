@@ -52,7 +52,7 @@ class Pipeline:
             resp.raise_for_status()
             return resp.json().get("data")
         except Exception as e:
-            print(f"[Pipeline] KBO lookup mislukt voor {kbo_nummer}: {e}")
+            print(f"[Pipeline] KBO lookup failed for {kbo_nummer}: {e}")
             return None
 
     def verwerk_bedrijven(self, bedrijven):
@@ -67,8 +67,8 @@ class Pipeline:
             profiel = {
                 "kbo_nummer": kbo,
                 "naam": data["naam"],
-                "gemeente": data["gemeente"],
-                "postcode": data["postcode"],
+                "gemeente": data["gemeente"] or (kbo_data or {}).get("gemeente"),
+                "postcode": data["postcode"] or (kbo_data or {}).get("postcode"),
                 "landcode": "BE" if kbo_data else None,
                 "email": (kbo_data or {}).get("email") or None,
                 "telefoonnummer": (kbo_data or {}).get("telefoonnummer") or None,

@@ -42,7 +42,7 @@
                 </span>
                 <span class="badge badge--mono">
                   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
-                  KBO {{ profile.kbonummer }}
+                  KBO {{ formatKbo(profile.kbonummer) }}
                 </span>
               </div>
             </div>
@@ -103,7 +103,7 @@
           <dl>
             <div class="row">
               <dt>KBO-nummer</dt>
-              <dd><span class="mono">{{ profile.kbonummer }}</span></dd>
+              <dd><span class="mono">{{ formatKbo(profile.kbonummer) }}</span></dd>
             </div>
             <div class="row">
               <dt>Sector</dt>

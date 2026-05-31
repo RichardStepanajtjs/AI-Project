@@ -20,20 +20,20 @@ const createKboCompany = async (data) => {
     const {
         enterprise_number, naam, juridical_form, start_date,
         postcode, gemeente, straat, huisnummer,
-        email, telefoonnummer, nace_main, nace_omschrijving
+        email, telefoonnummer, nace_activiteiten
     } = data;
 
     const query = `
         INSERT INTO kbo_companies
-            (enterprise_number, naam, juridical_form, start_date, postcode, gemeente, straat, huisnummer, email, telefoonnummer, nace_main, nace_omschrijving)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+            (enterprise_number, naam, juridical_form, start_date, postcode, gemeente, straat, huisnummer, email, telefoonnummer, nace_activiteiten)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
         RETURNING *
     `;
 
     const { rows } = await pool.query(query, [
         enterprise_number, naam, juridical_form, start_date,
         postcode, gemeente, straat, huisnummer,
-        email, telefoonnummer, nace_main, nace_omschrijving
+        email, telefoonnummer, nace_activiteiten
     ]);
     return rows[0];
 };
@@ -44,7 +44,7 @@ const bulkCreateKboCompanies = async (companies) => {
     const fields = [
         'enterprise_number', 'naam', 'juridical_form', 'start_date',
         'postcode', 'gemeente', 'straat', 'huisnummer',
-        'email', 'telefoonnummer', 'nace_main', 'nace_omschrijving'
+        'email', 'telefoonnummer', 'nace_activiteiten'
     ];
     const numFields = fields.length;
 
