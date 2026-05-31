@@ -67,7 +67,7 @@ export class DashboardAdmin {
       }
     });
 
-    this.prospectsService.getProspects().subscribe({
+    this.prospectsService.getProspectLists().subscribe({
       next: (response: any) => {
         const prospects = response.data ?? [];
         const now = new Date();

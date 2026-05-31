@@ -1,3 +1,4 @@
+import time
 import faiss
 import pickle
 import base64
@@ -8,7 +9,24 @@ from preprocessing import fetch_data, format
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-model_url = "http://backend:3000/models"
+backend_url = "http://backend:3000"
+model_url = f"{backend_url}/models"
+
+
+def wait_for_companies(poll_interval=30):
+    """Wacht tot de backend minstens 1 bedrijfsprofiel heeft voor we trainen."""
+    count_url = f"{backend_url}/companies/count"
+    while True:
+        try:
+            count = requests.get(count_url, verify=False).json().get("count", 0)
+        except Exception as e:
+            count = 0
+            print(f"Count-check mislukt: {e}")
+        if count > 0:
+            print(f"{count} bedrijfsprofiel(en) gevonden, start training.")
+            return
+        print(f"Nog geen bedrijfsprofielen, opnieuw checken over {poll_interval}s...")
+        time.sleep(poll_interval)
 
 def get_next_version_name():
     try:
@@ -84,4 +102,5 @@ def train():
             print(f"Backend response: {e.response.text}")
 
 if __name__ == "__main__":
+   wait_for_companies()
    train()

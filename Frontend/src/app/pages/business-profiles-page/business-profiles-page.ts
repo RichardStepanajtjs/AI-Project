@@ -22,14 +22,23 @@ export class BusinessProfilesPage {
     'Overheid', 'Productie', 'Techniek', 'Verkoop', 'Andere'
   ];
 
+  sorteerOpties = [
+    { label: 'Nieuwste eerst', value: 'nieuwste' },
+    { label: 'Oudste eerst', value: 'oudste' },
+  ];
+
   private _sector = 'Alle sectoren';
   private _zoekterm = '';
+  private _sortering = 'nieuwste';
 
   get geselecteerdeSector() { return this._sector; }
   set geselecteerdeSector(v: string) { this._sector = v; this.resetPagination(); }
 
   get zoekterm() { return this._zoekterm; }
   set zoekterm(v: string) { this._zoekterm = v; this.resetPagination(); }
+
+  get sortering() { return this._sortering; }
+  set sortering(v: string) { this._sortering = v; this.resetPagination(); }
 
   businessProfiles: BusinessProfile[] = [];
   errorMessage = '';
@@ -74,12 +83,12 @@ export class BusinessProfilesPage {
     const filtered = this.businessProfiles
       // Filter op Sector
       .filter(p => this._sector === 'Alle sectoren' || p.jobdomein === this._sector)
-      
-      
+
+
       // Filter op zoekterm
       .filter(p => {
         if (!this._zoekterm) return true;
-        
+
         const term = this._zoekterm.toLowerCase();
         
         const naamMatch = p.naam?.toLowerCase().includes(term);
@@ -92,18 +101,25 @@ export class BusinessProfilesPage {
         const gemeenteMatch = p.gemeente?.toLowerCase().includes(term);
 
         return naamMatch || beschrijvingMatch || technologieMatch || domeinMatch || gemeenteMatch;
+      })
+
+      // Sorteer op aanmaakdatum (nieuwste of oudste eerst)
+      .sort((a, b) => {
+        const dateA = new Date(a.created_at ?? 0).getTime();
+        const dateB = new Date(b.created_at ?? 0).getTime();
+        return this._sortering === 'oudste' ? dateA - dateB : dateB - dateA;
       });
 
     // Pagination logica
     this.filteredCount = filtered.length;
-    this.totalPages = Math.max(1, Math.ceil(filtered.length / this._pageSize));
+    this.totalPages = Math.max(1, Math.ceil(filtered.length / this.pageSize));
     
     if (this.currentPage > this.totalPages) {
       this.currentPage = this.totalPages;
     }
 
-    const start = (this.currentPage - 1) * this._pageSize;
-    const end = Math.min(start + this._pageSize, filtered.length);
+    const start = (this.currentPage - 1) * this.pageSize;
+    const end = Math.min(start + this.pageSize, filtered.length);
     
     this.pagedProfiles = filtered.slice(start, end);
     this.pageStart = filtered.length === 0 ? 0 : start + 1;

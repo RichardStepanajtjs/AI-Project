@@ -16,6 +16,11 @@ app = Flask(__name__)
 form_pipeline: FormPipeline = None
 
 
+@app.route("/health")
+def health():
+    return jsonify({"status": "ok"}), 200
+
+
 @app.route("/process-form", methods=["POST"])
 def process_form():
     data = request.get_json() or {}

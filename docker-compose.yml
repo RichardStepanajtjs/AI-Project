@@ -76,15 +76,11 @@ services:
     build: ./Scripts
     container_name: python_container
     healthcheck:
-      test: ["CMD-SHELL", "python3 -c 
-            \"import requests;
-             r = requests.get('http://backend:3000/companies/count');
-            exit(0 if r.json().get('count', 0) > 0 else 1)\""
-            ]
-      interval: 1m
-      timeout: 30s
-      retries: 10
-      start_period: 3m
+      test: ["CMD-SHELL", "python3 -c \"import requests; exit(0 if requests.get('http://localhost:5001/health').status_code == 200 else 1)\""]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
     restart: unless-stopped
     depends_on:
       database:
@@ -133,7 +129,7 @@ services:
     container_name: ai_model
     depends_on:
       python_container:
-        condition: service_healthy
+        condition: service_started
     networks:
       - backend
 

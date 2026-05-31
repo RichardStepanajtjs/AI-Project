@@ -5,6 +5,16 @@
   [(searchTerm)]="zoekterm">
 </app-filter-header>
 
+<!-- Sorteren op aanmaakdatum -->
+<div class="sort-bar">
+  <label for="sort-select">Sorteren</label>
+  <select id="sort-select" [(ngModel)]="sortering">
+    @for (optie of sorteerOpties; track optie.value) {
+      <option [value]="optie.value">{{ optie.label }}</option>
+    }
+  </select>
+</div>
+
 <main>
   @for (profile of pagedProfiles; track profile.kbonummer) {
     <app-business-profile
