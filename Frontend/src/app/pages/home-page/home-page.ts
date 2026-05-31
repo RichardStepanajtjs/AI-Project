@@ -32,7 +32,7 @@ export class HomePage {
       error: () => this.checkDone()
     });
 
-    this.prospectsService.getProspects().subscribe({
+    this.prospectsService.getProspectLists().subscribe({
       next: (res: any) => {
         this.totalProspectLists = (res.data ?? res)?.length ?? 0;
         this.checkDone();

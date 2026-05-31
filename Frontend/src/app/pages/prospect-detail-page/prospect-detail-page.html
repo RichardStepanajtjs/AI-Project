@@ -12,15 +12,10 @@
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
         Terug
       </button>
-
-      <div style="display: flex; gap: 8px;">
-        <button (click)="toggleEdit()" style="padding: 6px 12px; cursor: pointer; border-radius: 4px; border: 1px solid #ccc; background: white;">
-          {{ isEditing ? 'Annuleren' : 'Bewerken' }}
-        </button>
-        <button (click)="deleteList()" style="padding: 6px 12px; cursor: pointer; border-radius: 4px; border: 1px solid #ef4444; background: white; color: #ef4444;">
-          Verwijderen
-        </button>
-      </div>
+      <button class="delete-btn" (click)="deleteList()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+        Verwijderen
+      </button>
     </div>
 
     <div class="two-col">
@@ -97,54 +92,23 @@
           <dl>
             <div class="row">
               <dt>Naam</dt>
-              <dd>
-                @if (isEditing) {
-                  <input [(ngModel)]="prospect.naam" style="width: 100%; padding: 4px; border: 1px solid #ddd; border-radius: 4px;">
-                } @else {
-                  {{ listName }}
-                }
-              </dd>
+              <dd>{{ listName }}</dd>
+            </div>
+            <div class="row">
+              <dt>Formulier naam</dt>
+              <dd>{{ partnerName }}</dd>
             </div>
             <div class="row">
               <dt>Type</dt>
               <dd>{{ isJobMode ? 'Job' : 'Product' }}</dd>
             </div>
-            @if (isJobMode) {
-              <div class="row">
-                <dt>Partnernaam</dt>
-                <dd>
-                  @if (isEditing) {
-                    <input [(ngModel)]="prospect.partnerName" style="width: 100%; padding: 4px; border: 1px solid #ddd; border-radius: 4px;">
-                  } @else {
-                    {{ prospect.partnerName ?? prospect.partnername ?? '–' }}
-                  }
-                </dd>
-              </div>
-            } @else {
-              <div class="row">
-                <dt>Productnaam</dt>
-                <dd>
-                  @if (isEditing) {
-                    <input [(ngModel)]="prospect.productname" style="width: 100%; padding: 4px; border: 1px solid #ddd; border-radius: 4px;">
-                  } @else {
-                    {{ prospect.productname ?? prospect.productName ?? '–' }}
-                  }
-                </dd>
-              </div>
-            }
             <div class="row">
               <dt>Sector</dt>
-              <dd>
-                @if (isEditing) {
-                  <input [(ngModel)]="prospect.jobdomein" style="width: 100%; padding: 4px; border: 1px solid #ddd; border-radius: 4px;">
-                } @else {
-                  {{ sector || '–' }}
-                }
-              </dd>
+              <dd>{{ sector || '–' }}</dd>
             </div>
             <div class="row">
               <dt>Aantal prospects</dt>
-              <dd>{{ prospect.amount_prospects ?? prospect.amountOfProspects ?? connectedProfiles.length || '–' }}</dd>
+              <dd>{{ connectedProfiles.length || '–' }}</dd>
             </div>
             @if (createdAt) {
               <div class="row">
@@ -169,18 +133,8 @@
 
           <div class="desc-block">
             <p class="tags-label">Beschrijving</p>
-            @if (isEditing) {
-              <textarea [(ngModel)]="prospect.description" style="width: 100%; padding: 4px; border: 1px solid #ddd; border-radius: 4px; min-height: 100px;"></textarea>
-            } @else {
-              <p class="description-text">{{ prospect.description || 'Niet opgegeven' }}</p>
-            }
+            <p class="description-text">{{ description || 'Niet opgegeven' }}</p>
           </div>
-
-          @if (isEditing) {
-            <button (click)="saveChanges()" style="width: 100%; margin-top: 1rem; padding: 10px; background: #2563eb; color: white; border: none; border-radius: 6px; cursor: pointer;">
-              Wijzigingen Opslaan
-            </button>
-          }
         </div>
       </div>
 

@@ -10,7 +10,6 @@ def fetch_data(endpoint: str):
     GET-request to retrieve company or forum data.
     """
     url = f"{api_base_url}/{endpoint}"
-    print(f"Retrieving data from API: {url}...")
     
     try:
         response = requests.get(url, verify=False)
@@ -21,12 +20,10 @@ def fetch_data(endpoint: str):
         if json_response.get("success"):
             return json_response.get("data", [])
         else:
-            print(f"API returned an error: {json_response.get('message')}")
-            return []
+            raise RuntimeError(f"API returned an error: {json_response.get('message')}")
             
     except requests.exceptions.RequestException as e:
-        print(f"Error: Cannot connect to API. {e}")
-        return []
+        raise ConnectionError(f"Cannot connect to API at {url}. {e}")
 
 def format(api_data: list):
     """

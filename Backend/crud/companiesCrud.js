@@ -68,9 +68,15 @@ const deleteCompany = async (id) => {
     return rows[0];
 };
 
+const getCompaniesCount = async () => {
+    const { rows } = await pool.query('SELECT COUNT(*)::int AS count FROM companies');
+    return rows[0].count;
+};
+
 module.exports = {
     getAllCompaniesWithEmbeddings,
     getAllCompaniesWithoutEmbeddings,
+    getCompaniesCount,
     getCompanyById,
     getCompaniesByDomain,
     createCompany,

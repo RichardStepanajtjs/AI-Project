@@ -42,4 +42,8 @@ export class ModelsService {
   trainModel(): Observable<{success: boolean, message: string}> {
     return this.http.post<{success: boolean, message: string}>(`${this.apiUrl}/train`, {});
   }
+
+  rankModel(formId: number, k: number = 20): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/rank`, { form_id: formId, k });
+  }
 }

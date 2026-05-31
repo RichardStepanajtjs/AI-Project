@@ -30,7 +30,7 @@ app.use(express.json({ limit: '1mb' }));
 app.use('/users', usersRoute);
 app.use('/vacancies', vacanciesRoute);
 app.use('/companies', companiesRoute);
-app.use('/prospects', prospectListsRoute);
+app.use('/prospect-lists', prospectListsRoute);
 app.use('/models', modelsRoute);
 app.use('/forms', formsRoute);
 app.use('/kbo-companies', kboCompaniesRoute);
@@ -75,6 +75,7 @@ app.listen(port, () => {
   console.log('Companies:');
   console.log('  GET    /companies');
   console.log('  GET    /companies/:id');
+  console.log('  GET    /companies/count');
   console.log('  POST   /companies');
   console.log('  PUT    /companies/:id');
   console.log('  DELETE /companies/:id');
@@ -97,12 +98,12 @@ app.listen(port, () => {
   console.log('  DELETE /forms/:id');
 
   console.log('Prospect Lists:');
-  console.log('  GET    /prospects');
-  console.log('  GET    /prospects/:id');
-  console.log('  GET    /prospects/user/:userId');
-  console.log('  POST   /prospects');
-  console.log('  PUT    /prospects/:id');
-  console.log('  DELETE /prospects/:id');
+  console.log('  GET    /prospect-lists');
+  console.log('  GET    /prospect-lists/:id');
+  console.log('  GET    /prospect-lists/user/:userId');
+  console.log('  POST   /prospect-lists');
+  console.log('  PUT    /prospect-lists/:id');
+  console.log('  DELETE /prospect-lists/:id');
 
   console.log('Test Data:');
   console.log('  GET    /testdata');

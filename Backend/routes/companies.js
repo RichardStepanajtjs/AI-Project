@@ -3,6 +3,7 @@ const router = express.Router();
 const {
   getAllCompaniesWithEmbeddings,
   getAllCompaniesWithoutEmbeddings,
+  getCompaniesCount,
   getCompanyById,
   createCompany,
   updateCompany,
@@ -10,6 +11,21 @@ const {
 } = require("../crud/companiesCrud");
 
 // COMPANIES ROUTES
+
+// GET count of all companies
+router.get("/count", async (req, res) => {
+    try {
+        const count = await getCompaniesCount();
+        res.json({ success: true, count });
+    } catch (error) {
+        console.error("Error counting companies:", error);
+        res.status(500).json({
+            success: false,
+            message: "Error counting companies",
+            error: error.message,
+        });
+    }
+});
 
 // GET all companies (with embeddings)
 router.get("/embeddings", async (req, res) => {

@@ -9,7 +9,7 @@ const getAllForms = async () => {
 // Get form by ID (with embedding data)
 const getFormById = async (id) => {
     const { rows } = await pool.query('SELECT * FROM forms WHERE id = $1', [id]);
-    return rows;
+    return rows[0];
 };
 
 // Create a new form

@@ -20,8 +20,8 @@ export const routes: Routes = [
     {path: 'my-account', component: AccountPage, canActivate: [loginGuard]},
     {path: 'business-profiles', component: BusinessProfilesPage, canActivate: [loginGuard]},
     {path: 'business-profiles/:kbonummer', component: BusinessProfileDetailPage, canActivate: [loginGuard]},
-    {path: 'prospects', component: ProspectsPage, canActivate: [loginGuard]},
-    {path: 'prospects/:id', component: ProspectDetailPage, canActivate: [loginGuard]},
+    {path: 'prospect-lists', component: ProspectsPage, canActivate: [loginGuard]},
+    {path: 'prospect-lists/:id', component: ProspectDetailPage, canActivate: [loginGuard]},
     {path: 'login', component: LoginPage, canActivate: [alreadyLoggedInGuard]},
     {path: 'ai-model', component: ModelPage, canActivate: [loginGuard, adminGuard]},
 ];

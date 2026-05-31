@@ -35,6 +35,29 @@
   background: var(--accent-bg);
 }
 
+.delete-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 7px 14px;
+  font-size: 13px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all .15s;
+  box-shadow: 0 1px 3px var(--shadow);
+}
+
+.delete-btn:hover {
+  border-color: var(--danger, #ef4444);
+  color: var(--danger, #ef4444);
+  background: color-mix(in srgb, var(--danger, #ef4444) 8%, var(--surface));
+}
+
 .two-col {
   display: grid;
   grid-template-columns: 1fr 340px;

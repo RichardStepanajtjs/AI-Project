@@ -22,7 +22,7 @@
       [accuracy]="95"
       [isFavorite]="isFavorite(lijst)"
       (favoriteChange)="toggleFavorite(lijst)"
-      (cardClick)="router.navigate(['/prospects', lijst.id], { state: { prospect: lijst } })">
+      (cardClick)="router.navigate(['/prospect-lists', lijst.id], { state: { prospect: lijst } })">
     </app-prospect>
   } @empty {
     <p class="empty">Geen prospectlijsten gevonden.</p>
