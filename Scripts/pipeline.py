@@ -65,6 +65,12 @@ class Pipeline:
 
             result = self.ollama.genereer_profiel(data, kbo_data=kbo_data)
             embedding = self.voyage.embed(result["text"])
+
+            # no embedding means the company can't be matched, skip saving it
+            if embedding is None:
+                print(f"Skipped (no embedding): {data['naam']}")
+                continue
+
             profiel = {
                 "kbo_nummer": kbo,
                 "naam": data["naam"],

@@ -6,6 +6,12 @@ class Voyage_api:
         self.model = model
 
     def embed(self, text):
+        # empty input is rejected by the API, skip it early
+        text = (text or "").strip()
+        if not text:
+            print("Voyage skip: empty text")
+            return None
+
         try:
             result = self.client.embed([text], model = self.model)
             return result.embeddings[0]

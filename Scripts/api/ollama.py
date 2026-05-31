@@ -103,7 +103,7 @@ class Ollama:
 
         return None
 
-    def call_ollama(self, prompt, num_predict=500, timeout=180):
+    def call_ollama(self, prompt, num_predict=600, timeout=180):
         return requests.post(
             f"{self.host}/api/generate",
             json={
@@ -153,6 +153,15 @@ class Ollama:
                 # sometimes the model returns text as a list instead of a string
                 if isinstance(result.get("text"), list):
                     result["text"] = " ".join(result["text"])
+
+                # the model sometimes omits required fields; retry, then fall back
+                if not result.get("text") or not result.get("jobdomein"):
+                    print(
+                        f"[Ollama] attempt {attempt}/{max_retries}, incomplete result for {data['naam']}. "
+                        f"Raw: {raw[:200]!r}"
+                    )
+                    last_error = "incomplete"
+                    continue
 
                 return result
 
