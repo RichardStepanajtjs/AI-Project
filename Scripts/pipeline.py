@@ -56,6 +56,7 @@ class Pipeline:
             return None
 
     def verwerk_bedrijven(self, bedrijven):
+        self.ollama.warmup()
         count = 0
         for kbo, data in bedrijven.items():
             print(f"Processing: {data['naam']} ({kbo})")

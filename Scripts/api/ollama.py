@@ -103,7 +103,7 @@ class Ollama:
 
         return None
 
-    def call_ollama(self, prompt, num_predict=800):
+    def call_ollama(self, prompt, num_predict=500, timeout=180):
         return requests.post(
             f"{self.host}/api/generate",
             json={
@@ -115,8 +115,15 @@ class Ollama:
                     "num_predict": num_predict,
                 },
             },
-            timeout=60,
+            timeout=timeout,
         )
+
+    def warmup(self):
+        # preload the model so the first real request doesn't hit a cold start
+        try:
+            self.call_ollama("ping", num_predict=1)
+        except Exception as e:
+            print(f"[Ollama] warmup failed (continuing): {e}")
 
     def genereer_profiel(self, data, kbo_data=None, max_retries=3):
         prompt = self.build_prompt(data, kbo_data)
@@ -124,7 +131,7 @@ class Ollama:
 
         for attempt in range(1, max_retries + 1):
             try:
-                response = self.call_ollama(prompt, num_predict=800)
+                response = self.call_ollama(prompt, num_predict=500)
 
                 # 4xx means bad request, no point retrying
                 if 400 <= response.status_code < 500:
