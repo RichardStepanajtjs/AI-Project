@@ -156,13 +156,19 @@ router.post("/:id/process", async (req, res) => {
                     .map(m => Number(m.id))
                     .filter(val => Number.isInteger(val));
 
-                    if (company_ids.length > 0) {                    
+                // Convert FAISS cosine scores (0-1) to percentages, capped at 100
+                const accuracy_scores = matches
+                    .filter(m => Number.isInteger(Number(m.id)))
+                    .map(m => Math.min(Math.round((m.score ?? 0) * 100), 100));
+
+                    if (company_ids.length > 0) {
                         await createProspectList({
-                            user_id: formData.user_id || 1, 
-                            naam: formData.partner_name || `Form ${id}`, 
+                            user_id: formData.user_id || 1,
+                            naam: formData.partner_name || `Form ${id}`,
                             jobdomein: formData.sector || "Algemeen",
                             form_id: parseInt(id),
-                            company_ids
+                            company_ids,
+                            accuracy_scores
                         });
                         console.log(`Prospect list '${formData.partner_name}' succesfully created for form ${id}`);
                     } else {

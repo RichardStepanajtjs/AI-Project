@@ -54,7 +54,7 @@ const deleteTestData = async (id) => {
     return result.rows[0];
 };
 
-models.exports = {
+module.exports = {
     getAllTestData,
     getTestDataById,
     createTestData,

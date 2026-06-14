@@ -14,6 +14,7 @@ const prospectListsRoute = require('./routes/prospectlists');
 const modelsRoute = require('./routes/models');
 const formsRoute = require('./routes/forms');
 const kboCompaniesRoute = require('./routes/kbocompanies');
+const testDataRoute = require('./routes/testdata');
 
 // Initialize database connection
 require('./db/connection');
@@ -34,6 +35,7 @@ app.use('/prospect-lists', prospectListsRoute);
 app.use('/models', modelsRoute);
 app.use('/forms', formsRoute);
 app.use('/kbo-companies', kboCompaniesRoute);
+app.use('/testdata', testDataRoute);
 
 // Health check
 app.get('/health', (req, res) => {
