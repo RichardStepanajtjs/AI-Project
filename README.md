@@ -65,11 +65,7 @@ PASSWORD=
 Om het project als lector snel en foutloos op te starten, zijn er automatiseringsscripts toegevoegd die de juiste volgorde van netwerk- en containercreatie garanderen.
 
 1. **Docker Desktop**: Zorg dat Docker actief is.
-2. **Netwerk**: Maak eenmalig het gateway netwerk aan (indien dit nog niet bestaat):
-   ```powershell
-   docker network create gateway
-   ```
-3. **Launch**: Dubbelklik op het script in de root-map:
+2. **Launch**: Dubbelklik op het script in de root-map:
    ```text
    start.bat
    ```
