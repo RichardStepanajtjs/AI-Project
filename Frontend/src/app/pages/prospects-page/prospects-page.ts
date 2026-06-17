@@ -73,6 +73,13 @@ export class ProspectsPage {
     sessionStorage.setItem(FAVORITES_KEY, JSON.stringify([...this.favoriteIds]));
   }
 
+  gemiddeldeAccuracy(lijst: any): number {
+    const scores: number[] = lijst?.accuracy_scores ?? [];
+    if (!scores.length) return 0;
+    const gemiddelde = scores.reduce((som, s) => som + s, 0) / scores.length;
+    return Math.round(gemiddelde);
+  }
+
   isFavorite(lijst: any): boolean {
     return this.favoriteIds.has(lijst.id);
   }

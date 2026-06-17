@@ -204,8 +204,9 @@ export class ProspectDetailPage {
 
   accuracyColor(score: number | null): string {
     if (score === null) return 'var(--muted)';
-    if (score >= 80) return '#22c55e';
-    if (score >= 60) return '#f59e0b';
-    return '#ef4444';
+    if (score >= 80) return '#22c55e'; // groen
+    if (score >= 60) return '#eab308'; // geel
+    if (score >= 40) return '#f59e0b'; // oranje
+    return '#ef4444';                  // rood
   }
 }

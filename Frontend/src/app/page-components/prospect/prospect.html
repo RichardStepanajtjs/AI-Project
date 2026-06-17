@@ -2,7 +2,12 @@
   <div class="head">
     <span class="name">{{ prospectName }}</span>
     <div class="head-right">
-      <span class="score">{{ accuracy }}%</span>
+      <span class="score"
+        [style.color]="scoreColor"
+        [style.borderColor]="scoreColor"
+        [style.backgroundColor]="'color-mix(in srgb, ' + scoreColor + ' 12%, transparent)'">
+        {{ accuracy }}%
+      </span>
       <button
         class="favorite-btn"
         [class.active]="isFavorite"

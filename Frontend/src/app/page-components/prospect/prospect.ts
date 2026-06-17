@@ -13,4 +13,11 @@ export class Prospect {
   @Input() isFavorite: boolean = false;
   @Output() cardClick = new EventEmitter<void>();
   @Output() favoriteChange = new EventEmitter<void>();
+
+  get scoreColor(): string {
+    if (this.accuracy >= 80) return '#22c55e'; // groen
+    if (this.accuracy >= 60) return '#eab308'; // geel
+    if (this.accuracy >= 40) return '#f59e0b'; // oranje
+    return '#ef4444';                          // rood
+  }
 }

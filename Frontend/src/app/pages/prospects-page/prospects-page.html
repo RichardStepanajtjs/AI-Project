@@ -19,7 +19,7 @@
     <app-prospect
       [prospectName]="lijst.naam"
       [prospectDescription]="'Domein: ' + lijst.jobdomein"
-      [accuracy]="95"
+      [accuracy]="gemiddeldeAccuracy(lijst)"
       [isFavorite]="isFavorite(lijst)"
       (favoriteChange)="toggleFavorite(lijst)"
       (cardClick)="router.navigate(['/prospect-lists', lijst.id], { state: { prospect: lijst } })">
