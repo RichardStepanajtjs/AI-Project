@@ -93,6 +93,34 @@
   font-weight: 600;
 }
 
+/* favorieten-filter */
+.favorite-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  font-size: 12.5px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--muted);
+  transition: all .15s;
+}
+
+.favorite-toggle:hover {
+  border-color: #F5A623;
+  color: #F5A623;
+}
+
+.favorite-toggle.active {
+  background: rgba(245, 166, 35, .12);
+  border-color: #F5A623;
+  color: #F5A623;
+}
+
 /* zoekbalk */
 .search-wrapper {
   position: relative;

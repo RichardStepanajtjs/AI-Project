@@ -9,6 +9,8 @@ import { FormsModule } from '@angular/forms';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
+const FAVORITES_KEY = 'business-profile-favorites';
+
 @Component({
   selector: 'app-business-profiles-page',
   imports: [PageHeader, BusinessProfileComponent, FilterHeader, FormsModule],
@@ -43,6 +45,9 @@ export class BusinessProfilesPage implements OnDestroy {
   get sortering() { return this._sortering; }
   set sortering(v: 'nieuwste' | 'oudste') { this._sortering = v; this.resetAndFetch(); }
 
+  favoritesOnly = false;
+  private favoriteKbos: Set<string> = new Set();
+
   errorMessage = '';
 
   currentPage = 1;
@@ -73,11 +78,48 @@ export class BusinessProfilesPage implements OnDestroy {
   }
 
   ngOnInit() {
+    this.loadFavorites();
     this.fetchPage();
   }
 
   ngOnDestroy() {
     this.searchSub.unsubscribe();
+  }
+
+  private loadFavorites() {
+    try {
+      const stored = localStorage.getItem(FAVORITES_KEY);
+      this.favoriteKbos = new Set(stored ? JSON.parse(stored) : []);
+    } catch {
+      this.favoriteKbos = new Set();
+    }
+  }
+
+  private saveFavorites() {
+    localStorage.setItem(FAVORITES_KEY, JSON.stringify([...this.favoriteKbos]));
+  }
+
+  isFavorite(profile: BusinessProfile): boolean {
+    return this.favoriteKbos.has(profile.kbonummer);
+  }
+
+  onFavoriteChange(profile: BusinessProfile, isFavorite: boolean) {
+    if (isFavorite) {
+      this.favoriteKbos.add(profile.kbonummer);
+    } else {
+      this.favoriteKbos.delete(profile.kbonummer);
+    }
+    this.saveFavorites();
+
+    // In favorieten-modus moet een verwijderd item meteen uit de lijst verdwijnen.
+    if (this.favoritesOnly) {
+      this.fetchPage();
+    }
+  }
+
+  toggleFavoritesOnly(value: boolean) {
+    this.favoritesOnly = value;
+    this.resetAndFetch();
   }
 
   private resetAndFetch() {
@@ -86,12 +128,27 @@ export class BusinessProfilesPage implements OnDestroy {
   }
 
   private fetchPage() {
+    // Favorieten-modus zonder favorieten: niets ophalen, lege lijst tonen.
+    if (this.favoritesOnly && this.favoriteKbos.size === 0) {
+      this.pagedProfiles = [];
+      this.filteredCount = 0;
+      this.totalPages = 1;
+      this.currentPage = 1;
+      this.pageStart = 0;
+      this.pageEnd = 0;
+      this.visiblePageNumbers = [];
+      this.errorMessage = '';
+      this.cdr.detectChanges();
+      return;
+    }
+
     this.businessProfilesService.getBusinessProfilesPaged({
       page: this.currentPage,
       pageSize: this.pageSize,
       sector: this._sector,
       search: this._zoekterm,
       sort: this._sortering,
+      kbonummers: this.favoritesOnly ? [...this.favoriteKbos] : undefined,
     }).subscribe({
       next: (response: any) => {
         this.pagedProfiles = (response.data ?? []) as BusinessProfile[];

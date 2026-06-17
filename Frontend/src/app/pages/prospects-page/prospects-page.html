@@ -4,7 +4,9 @@
   <app-filter-header
     [filters]="sectorFilters"
     [(activeFilter)]="geselecteerdeSector"
-    [(searchTerm)]="zoekterm">
+    [(searchTerm)]="zoekterm"
+    [showFavoriteToggle]="true"
+    [(favoritesOnly)]="favoritesOnly">
   </app-filter-header>
   <button class="btn-new" (click)="openForm()">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">

@@ -2,7 +2,10 @@
 <app-filter-header
   [filters]="sectorFilters"
   [(activeFilter)]="geselecteerdeSector"
-  [(searchTerm)]="zoekterm">
+  [(searchTerm)]="zoekterm"
+  [showFavoriteToggle]="true"
+  [favoritesOnly]="favoritesOnly"
+  (favoritesOnlyChange)="toggleFavoritesOnly($event)">
 </app-filter-header>
 
 <!-- Sorteren op aanmaakdatum -->
@@ -23,6 +26,8 @@
         [countryCode]="profile.landcode"
         [jobDomain]="profile.jobdomein"
         [kbonummer]="profile.kbonummer"
+        [isFavorite]="isFavorite(profile)"
+        (favoriteChange)="onFavoriteChange(profile, $event)"
         (cardClick)="router.navigate(['/business-profiles', profile.kbonummer], { state: { profile } })">
     </app-business-profile>
   } @empty {

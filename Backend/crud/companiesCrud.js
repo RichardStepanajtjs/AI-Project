@@ -10,13 +10,18 @@ const getAllCompaniesWithoutEmbeddings = async () => {
     return rows;
 }
 
-const getCompaniesPaginated = async ({ limit, offset, sector, search, sort }) => {
+const getCompaniesPaginated = async ({ limit, offset, sector, search, sort, kbonummers }) => {
     const conditions = [];
     const values = [];
 
     if (sector && sector !== 'Alle sectoren') {
         values.push(sector);
         conditions.push(`jobdomein = $${values.length}`);
+    }
+
+    if (Array.isArray(kbonummers)) {
+        values.push(kbonummers);
+        conditions.push(`kbonummer = ANY($${values.length})`);
     }
 
     if (search) {

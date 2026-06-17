@@ -7,6 +7,7 @@ export interface BusinessProfilesQuery {
   sector?: string;
   search?: string;
   sort?: 'nieuwste' | 'oudste';
+  kbonummers?: string[];
 }
 
 @Injectable({
@@ -33,6 +34,9 @@ export class BusinessProfilesServices {
     }
     if (query.sort) {
       params = params.set('sort', query.sort);
+    }
+    if (query.kbonummers?.length) {
+      params = params.set('kbonummers', query.kbonummers.join(','));
     }
 
     return this.http.get(`${this.apiUrl}`, { params });

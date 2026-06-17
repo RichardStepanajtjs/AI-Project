@@ -60,6 +60,10 @@ router.get("/", async (req, res) => {
       const sector = req.query.sector || null;
       const search = req.query.search ? String(req.query.search).trim() : null;
       const sort = req.query.sort === "oudste" ? "oudste" : "nieuwste";
+      // Optionele favorieten-filter: comma-separated lijst van kbonummers
+      const kbonummers = req.query.kbonummers
+        ? String(req.query.kbonummers).split(",").map((k) => k.trim()).filter(Boolean)
+        : undefined;
 
       const { rows, total } = await getCompaniesPaginated({
         limit: pageSize,
@@ -67,6 +71,7 @@ router.get("/", async (req, res) => {
         sector,
         search,
         sort,
+        kbonummers,
       });
 
       return res.json({

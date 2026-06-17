@@ -38,6 +38,7 @@ export class ProspectsPage {
 
   geselecteerdeSector = 'Alle sectoren';
   zoekterm = '';
+  favoritesOnly = false;
 
   form = this.fb.group({
     productName: ['', Validators.required],  // required in product mode (default)
@@ -62,7 +63,7 @@ export class ProspectsPage {
 
   private loadFavorites() {
     try {
-      const stored = sessionStorage.getItem(FAVORITES_KEY);
+      const stored = localStorage.getItem(FAVORITES_KEY);
       this.favoriteIds = new Set(stored ? JSON.parse(stored) : []);
     } catch {
       this.favoriteIds = new Set();
@@ -70,7 +71,7 @@ export class ProspectsPage {
   }
 
   private saveFavorites() {
-    sessionStorage.setItem(FAVORITES_KEY, JSON.stringify([...this.favoriteIds]));
+    localStorage.setItem(FAVORITES_KEY, JSON.stringify([...this.favoriteIds]));
   }
 
   gemiddeldeAccuracy(lijst: any): number {
@@ -97,7 +98,8 @@ export class ProspectsPage {
     if (!this.alleLijsten || !Array.isArray(this.alleLijsten)) return [];
     return this.alleLijsten
       .filter(l => this.geselecteerdeSector === 'Alle sectoren' || l.jobdomein === this.geselecteerdeSector)
-      .filter(l => !this.zoekterm || (l.naam ?? '').toLowerCase().includes(this.zoekterm.toLowerCase()));
+      .filter(l => !this.zoekterm || (l.naam ?? '').toLowerCase().includes(this.zoekterm.toLowerCase()))
+      .filter(l => !this.favoritesOnly || this.isFavorite(l));
   }
 
   openForm() { this.showForm = true; }

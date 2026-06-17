@@ -20,6 +20,11 @@ export class FilterHeader {
     @Input() showAddTag: boolean = false;
     @Output() searchTermChange = new EventEmitter<string>();
     @Output() addTag = new EventEmitter<string>();
+
+    // favorieten-filter (optioneel)
+    @Input() showFavoriteToggle: boolean = false;
+    @Input() favoritesOnly: boolean = false;
+    @Output() favoritesOnlyChange = new EventEmitter<boolean>();
     
     dropdownOpen = false;
     tagValue = '';
