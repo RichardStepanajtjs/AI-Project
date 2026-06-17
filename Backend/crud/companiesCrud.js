@@ -10,6 +10,49 @@ const getAllCompaniesWithoutEmbeddings = async () => {
     return rows;
 }
 
+const getCompaniesPaginated = async ({ limit, offset, sector, search, sort }) => {
+    const conditions = [];
+    const values = [];
+
+    if (sector && sector !== 'Alle sectoren') {
+        values.push(sector);
+        conditions.push(`jobdomein = $${values.length}`);
+    }
+
+    if (search) {
+        values.push(`%${search}%`);
+        const p = `$${values.length}`;
+        conditions.push(`(
+            naam ILIKE ${p}
+            OR text ILIKE ${p}
+            OR jobdomein ILIKE ${p}
+            OR gemeente ILIKE ${p}
+            OR array_to_string(technologies, ',') ILIKE ${p}
+        )`);
+    }
+
+    const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
+    const order = sort === 'oudste' ? 'ASC' : 'DESC';
+
+    const { rows: countRows } = await pool.query(
+        `SELECT COUNT(*)::int AS total FROM companies ${where}`,
+        values
+    );
+    const total = countRows[0].total;
+
+    const dataValues = [...values, limit, offset];
+    const { rows } = await pool.query(
+        `SELECT id, naam, kbonummer, postcode, gemeente, landcode, email, telefoonnummer, jobdomein, text, technologies, created_at
+         FROM companies
+         ${where}
+         ORDER BY created_at ${order}
+         LIMIT $${dataValues.length - 1} OFFSET $${dataValues.length}`,
+        dataValues
+    );
+
+    return { rows, total };
+};
+
 const getCompanyById = async (id) => {
     const { rows } = await pool.query('SELECT * FROM companies WHERE id = $1', [id]);
     return rows[0];
@@ -76,6 +119,7 @@ const getCompaniesCount = async () => {
 module.exports = {
     getAllCompaniesWithEmbeddings,
     getAllCompaniesWithoutEmbeddings,
+    getCompaniesPaginated,
     getCompaniesCount,
     getCompanyById,
     getCompaniesByDomain,

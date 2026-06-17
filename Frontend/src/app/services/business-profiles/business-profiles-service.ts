@@ -1,5 +1,13 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
+
+export interface BusinessProfilesQuery {
+  page: number;
+  pageSize: number;
+  sector?: string;
+  search?: string;
+  sort?: 'nieuwste' | 'oudste';
+}
 
 @Injectable({
   providedIn: 'root',
@@ -10,6 +18,24 @@ export class BusinessProfilesServices {
 
   getAllBusinessProfiles() {
     return this.http.get(`${this.apiUrl}`);
+  }
+
+  getBusinessProfilesPaged(query: BusinessProfilesQuery) {
+    let params = new HttpParams()
+      .set('page', query.page)
+      .set('pageSize', query.pageSize);
+
+    if (query.sector && query.sector !== 'Alle sectoren') {
+      params = params.set('sector', query.sector);
+    }
+    if (query.search) {
+      params = params.set('search', query.search);
+    }
+    if (query.sort) {
+      params = params.set('sort', query.sort);
+    }
+
+    return this.http.get(`${this.apiUrl}`, { params });
   }
 
   createBusinessProfiles(data: any) {

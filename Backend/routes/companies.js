@@ -3,6 +3,7 @@ const router = express.Router();
 const {
   getAllCompaniesWithEmbeddings,
   getAllCompaniesWithoutEmbeddings,
+  getCompaniesPaginated,
   getCompaniesCount,
   getCompanyById,
   createCompany,
@@ -47,8 +48,38 @@ router.get("/embeddings", async (req, res) => {
 });
 
 // Get all companies (wihtout embeddings)
+// Paginatie is opt-in: zonder page/pageSize query-param wordt de volledige lijst
+// teruggegeven (backwards compatible met de Python-pipeline en andere callers).
 router.get("/", async (req, res) => {
   try {
+    const isPaginated = req.query.page !== undefined || req.query.pageSize !== undefined;
+
+    if (isPaginated) {
+      const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+      const pageSize = Math.min(100, Math.max(1, parseInt(req.query.pageSize, 10) || 20));
+      const sector = req.query.sector || null;
+      const search = req.query.search ? String(req.query.search).trim() : null;
+      const sort = req.query.sort === "oudste" ? "oudste" : "nieuwste";
+
+      const { rows, total } = await getCompaniesPaginated({
+        limit: pageSize,
+        offset: (page - 1) * pageSize,
+        sector,
+        search,
+        sort,
+      });
+
+      return res.json({
+        success: true,
+        data: rows,
+        count: rows.length,
+        total,
+        page,
+        pageSize,
+        totalPages: Math.max(1, Math.ceil(total / pageSize)),
+      });
+    }
+
     const companies = await getAllCompaniesWithoutEmbeddings();
     res.json({
       success: true,
