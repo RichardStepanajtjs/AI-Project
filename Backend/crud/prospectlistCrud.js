@@ -30,14 +30,14 @@ const getProspectListsByDomain = async (domain) => {
 };
 
 const createProspectList = async (data) => {
-    const { user_id, form_id, naam, jobdomein, company_ids } = data;
+    const { user_id, form_id, naam, jobdomein, company_ids, accuracy_scores } = data;
 
     const query = `
-        INSERT INTO prospect_lists (user_id, form_id, naam, jobdomein, company_ids)
-        VALUES ($1, $2, $3, $4, $5)
+        INSERT INTO prospect_lists (user_id, form_id, naam, jobdomein, company_ids, accuracy_scores)
+        VALUES ($1, $2, $3, $4, $5, $6)
         RETURNING *`;
 
-    const { rows } = await pool.query(query, [user_id, form_id ?? null, naam, jobdomein, company_ids]);
+    const { rows } = await pool.query(query, [user_id, form_id ?? null, naam, jobdomein, company_ids, accuracy_scores ?? null]);
     return rows[0];
 };
 
@@ -55,6 +55,7 @@ const updateProspectList = async (id, data) => {
 
     if (data.naam) { sets.push(`naam = $${sets.length + 1}`); values.push(data.naam); }
     if (data.company_ids) { sets.push(`company_ids = $${sets.length + 1}`); values.push(data.company_ids); }
+    if (data.accuracy_scores) { sets.push(`accuracy_scores = $${sets.length + 1}`); values.push(data.accuracy_scores); }
     if (data.user_id) { sets.push(`user_id = $${sets.length + 1}`); values.push(data.user_id); }
     if (data.jobdomein) { sets.push(`jobdomein = $${sets.length + 1}`); values.push(data.jobdomein); }
 

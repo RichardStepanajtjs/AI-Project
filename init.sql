@@ -89,6 +89,7 @@ CREATE TABLE IF NOT EXISTS prospect_lists (
     naam VARCHAR(255) NOT NULL,
     jobdomein VARCHAR(100),
     company_ids INTEGER[] NOT NULL,
+    accuracy_scores FLOAT4[],
     created_at TIMESTAMP DEFAULT (NOW() AT TIME ZONE 'Europe/Brussels')
 );
 

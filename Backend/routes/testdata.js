@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
     try {
         const testData = await getAllTestData();
         res.status(200).json({
-            Success: true,
+            success: true,
             data: testData,
             count: testData.length
         });
@@ -58,3 +58,5 @@ router.get("/:id", async (req, res) => {
         });
     }
 });
+
+module.exports = router;

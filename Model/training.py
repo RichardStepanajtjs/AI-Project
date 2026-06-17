@@ -6,6 +6,7 @@ from datetime import datetime
 import requests
 import urllib3
 from preprocessing import fetch_data, format
+from evaluation import evaluate
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -72,7 +73,10 @@ def train():
     
     index = faiss.IndexFlatIP(d)
     index.add(company_vectors)
-    
+
+    print("Evaluating model with test data...")
+    precision_score = evaluate(index, company_metadata, k=20)
+
     chunk = faiss.serialize_index(index)
     index_bytes = chunk.tobytes()
 
@@ -88,7 +92,8 @@ def train():
         "description": f"Trained model containing {index.ntotal} companies",
         "is_active": True,
         "faiss_index": index_b64,
-        "metadata_pkl": metadata_b64
+        "metadata_pkl": metadata_b64,
+        "f1_score": precision_score,
     }
 
     print("Sending trained model to database...")
