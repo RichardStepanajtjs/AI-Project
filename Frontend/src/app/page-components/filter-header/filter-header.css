@@ -93,7 +93,7 @@
   font-weight: 600;
 }
 
-/* favorieten-filter */
+/* favorites filter */
 .favorite-toggle {
   display: flex;
   align-items: center;
@@ -121,7 +121,7 @@
   color: #F5A623;
 }
 
-/* zoekbalk */
+/* search bar */
 .search-wrapper {
   position: relative;
   display: flex;

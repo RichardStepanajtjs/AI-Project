@@ -15,18 +15,18 @@ model_url = f"{backend_url}/models"
 
 
 def wait_for_companies(poll_interval=30):
-    """Wacht tot de backend minstens 1 bedrijfsprofiel heeft voor we trainen."""
+    """Wait until the backend has at least 1 company profile before we train."""
     count_url = f"{backend_url}/companies/count"
     while True:
         try:
             count = requests.get(count_url, verify=False).json().get("count", 0)
         except Exception as e:
             count = 0
-            print(f"Count-check mislukt: {e}")
+            print(f"Count check failed: {e}")
         if count > 0:
-            print(f"{count} bedrijfsprofiel(en) gevonden, start training.")
+            print(f"{count} company profile(s) found, starting training.")
             return
-        print(f"Nog geen bedrijfsprofielen, opnieuw checken over {poll_interval}s...")
+        print(f"No company profiles yet, checking again in {poll_interval}s...")
         time.sleep(poll_interval)
 
 def get_next_version_name():
@@ -101,7 +101,7 @@ def train():
     try:
         response = requests.post(model_url, json=payload, verify=False)
         response.raise_for_status()
-        print(f"Succes! Model '{version_name}' saved to the database.")
+        print(f"Success! Model '{version_name}' saved to the database.")
 
     except requests.exceptions.RequestException as e:
         print(f"Error: Failed to save model to database. {e}")

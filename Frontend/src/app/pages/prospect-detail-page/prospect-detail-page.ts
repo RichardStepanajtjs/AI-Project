@@ -128,7 +128,7 @@ export class ProspectDetailPage {
   }
 
   onDragOver(event: DragEvent) {
-    // Dit is verplicht in HTML5, anders laat de browser de 'drop' niet toe
+    // Required in HTML5, otherwise the browser won't allow the 'drop'
     event.preventDefault(); 
   }
 
@@ -139,22 +139,22 @@ export class ProspectDetailPage {
       return;
     }
 
-    // Pak de huidige visuele volgorde
+    // Take the current visual order
     const currentList = [...this.sortedProfiles];
     
-    // Verwijder het versleepte item en voeg het in op de nieuwe plek
+    // Remove the dragged item and insert it at the new position
     const itemToMove = currentList.splice(this.draggedIndex, 1)[0];
     currentList.splice(dropIndex, 0, itemToMove);
     
-    // Sla op en zet dropdown op 'manual'
+    // Save and set dropdown to 'manual'
     this.connectedProfiles = currentList;
     this.sortOrder = 'manual';
 
-    // Update het prospect object voor je backend save
+    // Update the prospect object before the backend save
     this.prospect.company_ids = this.connectedProfiles.map(p => p.id); 
     this.prospect.accuracy_scores = this.connectedProfiles.map(p => p.accuracy);
     
-    // Reset en trigger update
+    // Reset and trigger update
     this.draggedIndex = null;
     this.cdr.detectChanges();
   }
@@ -174,7 +174,7 @@ export class ProspectDetailPage {
   get tagsList(): string[] {
     const raw = this.form?.technologies;
     if (!raw) return [];
-    // PostgreSQL array komt als JS array binnen, anders komma-string als fallback
+    // PostgreSQL array arrives as a JS array, otherwise a comma string as fallback
     if (Array.isArray(raw)) return raw.filter(Boolean);
     return String(raw).split(',').map((t: string) => t.trim()).filter(Boolean);
   }
@@ -204,9 +204,9 @@ export class ProspectDetailPage {
 
   accuracyColor(score: number | null): string {
     if (score === null) return 'var(--muted)';
-    if (score >= 80) return '#22c55e'; // groen
-    if (score >= 60) return '#eab308'; // geel
-    if (score >= 40) return '#f59e0b'; // oranje
-    return '#ef4444';                  // rood
+    if (score >= 80) return '#22c55e'; // green
+    if (score >= 60) return '#eab308'; // yellow
+    if (score >= 40) return '#f59e0b'; // orange
+    return '#ef4444';                  // red
   }
 }

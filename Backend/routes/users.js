@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const pool = require('../db/connection'); // PAS OP: zorg dat dit klopt later wanneer connection is gemaakt
+const pool = require('../db/connection'); // NOTE: make sure this is correct later once the connection is set up
 const {
   getAllUsers,
   getUserById,
@@ -15,7 +15,7 @@ const {
 
 router.post('/login', async (req, res) => {
   try {
-    const { email, password } = req.body; // fix zodat het niet crasht
+    const { email, password } = req.body; // fix so it doesn't crash
 
     if (!email || !password) {
       return res.status(400).json({ success: false, message: 'Email and password are required' });
@@ -35,7 +35,7 @@ router.post('/login', async (req, res) => {
 
     const token = jwt.sign(
       { id: user.id, email: user.email, role: user.role },
-      process.env.JWT_SECRET || 'VERVANG_DIT_LATER_IN_ENV', // VERVANG DIT LATER
+      process.env.JWT_SECRET || 'VERVANG_DIT_LATER_IN_ENV', // REPLACE THIS LATER
       { expiresIn: '1h' }
     );
 

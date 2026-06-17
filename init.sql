@@ -1,4 +1,4 @@
-/* User tabel (GH-...) */
+/* User table (GH-...) */
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     email VARCHAR(255) UNIQUE NOT NULL,
@@ -16,7 +16,7 @@ VALUES
     ('user@sokrates.be', '$2a$10$sVTZ9XC/0Net2Q/fzHpYbuJCO352bA0Wi7q5EHzqdStx.LbRGEMvS', 'user', 'John', 'Doe')
 ON CONFLICT (email) DO NOTHING;
 
-/* Vacancy tabel (GH-...) */
+/* Vacancy table (GH-...) */
 CREATE TABLE IF NOT EXISTS vacancies (
     id SERIAL PRIMARY KEY,
     interne_referentie UUID UNIQUE NOT NULL,
@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS vacancies (
     created_at TIMESTAMP DEFAULT (NOW() AT TIME ZONE 'Europe/Brussels')
 );
 
-/* Company tabel (GH-43) */
+/* Company table (GH-43) */
 CREATE TABLE IF NOT EXISTS companies (
     id SERIAL PRIMARY KEY,
     naam VARCHAR(255) NOT NULL,
@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS companies (
     created_at TIMESTAMP DEFAULT (NOW() AT TIME ZONE 'Europe/Brussels')
 );
 
-/* KBO tabel */
+/* KBO table */
 CREATE TABLE IF NOT EXISTS kbo_companies (
     id SERIAL PRIMARY KEY,
     enterprise_number VARCHAR(20) UNIQUE NOT NULL,
@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS kbo_companies (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-/* Form Tabel (GH-52) */
+/* Form table (GH-52) */
 CREATE TABLE IF NOT EXISTS forms (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users(id) ON DELETE CASCADE,
@@ -81,7 +81,7 @@ CREATE TABLE IF NOT EXISTS forms (
     created_at TIMESTAMP DEFAULT (NOW() AT TIME ZONE 'Europe/Brussels')
 );
 
-/* Prospectlist tabel (GH-46) */
+/* Prospectlist table (GH-46) */
 CREATE TABLE IF NOT EXISTS prospect_lists (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users(id) ON DELETE CASCADE,
@@ -93,7 +93,7 @@ CREATE TABLE IF NOT EXISTS prospect_lists (
     created_at TIMESTAMP DEFAULT (NOW() AT TIME ZONE 'Europe/Brussels')
 );
 
-/* Model Tabel (GH-) */
+/* Model table (GH-) */
 CREATE TABLE IF NOT EXISTS models (
     id SERIAL PRIMARY KEY,
     version_label VARCHAR(255) NOT NULL,
@@ -124,7 +124,7 @@ BEFORE INSERT OR UPDATE ON models
 FOR EACH ROW
 EXECUTE FUNCTION set_single_active_model();
 
-/* Test Data Tabel (GH-63) */
+/* Test Data table (GH-63) */
 CREATE TABLE IF NOT EXISTS test_data (
     id SERIAL PRIMARY KEY,
     prospect_list_id INT REFERENCES prospect_lists(id) ON DELETE CASCADE,

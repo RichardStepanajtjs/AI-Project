@@ -167,7 +167,7 @@
   color: var(--muted);
 }
 
-/* Settings kaart */
+/* Settings card */
 .settings-card {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -241,7 +241,7 @@
 
 .field-hint { font-size: 11px; color: var(--muted-lite); }
 
-/* Info regels */
+/* Info rows */
 .info-row {
   display: flex;
   align-items: center;
@@ -363,7 +363,7 @@
 
 .btn-primary:hover { background: var(--accent-hov); }
 
-/* thema */
+/* theme */
 .theme-desc {
   font-size: 13px;
   color: var(--muted);

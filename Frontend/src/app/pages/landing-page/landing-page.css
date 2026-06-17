@@ -74,7 +74,7 @@
   align-items: center;
 }
 
-/* Functies beschrijving (nog niet volledig) */
+/* Features description (not yet complete) */
 .features {
   padding: 96px 48px;
   max-width: 1100px;
@@ -172,7 +172,7 @@ footer {
   background: var(--surface);
 }
 
-/* Knoppen */
+/* Buttons */
 .btn-primary {
   padding: 11px 24px;
   background: var(--accent);

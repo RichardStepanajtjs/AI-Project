@@ -66,7 +66,7 @@ nav {
   overflow-x: hidden;
 }
 
-/* ── Toggle knop ── */
+/* ── Toggle button ── */
 .toggle-btn {
   display: flex;
   align-items: center;
@@ -108,7 +108,7 @@ app-nav-component {
   display: block;
 }
 
-/* ── Account sectie onderaan ── */
+/* ── Account section at bottom ── */
 .account-section {
   flex-shrink: 0;
   padding: 10px;

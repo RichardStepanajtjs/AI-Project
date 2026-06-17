@@ -24,7 +24,7 @@ const port = 3000;
 
 // Middleware
 app.use(cors());
-// Verhoogd voor grote payloads (KBO-data + getraind FAISS-model met embeddings)
+// Increased for large payloads (KBO data + trained FAISS model with embeddings)
 app.use(express.json({ limit: '100mb' }));
 
 // Api routes

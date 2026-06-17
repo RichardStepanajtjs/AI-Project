@@ -38,7 +38,7 @@ export class BusinessProfilesPage implements OnDestroy {
   get geselecteerdeSector() { return this._sector; }
   set geselecteerdeSector(v: string) { this._sector = v; this.resetAndFetch(); }
 
-  // Zoeken wordt gedebounced zodat niet elke toetsaanslag een request veroorzaakt.
+  // Search is debounced so not every keystroke triggers a request.
   get zoekterm() { return this._zoekterm; }
   set zoekterm(v: string) { this._zoekterm = v; this.searchInput$.next(v); }
 
@@ -111,7 +111,7 @@ export class BusinessProfilesPage implements OnDestroy {
     }
     this.saveFavorites();
 
-    // In favorieten-modus moet een verwijderd item meteen uit de lijst verdwijnen.
+    // In favorites mode a removed item must disappear from the list immediately.
     if (this.favoritesOnly) {
       this.fetchPage();
     }
@@ -128,7 +128,7 @@ export class BusinessProfilesPage implements OnDestroy {
   }
 
   private fetchPage() {
-    // Favorieten-modus zonder favorieten: niets ophalen, lege lijst tonen.
+    // Favorites mode without favorites: fetch nothing, show an empty list.
     if (this.favoritesOnly && this.favoriteKbos.size === 0) {
       this.pagedProfiles = [];
       this.filteredCount = 0;
@@ -155,7 +155,7 @@ export class BusinessProfilesPage implements OnDestroy {
         this.filteredCount = response.total ?? 0;
         this.totalPages = response.totalPages ?? 1;
 
-        // Houd de huidige pagina binnen de geldige grenzen (bv. na een filterwissel).
+        // Keep the current page within valid bounds (e.g. after a filter change).
         if (this.currentPage > this.totalPages) {
           this.currentPage = this.totalPages;
         }

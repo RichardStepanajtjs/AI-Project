@@ -9,7 +9,7 @@ const {
 } = require("../crud/kboCompaniesCrud");
 
 
-// GET count dit functie is voor te controleren of de kbo data al reeds is gepushed.
+// GET count - used to check whether the KBO data has already been pushed.
 router.get("/count", async (req, res) => {
     try {
         const count = await getKboCompaniesCount();

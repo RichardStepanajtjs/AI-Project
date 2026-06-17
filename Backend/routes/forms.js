@@ -10,7 +10,7 @@ const {
 
 const { rankModel } = require("../crud/modelsCrud");
 
-// maak prospects via form aan
+// create prospects via form
 const { createProspectList } = require("../crud/prospectlistCrud");
 
 const PYTHON_CONTAINER_URL = process.env.PYTHON_CONTAINER_URL || "http://python_container:5001";
@@ -121,7 +121,7 @@ router.put("/:id", async (req, res) => {
     }
 });
 
-// Process form: genereer description + embedding via Python container
+// Process form: generate description + embedding via Python container
 router.post("/:id/process", async (req, res) => {
     try {
         const { id } = req.params;
@@ -143,7 +143,7 @@ router.post("/:id/process", async (req, res) => {
 
         const data = await response.json();
 
-        // Trigger ranking na succesvolle verwerking
+        // Trigger ranking after successful processing
         try {
             console.log(`Triggering ranking for form ${id}...`);
             const formData = await getFormById(id);

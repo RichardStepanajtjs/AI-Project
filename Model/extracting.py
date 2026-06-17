@@ -7,7 +7,7 @@ from preprocessing import fetch_data
 def load_active_model():
     """
     Retrieves the active model from the database, decodes the Base64 data 
-    and reconstructs the FAISS index en metadata.
+    and reconstructs the FAISS index and metadata.
     """    
     model_data = fetch_data("models/active")
     

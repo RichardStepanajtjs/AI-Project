@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { tap } from 'rxjs/internal/operators/tap';
 import { LoginResponse } from '../../models/login-response';
 
-// JWT geimplementeerd 
+// JWT implemented 
 function decodeJwtPayload(token: string): Record<string, any> | null {
   try {
     const parts = token.split('.');

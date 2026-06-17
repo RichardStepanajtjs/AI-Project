@@ -20,7 +20,7 @@ html, body {
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--muted-lite); }
 
-/* Licht thema */
+/* Light theme */
 :root,
 [data-theme="light"] {
   --bg:         #F7F6F2;
@@ -37,7 +37,7 @@ html, body {
   --shadow:     rgba(0,0,0,.06);
 }
 
-/* donkere thema */
+/* Dark theme */
 [data-theme="dark"] {
   --bg:         #111110;
   --surface:    #1C1C1A;

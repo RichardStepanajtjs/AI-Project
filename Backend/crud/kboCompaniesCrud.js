@@ -6,8 +6,8 @@ const getAllKboCompanies = async () => {
 };
 
 const getKboCompanyByEnterpriseNumber = async (enterpriseNumber) => {
-    // Normaliseer beide kanten. Verwijderd punten voor vergelijking.
-    // VDAB heeft "0732580523", KBO slaat het op als "0732.580.523"
+    // Normalize both sides. Dots removed for comparison.
+    // VDAB has "0732580523", KBO stores it as "0732.580.523"
     const normalized = enterpriseNumber.replace(/\./g, '');
     const { rows } = await pool.query(
         "SELECT * FROM kbo_companies WHERE REPLACE(enterprise_number, '.', '') = $1",

@@ -8,7 +8,7 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './filter-header.css',
 })
 export class FilterHeader {
-    // dropdown voor domeinen
+    // dropdown for domains
     @Input() filters: string[] = [];
     @Input() activeFilter: string = '';
     @Output() activeFilterChange = new EventEmitter<string>();
@@ -21,7 +21,7 @@ export class FilterHeader {
     @Output() searchTermChange = new EventEmitter<string>();
     @Output() addTag = new EventEmitter<string>();
 
-    // favorieten-filter (optioneel)
+    // favorites filter (optional)
     @Input() showFavoriteToggle: boolean = false;
     @Input() favoritesOnly: boolean = false;
     @Output() favoritesOnlyChange = new EventEmitter<boolean>();

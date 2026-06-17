@@ -48,8 +48,8 @@ router.get("/embeddings", async (req, res) => {
 });
 
 // Get all companies (wihtout embeddings)
-// Paginatie is opt-in: zonder page/pageSize query-param wordt de volledige lijst
-// teruggegeven (backwards compatible met de Python-pipeline en andere callers).
+// Pagination is opt-in: without a page/pageSize query param the full list
+// is returned (backwards compatible with the Python pipeline and other callers).
 router.get("/", async (req, res) => {
   try {
     const isPaginated = req.query.page !== undefined || req.query.pageSize !== undefined;
@@ -60,7 +60,7 @@ router.get("/", async (req, res) => {
       const sector = req.query.sector || null;
       const search = req.query.search ? String(req.query.search).trim() : null;
       const sort = req.query.sort === "oudste" ? "oudste" : "nieuwste";
-      // Optionele favorieten-filter: comma-separated lijst van kbonummers
+      // Optional favorites filter: comma-separated list of kbonummers
       const kbonummers = req.query.kbonummers
         ? String(req.query.kbonummers).split(",").map((k) => k.trim()).filter(Boolean)
         : undefined;
@@ -131,7 +131,7 @@ router.get("/:id", async (req, res) => {
 // Create new company
 router.post("/", async (req, res) => {
   try {
-    // Basis validatie
+    // Basic validation
     if (!req.body.naam || !req.body.kbonummer) {
       return res.status(400).json({
         success: false,
@@ -149,7 +149,7 @@ router.post("/", async (req, res) => {
   } catch (error) {
     console.error("Error creating company:", error);
 
-    // Check voor uniek kbonummer
+    // Check for unique kbonummer
     if (error.code === "23505") {
       return res.status(409).json({
         success: false,

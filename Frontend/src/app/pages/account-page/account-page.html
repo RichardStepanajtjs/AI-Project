@@ -2,7 +2,7 @@
 
 <div class="settings-layout">
 
-  <!-- Side navigation (De tabs overzicht) -->
+  <!-- Side navigation (tabs overview) -->
   <aside class="settings-sidebar">
     <div class="sidebar-header">
       <div class="sidebar-avatar">{{ initials }}</div>
@@ -54,7 +54,7 @@
 
   <div class="settings-content">
 
-    <!-- Mijn profiel tab -->
+    <!-- My profile tab -->
     @if (activeTab === 'profiel') {
       <div class="content-section">
         <div class="content-header">
@@ -104,7 +104,7 @@
       </div>
     }
 
-    <!-- Beveiliging tab -->
+    <!-- Security tab -->
     @if (activeTab === 'beveiliging') {
       <div class="content-section">
         <div class="content-header">
@@ -141,7 +141,7 @@
           </div>
         </div>
 
-        <!-- Wachtwoord tips -->
+        <!-- Password tips -->
         <div class="settings-card">
           <div class="settings-card-header">Beveiligingstips</div>
           <div class="settings-card-body no-gap">
@@ -178,7 +178,7 @@
       </div>
     }
 
-    <!-- weergave/thema tab -->
+    <!-- display/theme tab -->
     @if (activeTab === 'weergave') {
       <div class="content-section">
         <div class="content-header">

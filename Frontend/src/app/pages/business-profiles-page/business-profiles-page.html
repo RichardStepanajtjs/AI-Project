@@ -8,7 +8,7 @@
   (favoritesOnlyChange)="toggleFavoritesOnly($event)">
 </app-filter-header>
 
-<!-- Sorteren op aanmaakdatum -->
+<!-- Sort by creation date -->
 <div class="sort-bar">
   <label for="sort-select">Sorteren</label>
   <select id="sort-select" [(ngModel)]="sortering">
@@ -35,21 +35,21 @@
   }
 </main>
 
-<!-- Pagina balk -->
+<!-- Pagination bar -->
 <div class="pagination-bar">
   <div class="pagination-info">
     <span>{{ pageStart }}–{{ pageEnd }} van {{ filteredCount }} bedrijven</span>
   </div>
 
   <div class="pagination-controls">
-    <!-- Vorige knop -->
+    <!-- Previous button -->
     <button class="page-btn arrow" [disabled]="currentPage === 1" (click)="prevPage()">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
         <path d="M15 18l-6-6 6-6"/>
       </svg>
     </button>
 
-    <!-- Eerste pagina -->
+    <!-- First page -->
     @if (visiblePageNumbers[0] > 1) {
       <button class="page-btn" (click)="goToPage(1)">1</button>
       @if (visiblePageNumbers[0] > 2) {
@@ -57,12 +57,12 @@
       }
     }
 
-    <!-- Genummerde pagina's -->
+    <!-- Numbered pages -->
     @for (p of visiblePageNumbers; track p) {
       <button class="page-btn" [class.active]="p === currentPage" (click)="goToPage(p)">{{ p }}</button>
     }
 
-    <!-- Laatste pagina -->
+    <!-- Last page -->
     @if (visiblePageNumbers[visiblePageNumbers.length - 1] < totalPages) {
       @if (visiblePageNumbers[visiblePageNumbers.length - 1] < totalPages - 1) {
         <span class="page-ellipsis">…</span>
@@ -70,7 +70,7 @@
       <button class="page-btn" (click)="goToPage(totalPages)">{{ totalPages }}</button>
     }
 
-    <!-- Volgende knop + functie -->
+    <!-- Next button + function -->
     <button class="page-btn arrow" [disabled]="currentPage === totalPages" (click)="nextPage()">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
         <path d="M9 18l6-6-6-6"/>
@@ -78,7 +78,7 @@
     </button>
   </div>
 
-  <!-- Pagina grootte -->
+  <!-- Page size -->
   <div class="page-size-selector">
     <label>Per pagina</label>
     <select [(ngModel)]="pageSize">

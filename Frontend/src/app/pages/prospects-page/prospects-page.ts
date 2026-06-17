@@ -155,7 +155,7 @@ export class ProspectsPage {
           return;
         }
 
-        // Start de volledige pipeline (Ollama herformulering + Voyage embedding)
+        // Start the full pipeline (Ollama rephrasing + Voyage embedding)
         this.formService.processForm(formId).subscribe({
           next: () => {
             this.isGenerating = false;
@@ -163,7 +163,7 @@ export class ProspectsPage {
             this.closeForm();
           },
           error: (err) => {
-            // Processing is mislukt maar de form is wel opgeslagen
+            // Processing failed but the form was saved
             console.error('Form processing fout:', err);
             this.isGenerating = false;
             this.refreshList();

@@ -115,7 +115,7 @@
   </div>
 </main>
 
-<!-- nieuwe gebruiker venster -->
+<!-- new user window -->
 @if (showScreen) {
   <div class="modal-overlay" (click)="showScreen = false">
     <div class="modal" (click)="$event.stopPropagation()">
@@ -158,7 +158,7 @@
   </div>
 }
 
-<!-- Gebruiker details venster -->
+<!-- User details window -->
 @if (showUserDetail && selectedUser) {
   <div class="modal-overlay" (click)="closeDetail()">
     <div class="modal detail-modal" (click)="$event.stopPropagation()">
@@ -177,7 +177,7 @@
       </div>
 
       @if (!editMode) {
-        <!-- Detail weergave -->
+        <!-- Detail view -->
         <div class="detail-hero">
           <div class="detail-avatar">{{ selectedUser.email.charAt(0).toUpperCase() }}</div>
           <div>
@@ -235,7 +235,7 @@
           </div>
         }
       } @else {
-        <!-- Edit weergave -->
+        <!-- Edit view -->
         <div class="detail-hero">
           <div class="detail-avatar">{{ editData.email?.charAt(0)?.toUpperCase() || selectedUser.email.charAt(0).toUpperCase() }}</div>
           <div>

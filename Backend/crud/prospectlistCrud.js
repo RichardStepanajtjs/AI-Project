@@ -16,14 +16,14 @@ const getProspectListById = async (id) => {
 };
 
 const getProspectListsByDomain = async (domain) => {
-    // Als er geen domein is of het is 'Alle sectoren', select all
+    // If there is no domain or it is 'Alle sectoren', select all
     if (!domain || domain === 'Alle sectoren') {
         const query = 'SELECT * FROM prospect_lists ORDER BY created_at DESC';
         const { rows } = await pool.query(query);
         return rows;
     }
 
-    // filter op domein
+    // filter by domain
     const query = 'SELECT * FROM prospect_lists WHERE jobdomein = $1 ORDER BY created_at DESC';
     const { rows } = await pool.query(query, [domain]);
     return rows;
